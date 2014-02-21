@@ -1,0 +1,131 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+	<!-- T_GNOMTEC_SCROLLFRAME_EDITBOX: scrollable area with editbox -->
+	<ScrollFrame name="T_GNOMTEC_SCROLLFRAME_EDITBOX" virtual="true">
+		<Frames>
+			<Slider name="$parent_Slider" resizable="true" setAllPoints="true" parentKey="slider">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="0" y="-16" />
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="0" y="16" />
+					</Anchor>
+				</Anchors>	
+				<Size>
+					<AbsDimension x="16" y="43"/>
+				</Size>
+				<Frames>
+					<Button name="$parentScrollUpButton" inherits="UIPanelScrollUpButtonTemplate">
+						<Anchors>
+							<Anchor point="BOTTOM" relativePoint="TOP"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								local parent = self:GetParent();
+								parent:SetValue(parent:GetValue() - (parent:GetHeight() / 2));
+								PlaySound("UChatScrollButton");
+							</OnClick>
+							<OnEnter>
+								local parent = self:GetParent();
+								parentOfParent = parent:GetParent();
+								parentOfParent:UpdateScrollChildRect();
+								parent:SetMinMaxValues(0, parentOfParent:GetVerticalScrollRange());
+								parent:SetValue(parentOfParent:GetVerticalScroll());   
+							</OnEnter>
+						</Scripts>
+					</Button>
+					<Button name="$parentScrollDownButton" inherits="UIPanelScrollDownButtonTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM"/>
+						</Anchors>	
+						<Scripts>
+							<OnClick>
+								local parent = self:GetParent();
+								parent:SetValue(parent:GetValue() + (parent:GetHeight() / 2));
+								PlaySound("UChatScrollButton");
+							</OnClick>
+							<OnEnter>
+								local parent = self:GetParent();
+								parentOfParent = parent:GetParent();
+								parentOfParent:UpdateScrollChildRect();
+								parent:SetMinMaxValues(0, parentOfParent:GetVerticalScrollRange());
+								parent:SetValue(parentOfParent:GetVerticalScroll());   
+							</OnEnter>
+						</Scripts>
+					</Button>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						local parent = self:GetParent();
+						parent:UpdateScrollChildRect();
+						self:SetMinMaxValues(0, parent:GetVerticalScrollRange());
+						self:SetValue(parent:GetVerticalScroll());   
+					</OnLoad>
+					<OnValueChanged>
+						self:GetParent():SetVerticalScroll(value);
+					</OnValueChanged>
+					<OnMouseWheel>
+						self:SetValue(self:GetValue() - delta*14);
+					</OnMouseWheel>
+					<OnEnter>
+						local parent = self:GetParent();
+						parent:UpdateScrollChildRect();
+						self:SetMinMaxValues(0, parent:GetVerticalScrollRange());
+						self:SetValue(parent:GetVerticalScroll());   
+					</OnEnter>
+				</Scripts>
+				<ThumbTexture name="$parentThumbTexture" inherits="UIPanelScrollBarButton" file="Interface\Buttons\UI-ScrollBar-Knob">
+					<Size>
+						<AbsDimension x="16" y="16"/>
+					</Size>
+				</ThumbTexture>
+			</Slider>
+		</Frames>
+		<ScrollChild>
+			<EditBox name="$parent_Text" setAllPoints="true" multiLine="true" autoFocus="false" font="ChatFontNormal">
+				<Scripts>
+					<OnLoad>
+						self:EnableKeyboard(false);
+						self:EnableMouse(false);	
+					</OnLoad>
+					<OnSizeChanged>
+						local parent = self:GetParent();
+						parent:UpdateScrollChildRect();
+					</OnSizeChanged>
+					<OnTextChanged>
+--						GnomTEC_Badge:UpdateNote();
+					</OnTextChanged>
+					<OnMouseWheel>
+						local parent = self:GetParent();
+						local slider = parent.slider;
+						slider:SetValue(slider:GetValue() - delta*14);
+					</OnMouseWheel>
+					<OnEscapePressed>
+						self:ClearFocus();
+					</OnEscapePressed>
+				</Scripts>
+			</EditBox>
+		</ScrollChild>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_ChangeSize = T_GNOMTEC_SCROLLFRAME_EDITBOX_ChangeSize;
+			</OnLoad>
+			<OnEnter>
+				self:UpdateScrollChildRect();
+				self.slider:SetMinMaxValues(0, self:GetVerticalScrollRange());
+				self.slider:SetValue(self:GetVerticalScroll());   
+			</OnEnter>
+			<OnSizeChanged>
+				local child = self:GetScrollChild();
+				child:SetWidth(self:GetWidth()-16);	
+				child:SetHeight(self:GetHeight());	
+				child:SetTextInsets(0, 0, 0, 0);
+				child:SetPoint("BOTTOM");
+				self:UpdateScrollChildRect();
+			</OnSizeChanged>
+		</Scripts>
+	</ScrollFrame>
+	
+</Ui>
+

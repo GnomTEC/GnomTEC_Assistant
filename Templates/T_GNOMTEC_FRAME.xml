@@ -1,0 +1,543 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+	<!-- T_GNOMTEC_FRAME_TOOLTIP: Empty tooltip which could be moveable and resizable. -->
+	<Frame name="T_GNOMTEC_FRAME_TOOLTIP" parent="UIParent" toplevel="true" clampedToScreen="true" movable="true" resizable="true" hidden="true" virtual="true">
+		<Size x="128" y="128" />
+		<ResizeBounds>
+         <minResize>
+         	<AbsDimension x="64" y="64"/>
+      	</minResize>
+      </ResizeBounds>
+		<Anchors>
+			<Anchor point="CENTER" relativePoint="CENTER"/>
+		</Anchors>
+		<Backdrop bgFile="Interface\Addons\GnomTEC_Assistant\Textures\UI-Tooltip-Background" edgeFile="Interface\Addons\GnomTEC_Assistant\Textures\UI-Tooltip-Border" tile="true">
+			<EdgeSize val="16"/>
+			<TileSize val="16"/>
+			<Color r="0.25" g="0.25" b="0.25"/>
+			<BackgroundInsets left="5" right="5" top="5" bottom="5"/>
+		</Backdrop>
+		<Frames>
+			<Button name="$parent_Resize">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnMouseDown>
+						if (self:GetParent():IsResizable()) then
+							self:GetParent():StartSizing();
+						end
+					</OnMouseDown>
+					<OnMouseUp>
+						self:GetParent():StopMovingOrSizing();
+					</OnMouseUp>
+				</Scripts>
+				<NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
+				<HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
+				<PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_Resize
+				self.GnomTEC_Resize = getglobal(self:GetName().."_Resize")
+				self.GnomTEC_Width = self:GetWidth()
+				self.GnomTEC_Height = self:GetHeight()
+			</OnLoad>
+			<OnShow>
+				if (self:IsResizable()) then
+					self.GnomTEC_Resize:Show();
+				else
+					self.GnomTEC_Resize:Hide();
+				end
+				T_GNOMTEC_FRAME_Resize(self, 0, 0)
+			</OnShow>
+			<OnMouseDown>
+				if (self:IsMovable()) then
+					self:StartMoving();
+				end
+			</OnMouseDown>
+			<OnMouseUp>self:StopMovingOrSizing();</OnMouseUp>
+			<OnSizeChanged>
+				if ((not self.GnomTEC_Width) or (not self.GnomTEC_Height)) then
+					self.GnomTEC_Width = self:GetWidth()
+					self.GnomTEC_Height = self:GetHeight()
+				else
+					T_GNOMTEC_FRAME_Resize(self, self:GetWidth()-self.GnomTEC_Width, self:GetHeight()-self.GnomTEC_Height)
+					self.GnomTEC_Width = self:GetWidth()
+					self.GnomTEC_Height = self:GetHeight()
+				end				
+			</OnSizeChanged>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_WINDOW: Empty window with close button which could be moveable and resizable. -->
+	<Frame name="T_GNOMTEC_FRAME_WINDOW" parent="UIParent" toplevel="true" clampedToScreen="true" movable="true" resizable="true" hidden="true" virtual="true">
+		<Size x="128" y="128" />
+		<ResizeBounds>
+         <minResize>
+         	<AbsDimension x="64" y="64"/>
+      	</minResize>
+      </ResizeBounds>
+		<Anchors>
+			<Anchor point="CENTER" relativePoint="CENTER"/>
+		</Anchors>
+		<Backdrop bgFile="Interface\Addons\GnomTEC_Assistant\Textures\UI-Window-Background" edgeFile="Interface\Addons\GnomTEC_Assistant\Textures\UI-Window-Border" tile="true">
+			<EdgeSize val="32"/>
+			<TileSize val="32"/>
+			<BackgroundInsets left="5" right="5" top="5" bottom="5"/>
+			<Color r="0.0" g="0.0" b="0.0"/>
+		</Backdrop>
+		<Frames>
+			<Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parent_Resize">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnMouseDown>
+						if (self:GetParent():IsResizable()) then
+							self:GetParent():StartSizing();
+						end
+					</OnMouseDown>
+					<OnMouseUp>
+						self:GetParent():StopMovingOrSizing();
+					</OnMouseUp>
+				</Scripts>
+				<NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
+				<HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
+				<PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_Resize
+				self.GnomTEC_Resize = getglobal(self:GetName().."_Resize")
+				self.GnomTEC_Width = self:GetWidth()
+				self.GnomTEC_Height = self:GetHeight()
+			</OnLoad>
+			<OnShow>
+				if (self:IsResizable()) then
+					self.GnomTEC_Resize:Show();
+				else
+					self.GnomTEC_Resize:Hide();
+				end
+				T_GNOMTEC_FRAME_Resize(self, 0, 0)
+			</OnShow>
+			<OnMouseDown>
+				if (self:IsMovable()) then
+					self:StartMoving();
+				end
+			</OnMouseDown>
+			<OnMouseUp>self:StopMovingOrSizing();</OnMouseUp>
+			<OnSizeChanged>
+				if ((not self.GnomTEC_Width) or (not self.GnomTEC_Height)) then
+					self.GnomTEC_Width = self:GetWidth()
+					self.GnomTEC_Height = self:GetHeight()
+				else
+					T_GNOMTEC_FRAME_Resize(self, self:GetWidth()-self.GnomTEC_Width, self:GetHeight()-self.GnomTEC_Height)
+					self.GnomTEC_Width = self:GetWidth()
+					self.GnomTEC_Height = self:GetHeight()
+				end				
+			</OnSizeChanged>
+		</Scripts>
+	</Frame>	
+
+	<!-- T_GNOMTEC_FRAME_WINDOW_HEADER: header of a window. -->
+	<Frame name="T_GNOMTEC_FRAME_WINDOW_HEADER" virtual="true">
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="5" y="-6"/>
+				</Offset>
+			</Anchor>
+			<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT">
+				<Offset>
+					<AbsDimension x="-30" y="-26"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer>
+				<FontString name="$parent_Title" inherits="GameFontNormalLeft" justifyH="CENTER" text="T_GNOMTEC_FRAME_WINDOW_HEADER">
+					<Color r="1.0" g="1.0" b="0.0"/>
+					<Size x="32" y="14" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="-3"/>
+						</Anchor>
+						<Anchor point="RIGHT">
+							<Offset x="0" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_WINDOW_HEADER_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_WINDOW_INNERFRAME: inner frame of a window. -->
+	<Frame name="T_GNOMTEC_FRAME_WINDOW_INNERFRAME" virtual="true">
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="5" y="-29"/>
+				</Offset>
+			</Anchor>
+			<Anchor point="BOTTOMRIGHT">
+				<Offset>
+					<AbsDimension x="-7" y="32"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_WINDOW_INNERFRAME_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_WINDOW_FOOTER: footer of a window. -->
+	<Frame name="T_GNOMTEC_FRAME_WINDOW_FOOTER" virtual="true">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT">
+				<Offset>
+					<AbsDimension x="5" y="29"/>
+				</Offset>
+			</Anchor>
+			<Anchor point="BOTTOMRIGHT">
+				<Offset>
+					<AbsDimension x="-5" y="6"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_WINDOW_FOOTER_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_SPACER: a spacer which will take every space free between one and infinity pixels. -->
+	<Frame name="T_GNOMTEC_FRAME_SPACER" virtual="true">
+		<Size x="1" y="1" />
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_SPACER_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_CONTAINER_HORIZONTAL: container with horizontal layout. Sub frames shoul anchored to top and bottom.-->
+	<Frame name="T_GNOMTEC_FRAME_CONTAINER_HORIZONTAL" virtual="true">
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+			<Anchor point="BOTTOMRIGHT"/>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_CONTAINER_HORIZONTAL_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_CONTAINER_VERTICAL: container with vertical layout.  Sub frames shoul anchored to left and right.-->
+	<Frame name="T_GNOMTEC_FRAME_CONTAINER_VERTICAL" virtual="true">
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+			<Anchor point="BOTTOMRIGHT"/>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_CONTAINER_VERTICAL_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_CONTAINER_TABULATOR: container with Tabulator layout. -->
+	<Frame name="T_GNOMTEC_FRAME_CONTAINER_TABULATOR" virtual="true">
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+			<Anchor point="BOTTOMRIGHT"/>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_CONTAINER_TABULATOR_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_CONTAINER_TABULATOR_INNERFRAME: inner frame of a tabulator container. -->
+	<Frame name="T_GNOMTEC_FRAME_CONTAINER_TABULATOR_INNERFRAME" parentKey="GnomTEC_InnerFrame" virtual="true">
+		<Backdrop edgeFile="Interface\Addons\GnomTEC_Assistant\Textures\UI-Tabulator-InnerFrame-Border" tile="true">
+			<EdgeSize val="16"/>
+			<TileSize val="16"/>
+		</Backdrop>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_CONTAINER_TABULATOR_INNERFRAME_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_CONTAINER_TABULATOR_HORIZONTAL: horizontal tabs area of a tabulator container. -->
+	<Frame name="T_GNOMTEC_FRAME_CONTAINER_TABULATOR_HORIZONTAL" parentKey="GnomTEC_Tabulator" virtual="true">
+		<Size x="24" y="24" />
+		<Anchors>
+			<Anchor point="LEFT"/>
+			<Anchor point="RIGHT"/>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_CONTAINER_TABULATOR_HORIZONTAL_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+
+	<!-- T_GNOMTEC_FRAME_SCROLLINGMESSAGE: scrollable area with messages -->
+	<Frame name="T_GNOMTEC_FRAME_SCROLLINGMESSAGE" virtual="true">
+		<Frames>
+			<ScrollingMessageFrame name="$parent_Text" fade="false" maxLines="1024" parentKey="messages">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="0" y="0" />
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-16" y="0" />
+					</Anchor>
+				</Anchors>	
+				<FontString inherits="ChatFontNormal" justifyH="LEFT" indented="true" nonspacewrap="true"/>
+				<Scripts>
+					<OnMouseWheel>
+						self:GetParent().slider:SetValue(self:GetParent().slider:GetValue() - delta);
+					</OnMouseWheel>
+				</Scripts>
+			</ScrollingMessageFrame>
+			<Slider name="$parent_Slider" resizable="true" setAllPoints="true" parentKey="slider">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="0" y="-16" />
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="0" y="16" />
+					</Anchor>
+				</Anchors>	
+				<Size>
+					<AbsDimension x="16" y="43"/>
+				</Size>
+				<Frames>
+					<Button name="$parentScrollUpButton" inherits="UIPanelScrollUpButtonTemplate">
+						<Anchors>
+							<Anchor point="BOTTOM" relativePoint="TOP"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								local parent = self:GetParent();
+								parentOfParent = parent:GetParent();
+								parentOfParent.messages:ScrollUp()
+								parent:SetValue(parentOfParent.messages:GetNumMessages() - parentOfParent.messages:GetCurrentScroll());
+								PlaySound("UChatScrollButton");
+							</OnClick>
+							<OnEnter>
+								local parent = self:GetParent();
+								parentOfParent = parent:GetParent();
+								parent:SetMinMaxValues(1, parentOfParent.messages:GetNumMessages());
+								parent:SetValue(parentOfParent.messages:GetNumMessages() - parentOfParent.messages:GetCurrentScroll());   
+							</OnEnter>
+						</Scripts>
+					</Button>
+					<Button name="$parentScrollDownButton" inherits="UIPanelScrollDownButtonTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM"/>
+						</Anchors>	
+						<Scripts>
+							<OnClick>
+								local parent = self:GetParent();
+								parentOfParent = parent:GetParent();
+								parentOfParent.messages:ScrollDown()
+								parent:SetValue(parentOfParent.messages:GetNumMessages() - parentOfParent.messages:GetCurrentScroll());
+								PlaySound("UChatScrollButton");
+							</OnClick>
+							<OnEnter>
+								local parent = self:GetParent();
+								parentOfParent = parent:GetParent();
+								parent:SetMinMaxValues(1, parentOfParent.messages:GetNumMessages());
+								parent:SetValue(parentOfParent.messages:GetNumMessages() - parentOfParent.messages:GetCurrentScroll());   
+							</OnEnter>
+						</Scripts>
+					</Button>
+				</Frames>
+				<Scripts>
+					<OnValueChanged>
+						self:GetParent().messages:SetScrollOffset(self:GetParent().messages:GetNumMessages() - value);
+					</OnValueChanged>
+					<OnMouseWheel>
+						self:SetValue(self:GetValue() - delta);
+					</OnMouseWheel>
+					<OnEnter>
+						local parent = self:GetParent();
+						self:SetMinMaxValues(1, parent.messages:GetNumMessages());
+						self:SetValue(parent.messages:GetNumMessages() - parent.messages:GetCurrentScroll());   
+					</OnEnter>
+				</Scripts>
+				<ThumbTexture name="$parentThumbTexture" inherits="UIPanelScrollBarButton" file="Interface\Buttons\UI-ScrollBar-Knob">
+					<Size>
+						<AbsDimension x="16" y="16"/>
+					</Size>
+				</ThumbTexture>
+			</Slider>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_SCROLLINGMESSAGE_ChangeSize;
+			</OnLoad>
+			<OnEnter>
+				self.slider:SetMinMaxValues(1, self.messages:GetNumMessages());
+				self.slider:SetValue(self.messages:GetNumMessages() - self.messages:GetCurrentScroll());   
+			</OnEnter>
+		</Scripts>
+	</Frame>
+	
+	
+	<!-- T_GNOMTEC_FRAME_MAP: map display -->
+	<Frame name="T_GNOMTEC_FRAME_MAP" virtual="true">
+		<Layers>
+			<Layer>
+				<Texture name="$parent_Map1" file="Interface\WorldMap\StormwindCity\StormwindCity1">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="0" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map2" file="Interface\WorldMap\StormwindCity\StormwindCity2">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="150" y="0" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map3" file="Interface\WorldMap\StormwindCity\StormwindCity3">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="300" y="0" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map4" file="Interface\WorldMap\StormwindCity\StormwindCity4">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="450" y="0" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map5" file="Interface\WorldMap\StormwindCity\StormwindCity5">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="-150" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map6" file="Interface\WorldMap\StormwindCity\StormwindCity6">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="150" y="-150" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map7" file="Interface\WorldMap\StormwindCity\StormwindCity7">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="300" y="-150" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map8" file="Interface\WorldMap\StormwindCity\StormwindCity8">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="450" y="-150" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map9" file="Interface\WorldMap\StormwindCity\StormwindCity9">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="-300" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map10" file="Interface\WorldMap\StormwindCity\StormwindCity10">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="150" y="-300" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map11" file="Interface\WorldMap\StormwindCity\StormwindCity11">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="300" y="-300" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parent_Map12" file="Interface\WorldMap\StormwindCity\StormwindCity12">
+					<Size x="150" y="150" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="450" y="-300" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_MAP_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+</Ui>

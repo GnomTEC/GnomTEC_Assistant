@@ -1,0 +1,100 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+	<Frame name="GnomTEC_Assistant_Window" inherits="T_GNOMTEC_FRAME_WINDOW" movable="true" resizable="true" hidden="true">
+		<Size x="610" y="500" />
+		<Frames>
+			<Frame name="$parent_Header" inherits="T_GNOMTEC_FRAME_WINDOW_HEADER">
+			</Frame>
+			<Frame name="$parent_InnerFrame" inherits="T_GNOMTEC_FRAME_WINDOW_INNERFRAME">
+				<Frames>
+					<Frame name="$parent_Container" inherits="T_GNOMTEC_FRAME_CONTAINER_TABULATOR">
+						<Frames>
+							<Frame name="$parent_Tabulator" inherits="T_GNOMTEC_FRAME_CONTAINER_TABULATOR_HORIZONTAL">
+								<Anchors>
+									<Anchor point="TOP"/>
+								</Anchors>
+								<Frames>
+									<Button name="$parent_TabAddons" inherits="T_GNOMTEC_BUTTON_TABULATOR" id="1">
+										<Size x="80"/>
+										<Anchors>
+											<Anchor point="LEFT"/>
+										</Anchors>
+									</Button>
+									<Button name="$parent_TabLog" inherits="T_GNOMTEC_BUTTON_TABULATOR" id="2">
+										<Size x="80"/>
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_TabAddons" relativePoint="RIGHT"/>
+										</Anchors>
+									</Button>
+									<Button name="$parent_TabDemo" inherits="T_GNOMTEC_BUTTON_TABULATOR" id="3">
+										<Size x="80"/>
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_TabLog" relativePoint="RIGHT"/>
+										</Anchors>
+									</Button>
+									<Frame name="$parent_Spacer" inherits="T_GNOMTEC_FRAME_SPACER">
+										<Anchors>
+											<Anchor point="LEFT" relativeTo="$parent_TabDemo" relativePoint="RIGHT"/>
+											<Anchor point="RIGHT"/>
+										</Anchors>
+									</Frame>
+								</Frames>
+							</Frame>
+							<Frame name="$parent_InnerFrame" inherits="T_GNOMTEC_FRAME_CONTAINER_TABULATOR_INNERFRAME">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parent_Tabulator" relativePoint="BOTTOM"/>
+									<Anchor point="LEFT"/>
+									<Anchor point="RIGHT"/>
+									<Anchor point="BOTTOM"/>							
+								</Anchors>
+								<Frames>
+									<ScrollFrame name="$parent_Addons" inherits="T_GNOMTEC_SCROLLFRAME_EDITBOX"  id="1">
+										<Anchors>
+											<Anchor point="TOP" y="-5"/>
+											<Anchor point="LEFT" x="5"/>
+											<Anchor point="RIGHT" x="-5"/>
+											<Anchor point="BOTTOM" y="5"/>							
+										</Anchors>
+									</ScrollFrame>
+									<Frame name="$parent_Log" inherits="T_GNOMTEC_FRAME_SCROLLINGMESSAGE" id="2">
+										<Anchors>
+											<Anchor point="TOP" y="-5"/>
+											<Anchor point="LEFT" x="5"/>
+											<Anchor point="RIGHT" x="-5"/>
+											<Anchor point="BOTTOM" y="5"/>							
+										</Anchors>
+									</Frame>									
+									<Frame name="$parent_Demo" inherits="T_GNOMTEC_FRAME_CONTAINER_VERTICAL"  id="3">
+										<Anchors>
+											<Anchor point="TOP" y="-5"/>
+											<Anchor point="LEFT" x="5"/>
+											<Anchor point="RIGHT" x="-5"/>
+											<Anchor point="BOTTOM" y="5"/>							
+										</Anchors>
+										<Layers>
+											<Layer>
+												<FontString name="$parent_Title" inherits="GameFontNormalLeft" justifyH="CENTER">
+													<Color r="1.0" g="1.0" b="0.0"/>
+													<Size x="32" y="14" />
+													<Anchors>
+														<Anchor point="TOPLEFT">
+															<Offset x="0" y="-8"/>
+														</Anchor>
+														<Anchor point="RIGHT">
+															<Offset x="0" y="0"/>
+														</Anchor>
+													</Anchors>
+												</FontString>
+											</Layer>
+										</Layers>
+									</Frame>
+								</Frames>
+							</Frame>
+						</Frames>
+					</Frame>
+				</Frames>
+			</Frame>
+			<Frame name="$parent_Footer" inherits="T_GNOMTEC_FRAME_WINDOW_FOOTER">
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

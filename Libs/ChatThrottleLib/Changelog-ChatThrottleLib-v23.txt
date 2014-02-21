@@ -1,0 +1,30 @@
+------------------------------------------------------------------------
+r79 | mikk | 2013-11-13 20:30:28 +0000 (Wed, 13 Nov 2013) | 1 line
+Changed paths:
+   A /tags/v23 (from /trunk:78)
+
+Tagging as v23
+------------------------------------------------------------------------
+r78 | mikk | 2013-11-13 20:29:21 +0000 (Wed, 13 Nov 2013) | 1 line
+Changed paths:
+   M /trunk/ChatThrottleLib.toc
+
+Update version in TOC, oops.
+------------------------------------------------------------------------
+r77 | mikk | 2013-11-13 20:28:35 +0000 (Wed, 13 Nov 2013) | 5 lines
+Changed paths:
+   M /trunk/ChatThrottleLib.lua
+   M /trunk/ChatThrottleLib.toc
+
+Version 23:
+- TOC 50400
+- Avoid sending delayed messages to raid/party if we left it by the time the messages actually despool
+- Additional argument to delivery callback function: true/false (sent or not sent)
+
+------------------------------------------------------------------------
+r76 | mikk | 2013-03-10 14:55:01 +0000 (Sun, 10 Mar 2013) | 1 line
+Changed paths:
+   M /trunk/ChatThrottleLib.toc
+
+TOC 50200
+------------------------------------------------------------------------

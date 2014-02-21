@@ -1,0 +1,12 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  <Include file="Templates\T_GNOMTEC_FRAME.xml"/>
+  <Include file="Templates\T_GNOMTEC_FRAME.lua"/>
+  <Include file="Templates\T_GNOMTEC_SCROLLFRAME.xml"/>
+  <Include file="Templates\T_GNOMTEC_SCROLLFRAME.lua"/>
+  <Include file="Templates\T_GNOMTEC_BUTTON.xml"/>
+  <Include file="Templates\T_GNOMTEC_BUTTON.lua"/>
+  <Include file="Templates\T_GNOMTEC_DEMO.xml"/>
+  <Include file="Templates\T_GNOMTEC_DEMO.lua"/>
+</Ui>
+
+

@@ -1,0 +1,7 @@
+package-as: GnomTEC_Assistant
+
+manual-changelog:
+    filename: history.txt
+    markup-type: creole
+
+enable-nolib-creation: no
