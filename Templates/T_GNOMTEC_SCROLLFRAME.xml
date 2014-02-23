@@ -109,6 +109,7 @@
 		</ScrollChild>
 		<Scripts>
 			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
 				self.GnomTEC_ChangeSize = T_GNOMTEC_SCROLLFRAME_EDITBOX_ChangeSize;
 			</OnLoad>
 			<OnEnter>
@@ -127,5 +128,37 @@
 		</Scripts>
 	</ScrollFrame>
 	
+	<!-- T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE: container with table layout. -->
+	<ScrollFrame name="T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE" virtual="true">
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+			<Anchor point="BOTTOMRIGHT"/>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE_ChangeSize;
+				self.GnomTEC_Table = {}
+				self.GnomTEC_Offset = 0
+			</OnLoad>
+			<OnEnter>
+				self:UpdateScrollChildRect();
+				T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SetSlider(self.GnomTEC_Scrollbar)
+			</OnEnter>
+			<OnMouseWheel>
+				self.GnomTEC_Scrollbar.slider:SetValue(self.GnomTEC_Scrollbar.slider:GetValue() - delta);
+			</OnMouseWheel>
+			<OnSizeChanged>
+				local child = self:GetScrollChild();
+				child:SetWidth(self:GetWidth()-16);	
+				child:SetHeight(self:GetHeight()-24);	
+				child:SetPoint("TOPLEFT", 0, -24);
+				self:UpdateScrollChildRect();
+				T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SetSlider(self.GnomTEC_Scrollbar)
+			</OnSizeChanged>
+		</Scripts>
+	</ScrollFrame>
+
+
 </Ui>
 

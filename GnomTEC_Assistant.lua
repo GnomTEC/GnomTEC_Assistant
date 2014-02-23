@@ -1,6 +1,6 @@
 ﻿-- **********************************************************************
 -- GnomTEC Assistant
--- Version: 5.4.2.1
+-- Version: 5.4.7.1
 -- Author: GnomTEC
 -- Copyright 2014 by GnomTEC
 -- http://www.gnomtec.de/
@@ -131,9 +131,19 @@ end
 -- Hook functions
 -- ----------------------------------------------------------------------
 
+
 -- ----------------------------------------------------------------------
 -- Event handler
 -- ----------------------------------------------------------------------
+
+
+-- ----------------------------------------------------------------------
+-- chat commands
+-- ----------------------------------------------------------------------
+function GnomTEC_Assistant:ChatCommand_gnomtec(input)
+	GnomTEC_Assistant_Window:Show()
+end
+
 
 -- ----------------------------------------------------------------------
 -- Addon OnInitialize, OnEnable and OnDisable
@@ -160,6 +170,7 @@ function GnomTEC_Assistant:OnEnable()
 	-- set local parameters
 	
 	-- initialize hooks and events
+	GnomTEC_Assistant:RegisterChatCommand("gnomtec", "ChatCommand_gnomtec")
 
 	-- initialize some parts of GUI 
 	GnomTEC_Assistant_Window_Header_Title:SetText("GnomTEC Assistant")
@@ -167,12 +178,21 @@ function GnomTEC_Assistant:OnEnable()
 	GnomTEC_Assistant_Window_InnerFrame_Container_Tabulator_TabLog_Title:SetText("Log")
 	GnomTEC_Assistant_Window_InnerFrame_Container_Tabulator_TabDemo_Title:SetText("Demo")
 
+	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons_LabelFrame_Label1_Title:SetText("Name")
+	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons_LabelFrame_Label2_Title:SetText("Version")
+	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons_LabelFrame_Label3_Title:SetText("Autor")
+	
+	local addons = {
+		{ {"GnomTEC Assistant"}, {"5.4.7.1"}, {"GnomTEC"} },
+		{ {"GnomTEC Badge"}, {"5.4.7.37"}, {"GnomTEC"} },
+	}	
+	T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE_SetTable(GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons, addons)
 
 	T_GnomTEC_Demo_Window_InnerFrame_Container:SetParent(GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Demo)
 	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Demo_Title:SetText("GnomTEC Templates Demonstration")
 	T_GnomTEC_Demo_Window_InnerFrame_Container:SetPoint("TOPLEFT", 0, -30)
 	T_GnomTEC_Demo_Window_InnerFrame_Container:SetPoint("BOTTOMRIGHT")
-	GnomTEC_Assistant_Window:Show()
+--	GnomTEC_Assistant_Window:Show()
 
 --	T_GnomTEC_Demo_Window:Show()
 end
@@ -200,6 +220,10 @@ function GnomTEC:RegisterAddon(addon, addonInfo)
 end
 
 function GnomTEC:DebugMessage(addon, message)
-	GnomTEC_Assistant:AddMessage2Log(addon:GetName()..": "..message,1.0,1.0,0.0)
+	if (addon) then
+		GnomTEC_Assistant:AddMessage2Log(addon:GetName()..": "..message,1.0,1.0,0.0)
+	else
+		GnomTEC_Assistant:AddMessage2Log(message,1.0,0.0,0.0)
+	end
 end
 

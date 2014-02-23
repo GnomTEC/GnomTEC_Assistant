@@ -158,7 +158,6 @@ function T_GNOMTEC_FRAME_CONTAINER_TABULATOR_ChangeSize(frame, larger)
 	local childs
 	local width = frame:GetWidth()
 	local height = frame:GetHeight()
-	local incHeight = 0
 	local tabulator = frame.GnomTEC_Tabulator
 	local innerFrame = frame.GnomTEC_InnerFrame
 	local id = frame.GnomTEC_ID
@@ -213,12 +212,9 @@ function T_GNOMTEC_FRAME_CONTAINER_TABULATOR_ChangeSize(frame, larger)
 		if (value.GnomTEC_ChangeSize ~= nil) and (value:IsShown()) then
 			local w,h = value:GnomTEC_ChangeSize(value, larger)
 			width = width + w
-			if (h > incHeight) then
-				incHeight = h
-			end
+			height = height + h
 		end
 	end
-	height = height + incHeight
 	return (width-frame:GetWidth()), (height-frame:GetHeight())
 end
 
@@ -298,7 +294,150 @@ function T_GNOMTEC_FRAME_SCROLLINGMESSAGE_ChangeSize(frame, larger)
 	return (width-frame:GetWidth()), (height-frame:GetHeight())
 end
 
+function T_GNOMTEC_FRAME_SCROLLINGMESSAGE_SetSlider(frame)
+	local num = frame.messages:GetNumMessages()
+	local cur = frame.messages:GetCurrentScroll()
+	
+	if (num > 0) then
+		frame.slider:SetMinMaxValues(1, num);
+		frame.slider:SetValue(num - cur);   
+	else
+		frame.slider:SetMinMaxValues(0, 0);
+		frame.slider:SetValue(0);   	
+	end
+end
 
+function T_GNOMTEC_FRAME_SCROLLINGMESSAGE_SliderOnValueChanged(frame, value)
+	local num = frame.messages:GetNumMessages()
+	local cur = frame.messages:GetCurrentScroll()
+
+	if (value > num) then
+		frame.messages:SetScrollOffset(0);	
+	elseif (value > 0) then
+		frame.messages:SetScrollOffset(num - value);
+	else
+		frame.messages:SetScrollOffset(num);
+	end
+end
+
+
+function T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_ChangeSize(frame, larger)
+	local childs = {frame:GetChildren()}
+	local width = frame:GetWidth()
+	local height = frame:GetHeight()
+	local incWidth = 0
+	local heightLines = 0
+
+	if (height < 32) then
+		height = 32
+	end
+	for idx, value in ipairs(childs) do
+		heightLines = heightLines + value:GetHeight()
+		if (value.GnomTEC_ChangeSize ~= nil) and (value:IsShown()) then
+			local w,h = value:GnomTEC_ChangeSize(value, larger)
+			if (w > incWidth) then
+				incWidth = w
+			end
+		end
+	end
+	
+	if (height > heightLines+5) then
+		height = heightLines+5
+	end
+	
+	width = width + incWidth
+	return (width-frame:GetWidth()), (height-frame:GetHeight())
+end
+
+function T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE_ChangeSize(frame, larger)
+	local childs = {frame:GetChildren()}
+	local width = frame:GetWidth()
+	local height = frame:GetHeight()
+	local incHeight = 0
+
+	for idx, value in ipairs(childs) do
+		if (value.GnomTEC_ChangeSize ~= nil) and (value:IsShown()) then
+			local w,h = value:GnomTEC_ChangeSize(value, larger)
+			width = width + w
+			if (h > incHeight) then
+				incHeight = h
+			end
+		end
+	end
+	height = height + incHeight
+	return (width-frame:GetWidth()), (height-frame:GetHeight())
+end
+
+
+function T_GNOMTEC_FRAME_CONTAINER_TABLE_LABELFRAME_ChangeSize(frame, larger)
+	local childs = {frame:GetChildren()}
+	local width = frame:GetWidth()
+	local height = frame:GetHeight()
+	local incHeight = 0
+
+	for idx, value in ipairs(childs) do
+		if (value.GnomTEC_ChangeSize ~= nil) and (value:IsShown()) then
+			local w,h = value:GnomTEC_ChangeSize(value, larger)
+			width = width + w
+			if (h > incHeight) then
+				incHeight = h
+			end
+		end
+	end
+	height = height + incHeight
+	return (width-frame:GetWidth()), (height-frame:GetHeight())
+end
+
+
+function T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_ChangeSize(frame, larger)
+	local width, height 
+
+	width = frame:GetWidth()
+	height = frame:GetHeight()
+	
+	if (height < 64) then
+		height = 64
+	end
+	
+	return (width-frame:GetWidth()), (height-frame:GetHeight())
+end
+
+
+function T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SetSlider(frame)	
+	if (frame:GetParent().GnomTEC_Table) then
+		local lines = #(frame:GetParent().GnomTEC_Table)
+		local visibleLines = lines
+		local child = frame:GetParent():GetScrollChild()
+		local offset = frame:GetParent().GnomTEC_Offset
+		
+		if (child) then
+			local firstFrame = select(1,child:GetChildren())
+			if (firstFrame) then
+				visibleLines = floor((frame:GetParent():GetHeight()-24) / firstFrame:GetHeight())
+				if (visibleLines > lines) then
+					visibleLines = lines
+				end
+			end
+		end 
+		
+		if (offset > lines-visibleLines) then
+			offset = lines-visibleLines
+			frame:GetParent().GnomTEC_Offset = offset
+		end
+
+		frame.slider:SetMinMaxValues(0, lines-visibleLines);
+		frame.slider:SetValue(offset);   
+	else
+		frame.slider:SetMinMaxValues(0, 0);
+		frame.slider:SetValue(0);   
+	end
+end
+
+function T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SliderOnValueChanged(frame, value)
+	T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE_Redraw(frame:GetParent(), value)
+end
+
+						
 function T_GNOMTEC_FRAME_MAP_ChangeSize(frame, larger)
 	local name 
 	local width, height 

@@ -47,13 +47,281 @@
 									<Anchor point="BOTTOM"/>							
 								</Anchors>
 								<Frames>
-									<ScrollFrame name="$parent_Addons" inherits="T_GNOMTEC_SCROLLFRAME_EDITBOX"  id="1">
+									<ScrollFrame name="$parent_Addons" inherits="T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE" id="1">
 										<Anchors>
-											<Anchor point="TOP" y="-5"/>
-											<Anchor point="LEFT" x="5"/>
-											<Anchor point="RIGHT" x="-5"/>
-											<Anchor point="BOTTOM" y="5"/>							
+											<Anchor point="TOP" y="-7"/>
+											<Anchor point="LEFT" x="7"/>
+											<Anchor point="RIGHT" x="-7"/>
+											<Anchor point="BOTTOM" y="7"/>							
 										</Anchors>
+										<Frames>
+											<Frame name="$parent_LabelFrame" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_LABELFRAME">
+												<Frames>
+													<Button name="$parent_Label1" inherits="T_GNOMTEC_BUTTON_TABLELABEL" id="1">
+														<Size x="200"/>
+														<Anchors>
+															<Anchor point="LEFT"/>
+														</Anchors>
+													</Button>
+													<Button name="$parent_Label2" inherits="T_GNOMTEC_BUTTON_TABLELABEL" id="2">
+														<Size x="100"/>
+														<Anchors>
+															<Anchor point="LEFT" relativeTo="$parent_Label1" relativePoint="RIGHT"/>
+														</Anchors>
+													</Button>
+													<Button name="$parent_Label3" inherits="T_GNOMTEC_BUTTON_TABLELABEL" id="3">
+														<Anchors>
+															<Anchor point="LEFT" relativeTo="$parent_Label2" relativePoint="RIGHT"/>
+															<Anchor point="RIGHT"/>
+														</Anchors>
+													</Button>
+												</Frames>
+											</Frame>
+											<Frame name="$parent_Scrollbar" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR">
+											</Frame>
+										</Frames>
+										<ScrollChild>
+											<Frame name="$parent_InnerFrame" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME">
+												<Frames>
+													<Frame name="$parent_Line1" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE" id="1">
+														<Size x="20" y="20"/>
+														<Anchors>
+															<Anchor point="TOP"/>
+															<Anchor point="LEFT"/>
+															<Anchor point="RIGHT"/>
+														</Anchors>
+														<Frames>
+															<Button name="$parent_Row1" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="1">
+																<Size x="200"/>
+																<Anchors>
+																	<Anchor point="LEFT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row2" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="2">
+																<Size x="100"/>
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row1" relativePoint="RIGHT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row3" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="3">
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row2" relativePoint="RIGHT"/>
+																	<Anchor point="RIGHT"/>
+																</Anchors>
+															</Button>
+														</Frames>
+													</Frame>
+													<Frame name="$parent_Line2" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE" id="2">
+														<Size x="20" y="20"/>
+														<Anchors>
+															<Anchor point="TOP" relativeTo="$parent_Line1" relativePoint="BOTTOM"/>
+														</Anchors>
+														<Frames>
+															<Button name="$parent_Row1" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="1">
+																<Size x="200"/>
+																<Anchors>
+																	<Anchor point="LEFT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row2" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="2">
+																<Size x="100"/>
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row1" relativePoint="RIGHT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row3" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="3">
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row2" relativePoint="RIGHT"/>
+																	<Anchor point="RIGHT"/>
+																</Anchors>
+															</Button>
+														</Frames>
+													</Frame>
+													<Frame name="$parent_Line3" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE" id="3">
+														<Size x="20" y="20"/>
+														<Anchors>
+															<Anchor point="TOP" relativeTo="$parent_Line2" relativePoint="BOTTOM"/>
+														</Anchors>
+														<Frames>
+															<Button name="$parent_Row1" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="1">
+																<Size x="200"/>
+																<Anchors>
+																	<Anchor point="LEFT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row2" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="2">
+																<Size x="100"/>
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row1" relativePoint="RIGHT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row3" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="3">
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row2" relativePoint="RIGHT"/>
+																	<Anchor point="RIGHT"/>
+																</Anchors>
+															</Button>
+														</Frames>
+													</Frame>
+													<Frame name="$parent_Line4" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE" id="3">
+														<Size x="20" y="20"/>
+														<Anchors>
+															<Anchor point="TOP" relativeTo="$parent_Line3" relativePoint="BOTTOM"/>
+														</Anchors>
+														<Frames>
+															<Button name="$parent_Row1" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="1">
+																<Size x="200"/>
+																<Anchors>
+																	<Anchor point="LEFT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row2" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="2">
+																<Size x="100"/>
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row1" relativePoint="RIGHT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row3" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="3">
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row2" relativePoint="RIGHT"/>
+																	<Anchor point="RIGHT"/>
+																</Anchors>
+															</Button>
+														</Frames>
+													</Frame>
+													<Frame name="$parent_Line5" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE" id="3">
+														<Size x="20" y="20"/>
+														<Anchors>
+															<Anchor point="TOP" relativeTo="$parent_Line4" relativePoint="BOTTOM"/>
+														</Anchors>
+														<Frames>
+															<Button name="$parent_Row1" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="1">
+																<Size x="200"/>
+																<Anchors>
+																	<Anchor point="LEFT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row2" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="2">
+																<Size x="100"/>
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row1" relativePoint="RIGHT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row3" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="3">
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row2" relativePoint="RIGHT"/>
+																	<Anchor point="RIGHT"/>
+																</Anchors>
+															</Button>
+														</Frames>
+													</Frame>
+													<Frame name="$parent_Line6" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE" id="3">
+														<Size x="20" y="20"/>
+														<Anchors>
+															<Anchor point="TOP" relativeTo="$parent_Line5" relativePoint="BOTTOM"/>
+														</Anchors>
+														<Frames>
+															<Button name="$parent_Row1" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="1">
+																<Size x="200"/>
+																<Anchors>
+																	<Anchor point="LEFT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row2" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="2">
+																<Size x="100"/>
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row1" relativePoint="RIGHT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row3" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="3">
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row2" relativePoint="RIGHT"/>
+																	<Anchor point="RIGHT"/>
+																</Anchors>
+															</Button>
+														</Frames>
+													</Frame>
+													<Frame name="$parent_Line7" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE" id="3">
+														<Size x="20" y="20"/>
+														<Anchors>
+															<Anchor point="TOP" relativeTo="$parent_Line6" relativePoint="BOTTOM"/>
+														</Anchors>
+														<Frames>
+															<Button name="$parent_Row1" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="1">
+																<Size x="200"/>
+																<Anchors>
+																	<Anchor point="LEFT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row2" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="2">
+																<Size x="100"/>
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row1" relativePoint="RIGHT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row3" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="3">
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row2" relativePoint="RIGHT"/>
+																	<Anchor point="RIGHT"/>
+																</Anchors>
+															</Button>
+														</Frames>
+													</Frame>
+													<Frame name="$parent_Line8" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE" id="3">
+														<Size x="20" y="20"/>
+														<Anchors>
+															<Anchor point="TOP" relativeTo="$parent_Line7" relativePoint="BOTTOM"/>
+														</Anchors>
+														<Frames>
+															<Button name="$parent_Row1" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="1">
+																<Size x="200"/>
+																<Anchors>
+																	<Anchor point="LEFT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row2" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="2">
+																<Size x="100"/>
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row1" relativePoint="RIGHT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row3" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="3">
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row2" relativePoint="RIGHT"/>
+																	<Anchor point="RIGHT"/>
+																</Anchors>
+															</Button>
+														</Frames>
+													</Frame>
+													<Frame name="$parent_Line9" inherits="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE" id="3">
+														<Size x="20" y="20"/>
+														<Anchors>
+															<Anchor point="TOP" relativeTo="$parent_Line8" relativePoint="BOTTOM"/>
+														</Anchors>
+														<Frames>
+															<Button name="$parent_Row1" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="1">
+																<Size x="200"/>
+																<Anchors>
+																	<Anchor point="LEFT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row2" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="2">
+																<Size x="100"/>
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row1" relativePoint="RIGHT"/>
+																</Anchors>
+															</Button>
+															<Button name="$parent_Row3" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="3">
+																<Anchors>
+																	<Anchor point="LEFT" relativeTo="$parent_Row2" relativePoint="RIGHT"/>
+																	<Anchor point="RIGHT"/>
+																</Anchors>
+															</Button>
+														</Frames>
+													</Frame>
+												</Frames>
+											</Frame>
+										</ScrollChild>
 									</ScrollFrame>
 									<Frame name="$parent_Log" inherits="T_GNOMTEC_FRAME_SCROLLINGMESSAGE" id="2">
 										<Anchors>

@@ -366,14 +366,13 @@
 								local parent = self:GetParent();
 								parentOfParent = parent:GetParent();
 								parentOfParent.messages:ScrollUp()
-								parent:SetValue(parentOfParent.messages:GetNumMessages() - parentOfParent.messages:GetCurrentScroll());
+								T_GNOMTEC_FRAME_SCROLLINGMESSAGE_SetSlider(parentOfParent)
 								PlaySound("UChatScrollButton");
 							</OnClick>
 							<OnEnter>
 								local parent = self:GetParent();
 								parentOfParent = parent:GetParent();
-								parent:SetMinMaxValues(1, parentOfParent.messages:GetNumMessages());
-								parent:SetValue(parentOfParent.messages:GetNumMessages() - parentOfParent.messages:GetCurrentScroll());   
+								T_GNOMTEC_FRAME_SCROLLINGMESSAGE_SetSlider(parentOfParent)
 							</OnEnter>
 						</Scripts>
 					</Button>
@@ -386,29 +385,27 @@
 								local parent = self:GetParent();
 								parentOfParent = parent:GetParent();
 								parentOfParent.messages:ScrollDown()
-								parent:SetValue(parentOfParent.messages:GetNumMessages() - parentOfParent.messages:GetCurrentScroll());
+								T_GNOMTEC_FRAME_SCROLLINGMESSAGE_SetSlider(parentOfParent)
 								PlaySound("UChatScrollButton");
 							</OnClick>
 							<OnEnter>
 								local parent = self:GetParent();
 								parentOfParent = parent:GetParent();
-								parent:SetMinMaxValues(1, parentOfParent.messages:GetNumMessages());
-								parent:SetValue(parentOfParent.messages:GetNumMessages() - parentOfParent.messages:GetCurrentScroll());   
+								T_GNOMTEC_FRAME_SCROLLINGMESSAGE_SetSlider(parentOfParent)
 							</OnEnter>
 						</Scripts>
 					</Button>
 				</Frames>
 				<Scripts>
 					<OnValueChanged>
-						self:GetParent().messages:SetScrollOffset(self:GetParent().messages:GetNumMessages() - value);
+						T_GNOMTEC_FRAME_SCROLLINGMESSAGE_SliderOnValueChanged(self:GetParent(), value)
 					</OnValueChanged>
 					<OnMouseWheel>
 						self:SetValue(self:GetValue() - delta);
 					</OnMouseWheel>
 					<OnEnter>
 						local parent = self:GetParent();
-						self:SetMinMaxValues(1, parent.messages:GetNumMessages());
-						self:SetValue(parent.messages:GetNumMessages() - parent.messages:GetCurrentScroll());   
+						T_GNOMTEC_FRAME_SCROLLINGMESSAGE_SetSlider(parent)
 					</OnEnter>
 				</Scripts>
 				<ThumbTexture name="$parentThumbTexture" inherits="UIPanelScrollBarButton" file="Interface\Buttons\UI-ScrollBar-Knob">
@@ -421,14 +418,141 @@
 		<Scripts>
 			<OnLoad>
 				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_SCROLLINGMESSAGE_ChangeSize;
+				T_GNOMTEC_FRAME_SCROLLINGMESSAGE_SetSlider(self)
 			</OnLoad>
 			<OnEnter>
-				self.slider:SetMinMaxValues(1, self.messages:GetNumMessages());
-				self.slider:SetValue(self.messages:GetNumMessages() - self.messages:GetCurrentScroll());   
+				T_GNOMTEC_FRAME_SCROLLINGMESSAGE_SetSlider(self)
 			</OnEnter>
 		</Scripts>
 	</Frame>
+		
+	<!-- T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME: inner frame of a table container. -->
+	<Frame name="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME" parentKey="GnomTEC_InnerFrame" virtual="true">
+		<Anchors>
+			<Anchor point="TOPLEFT" y="-24"/>
+			<Anchor point="BOTTOMRIGHT" x="-16"/>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>	
 	
+	<!-- T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE: line of a inner frame of a table container. -->
+	<Frame name="T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE" parentKey="GnomTEC_InnerFrame" virtual="true">
+		<Anchors>
+			<Anchor point="LEFT"/>
+			<Anchor point="RIGHT"/>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_CONTAINER_TABLE_INNERFRAME_LINE_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_CONTAINER_TABLE_LABELFRAME: label area of a table container. -->
+	<Frame name="T_GNOMTEC_FRAME_CONTAINER_TABLE_LABELFRAME" parentKey="GnomTEC_LabelFrame" virtual="true">
+		<Size x="24" y="24" />
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+			<Anchor point="TOPRIGHT" x="-16"/>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_CONTAINER_TABLE_LABELFRAME_ChangeSize;
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<!-- T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR: scrollbar of a table container. -->
+	<Frame name="T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR" parentKey="GnomTEC_Scrollbar" virtual="true">
+		<Size x="16" y="16" />
+		<Anchors>
+			<Anchor point="TOPRIGHT" y="-24"/>
+			<Anchor point="BOTTOMRIGHT"/>
+		</Anchors>
+		<Frames>
+			<Slider name="$parent_Slider" resizable="true" setAllPoints="true" parentKey="slider">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="0" y="-16" />
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="0" y="16" />
+					</Anchor>
+				</Anchors>	
+				<Size>
+					<AbsDimension x="16" y="43"/>
+				</Size>
+				<Scripts>
+					<OnValueChanged>
+						T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SliderOnValueChanged(self:GetParent(), value)
+					</OnValueChanged>
+					<OnMouseWheel>
+						self:SetValue(self:GetValue() - delta);
+					</OnMouseWheel>
+					<OnEnter>
+						local parent = self:GetParent();
+						T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SetSlider(parent)
+					</OnEnter>
+				</Scripts>
+				<ThumbTexture name="$parentThumbTexture" inherits="UIPanelScrollBarButton" file="Interface\Buttons\UI-ScrollBar-Knob">
+					<Size>
+						<AbsDimension x="16" y="16"/>
+					</Size>
+				</ThumbTexture>
+			</Slider>
+			<Button name="$parent_ScrollUpButton" inherits="UIPanelScrollUpButtonTemplate">
+				<Anchors>
+					<Anchor point="BOTTOM" relativePoint="TOP" relativeTo="$parent_Slider"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						local parent = self:GetParent();
+						parent.slider:SetValue(parent.slider:GetValue() - 1);
+						T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SetSlider(parent)
+						PlaySound("UChatScrollButton");
+					</OnClick>
+					<OnEnter>
+						local parent = self:GetParent();
+						T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SetSlider(parent)
+						PlaySound("UChatScrollButton");
+					</OnEnter>
+				</Scripts>
+			</Button>
+			<Button name="$parent_ScrollDownButton" inherits="UIPanelScrollDownButtonTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="$parent_Slider"/>
+				</Anchors>	
+				<Scripts>
+					<OnClick>
+						local parent = self:GetParent();
+						parent.slider:SetValue(parent.slider:GetValue() + 1);
+						T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SetSlider(parent)
+						PlaySound("UChatScrollButton");
+					</OnClick>
+					<OnEnter>
+						local parent = self:GetParent();
+						T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SetSlider(parent)
+						PlaySound("UChatScrollButton");
+					</OnEnter>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_TriggerResize = T_GNOMTEC_FRAME_TriggerResize
+				self.GnomTEC_ChangeSize = T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_ChangeSize;
+				T_GNOMTEC_FRAME_CONTAINER_TABLE_SCROLLBAR_SetSlider(self)
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
 	
 	<!-- T_GNOMTEC_FRAME_MAP: map display -->
 	<Frame name="T_GNOMTEC_FRAME_MAP" virtual="true">

@@ -26,6 +26,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 	T_GnomTEC_Demo_Window_InnerFrame_Container_Tabulator_Tab1_Title:SetText("Karte")
 	T_GnomTEC_Demo_Window_InnerFrame_Container_Tabulator_Tab2_Title:SetText("EditBox")
 	T_GnomTEC_Demo_Window_InnerFrame_Container_Tabulator_Tab3_Title:SetText("Messages")
+	T_GnomTEC_Demo_Window_InnerFrame_Container_Tabulator_Tab4_Title:SetText("Tabelle")
 
 	local text = [[	
 Als am andern Tag Genelon sich auf den Heimweg begab, hatte Marsilias schon achthundert mit dem Tribut beladene Kamele nebst den Geiseln vorausgesandt, er selbst aber gab mit Blancandrin dem neuen Freund noch eine Strecke weit das Geleite und beschwor ihn nochmals, seinen Sinn nicht wenden.
@@ -58,7 +59,18 @@ Roland befand sich zu dieser Zeit zu Ronceval im Pyrenäental, und mit ihm seine
 		T_GnomTEC_Demo_Window_InnerFrame_Container_InnerFrame_Messages_Text:AddMessage("Eintrag Nummer "..i,0.8,0.8,0.8)
 	end
 	
-
+	T_GnomTEC_Demo_Window_InnerFrame_Container_InnerFrame_Table_LabelFrame_Label1_Title:SetText("Spalte 1")
+	T_GnomTEC_Demo_Window_InnerFrame_Container_InnerFrame_Table_LabelFrame_Label2_Title:SetText("Spalte 2")
+	T_GnomTEC_Demo_Window_InnerFrame_Container_InnerFrame_Table_LabelFrame_Label3_Title:SetText("Spalte 3")
+	
+	local demoTable = {
+		{ {"Zelle 1-1"}, {"Zelle 1-2"}, {"Zelle 1-3"} },
+		{ {"Zelle 2-1"}, {"Zelle 2-2"}, {"Zelle 2-3"} },
+		{ {"Zelle 3-1"}, {"Zelle 3-2"}, {"Zelle 3-3"} },
+		{ {"Zelle 4-1"}, {"Zelle 4-2"}, {"Zelle 4-3"} },
+		{ {"Zelle 5-1"}, {"Zelle 5-2"}, {"Zelle 5-3"} },
+	}	
+	T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE_SetTable(T_GnomTEC_Demo_Window_InnerFrame_Container_InnerFrame_Table, demoTable)
 
 -- ----------------------------------------------------------------------
 -- Local functions

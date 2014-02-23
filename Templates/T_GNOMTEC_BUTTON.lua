@@ -37,6 +37,14 @@ function T_GNOMTEC_BUTTON_TABULATOR_ChangeSize(frame, larger)
 
 	width = frame:GetWidth()
 	height = frame:GetHeight()
+
+	if (width < 16) then
+		width = 16
+	end
+	if (height < 16) then
+		height = 16
+	end
+
 	return (width-frame:GetWidth()), (height-frame:GetHeight())
 end
 
@@ -71,4 +79,44 @@ function T_GNOMTEC_BUTTON_TABULATOR_OnClick(button,id)
 		end
 	end
 	button:LockHighlight()
+end
+
+function T_GNOMTEC_BUTTON_TABLELABEL_ChangeSize(frame, larger)
+	local width, height 
+
+	width = frame:GetWidth()
+	height = frame:GetHeight()
+	
+	if (width < 32) then
+		width = 32
+	end
+	if (height < 16) then
+		height = 16
+	end
+	
+	return (width-frame:GetWidth()), (height-frame:GetHeight())
+end
+
+function T_GNOMTEC_BUTTON_TABLELABEL_OnClick(button,id)
+
+end
+
+function T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE_ChangeSize(frame, larger)
+	local width, height 
+
+	width = frame:GetWidth()
+	height = frame:GetHeight()
+
+	if (width < 32) then
+		width = 32
+	end
+	if (height < 16) then
+		height = 16
+	end
+
+	return (width-frame:GetWidth()), (height-frame:GetHeight())
+end
+
+function T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE_OnClick(button,id)
+
 end

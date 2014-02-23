@@ -29,4 +29,61 @@
 			</OnClick>
 		</Scripts>
 	</Button>
+
+
+	<!-- T_GNOMTEC_BUTTON_TABLELABEL: label of a table container. -->
+	<Button name="T_GNOMTEC_BUTTON_TABLELABEL" virtual="true">
+		<Anchors>
+			<Anchor point="TOP"/>
+			<Anchor point="BOTTOM"/>
+		</Anchors>
+		<Layers>
+			<Layer>
+				<FontString name="$parent_Title" inherits="GameFontNormalLeft" justifyH="LEFT" text="LABEL">
+					<Color r="0.5" g="0.5" b="0.0"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" x="5" y="2"/>
+						<Anchor point="RIGHT" x="-5"/>						
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_ChangeSize = T_GNOMTEC_BUTTON_TABLELABEL_ChangeSize;
+			</OnLoad>
+			<OnClick>
+				T_GNOMTEC_BUTTON_TABLELABEL_OnClick(self,self:GetID());
+			</OnClick>
+		</Scripts>
+	</Button>
+
+	<!-- T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE: cell of a row of table container. -->
+	<Button name="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" virtual="true">
+		<Anchors>
+			<Anchor point="TOP"/>
+			<Anchor point="BOTTOM"/>
+		</Anchors>
+		<Layers>
+			<Layer>
+				<FontString name="$parent_Text" inherits="GameFontNormalLeft" justifyH="LEFT" text="CELL">
+					<Color r="1.0" g="1.0" b="1.0"/>
+					<Anchors>
+						<Anchor point="LEFT" x="5"/>
+						<Anchor point="RIGHT" x="-5"/>						
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.GnomTEC_ChangeSize = T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE_ChangeSize;
+			</OnLoad>
+			<OnClick>
+				T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE_OnClick(self,self:GetID());
+			</OnClick>
+		</Scripts>
+	</Button>
+
+
 </Ui>
