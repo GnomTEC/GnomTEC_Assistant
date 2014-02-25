@@ -13,6 +13,30 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 -- Addon global Constants (local)
 -- ----------------------------------------------------------------------
 
+-- internal used version number since WoW only updates from TOC on game start
+local addonVersion = "5.4.7.1"
+
+-- addonInfo for addon registration to GnomTEC API
+local addonInfo = {
+	["Name"] = "GnomTEC Assistant",
+	["Version"] = addonVersion,
+	["Date"] = "2014-02-25",
+	["Author"] = "GnomTEC",
+	["Email"] = "info@gnomtec.de",
+	["Website"] = "http://www.gnomtec.de/",
+	["Copyright"] = "(c)2014 by GnomTEC",
+}
+
+-- GnomTEC API revision
+local GNOMTEC_REVISION = 0
+
+-- Log levels
+local LOG_FATAL 	= 0
+local LOG_ERROR	= 1
+local LOG_WARN		= 2
+local LOG_INFO 	= 3
+local LOG_DEBUG 	= 4
+
 
 -- ----------------------------------------------------------------------
 -- Addon global variables (local)
@@ -37,27 +61,27 @@ local optionsMain = {
 				descriptionVersion = {
 				order = 1,
 				type = "description",			
-				name = "|cffffd700".."Version"..": ".._G["GREEN_FONT_COLOR_CODE"]..GetAddOnMetadata("GnomTEC_Assistant", "Version"),
+				name = "|cffffd700".."Version"..": ".._G["GREEN_FONT_COLOR_CODE"]..addonInfo["Version"],
 				},
 				descriptionAuthor = {
 					order = 2,
 					type = "description",
-					name = "|cffffd700".."Autor"..": ".."|cffff8c00".."GnomTEC",
+					name = "|cffffd700".."Author"..": ".."|cffff8c00"..addonInfo["Author"],
 				},
 				descriptionEmail = {
 					order = 3,
 					type = "description",
-					name = "|cffffd700".."Email"..": ".._G["HIGHLIGHT_FONT_COLOR_CODE"].."info@gnomtec.de",
+					name = "|cffffd700".."Email"..": ".._G["HIGHLIGHT_FONT_COLOR_CODE"]..addonInfo["Email"],
 				},
 				descriptionWebsite = {
 					order = 4,
 					type = "description",
-					name = "|cffffd700".."Website"..": ".._G["HIGHLIGHT_FONT_COLOR_CODE"].."http://www.gnomtec.de/",
+					name = "|cffffd700".."Website"..": ".._G["HIGHLIGHT_FONT_COLOR_CODE"]..addonInfo["Website"],
 				},
 				descriptionLicense = {
 					order = 5,
 					type = "description",
-					name = "|cffffd700".."Copyright"..": ".._G["HIGHLIGHT_FONT_COLOR_CODE"].."(c)2014 by GnomTEC",
+					name = "|cffffd700".."Copyright"..": ".._G["HIGHLIGHT_FONT_COLOR_CODE"]..addonInfo["Copyright"],
 				},
 			}
 		},
@@ -73,6 +97,9 @@ local optionsMain = {
 	}
 }
 
+local addonsList = {}
+local addonsTable = {}
+
 
 -- ----------------------------------------------------------------------
 -- Startup initialization
@@ -82,6 +109,19 @@ GnomTEC_Assistant = LibStub("AceAddon-3.0"):NewAddon("GnomTEC_Assistant", "AceCo
 
 LibStub("AceConfig-3.0"):RegisterOptionsTable("GnomTEC Assistant Main", optionsMain)
 LibStub("AceConfigDialog-3.0"):AddToBlizOptions("GnomTEC Assistant Main", "GnomTEC Assistant");
+
+-- ----------------------------------------------------------------------
+-- Local stubs for the GnomTEC API
+-- ----------------------------------------------------------------------
+
+local function GnomTEC_LogMessage(level, message)
+	GnomTEC:LogMessage(GnomTEC_Assistant, level, message)
+end
+
+local function GnomTEC_RegisterAddon()
+	GnomTEC:RegisterAddon(GnomTEC_Assistant, addonInfo, GNOMTEC_REVISION) 
+end
+
 
 -- ----------------------------------------------------------------------
 -- Local functions
@@ -154,8 +194,9 @@ function GnomTEC_Assistant:OnInitialize()
  	-- Code that you want to run when the addon is first loaded goes here.
 	self.db = LibStub("AceDB-3.0"):New("GnomTEC_AssistantDB")
 
-  	GnomTEC_Assistant:Print("Willkommen bei GnomTEC_Assistant")
-  	  	
+  	GnomTEC_RegisterAddon() 	
+
+  	GnomTEC_LogMessage(LOG_INFO,"Willkommen bei GnomTEC_Assistant")
 end
 
 -- function called on enable of addon
@@ -163,7 +204,7 @@ function GnomTEC_Assistant:OnEnable()
     -- Called when the addon is enabled
 	local realm = GetRealmName()
 
-	GnomTEC_Assistant:Print("GnomTEC_Assistant Enabled")
+	GnomTEC_LogMessage(LOG_INFO,"GnomTEC_Assistant Enabled")
 
 	-- Initialize options which are propably not valid because they are new added in new versions of addon
 		
@@ -180,13 +221,10 @@ function GnomTEC_Assistant:OnEnable()
 
 	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons_LabelFrame_Label1_Title:SetText("Name")
 	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons_LabelFrame_Label2_Title:SetText("Version")
-	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons_LabelFrame_Label3_Title:SetText("Autor")
-	
-	local addons = {
-		{ {"GnomTEC Assistant"}, {"5.4.7.1"}, {"GnomTEC"} },
-		{ {"GnomTEC Badge"}, {"5.4.7.37"}, {"GnomTEC"} },
-	}	
-	T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE_SetTable(GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons, addons)
+	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons_LabelFrame_Label3_Title:SetText("Datum")
+	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons_LabelFrame_Label4_Title:SetText("Autor")
+
+	T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE_SetTable(GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons, addonsTable)	
 
 	T_GnomTEC_Demo_Window_InnerFrame_Container:SetParent(GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Demo)
 	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Demo_Title:SetText("GnomTEC Templates Demonstration")
@@ -210,20 +248,80 @@ end
 
 GnomTEC = {}
 
-function GnomTEC:RegisterAddon(addon, addonInfo)
-	GnomTEC_Assistant:AddMessage2Log("=== "..(addonInfo["Name"]  or "?").." registerd ===",0.0,1.0,0.0)
-	GnomTEC_Assistant:AddMessage2Log("Version: "..(addonInfo["Version"]  or "?"))
-	GnomTEC_Assistant:AddMessage2Log("Author: "..(addonInfo["Author"]  or "?"))
-	GnomTEC_Assistant:AddMessage2Log("Email: "..(addonInfo["Email"]  or "?"))
-	GnomTEC_Assistant:AddMessage2Log("Website: "..(addonInfo["Website"]  or "?"))
-	GnomTEC_Assistant:AddMessage2Log("Copyright: "..(addonInfo["Copyright"]  or "?"))			
+--[[
+GnomTEC:RegisterAddon()
+Parameters: addon, addonInfo, revision
+	addon - Ace3 addon object
+	addonInfo - table with addon informations as string
+		["Name"] 		- name
+		["Version"] 	- version
+		["Date"] = 		- date
+		["Author"] 		- author
+		["Email"] 		- contact email
+		["Website"] 	- URL to addon website
+		["Copyright"] 	- copyright information
+	revision - GnomTEC API revision for which the registered addon is made
+Returns: registerd
+	registerd
+		true 	- addon is successfuly registered and compatible to actual API
+		false - addon is registerd but probably incompatible to actual API
+--]]
+function GnomTEC:RegisterAddon(addon, addonInfo, revision)
+	local addonName = addon:GetName()
+	
+	addonsList[addonName] = {
+		["Addon"] = addon,
+		["AddonInfo"] = addonInfo,
+		["Revision"] = revision		
+	}
+	
+	GnomTEC_LogMessage(LOG_INFO, (addonInfo["Name"]).." ("..(addonInfo["Version"]).." / "..(addonInfo["Date"])..") registriert")
+
+	if (GNOMTEC_REVISION < revision) then
+		GnomTEC_LogMessage(LOG_WARN, (addonInfo["Name"]).." benötigt aktuellere GnomTEC API")
+	end
+	
+	table.insert(addonsTable,{ {addonInfo["Name"]}, {addonInfo["Version"]}, {addonInfo["Date"]}, {addonInfo["Author"]} })
+	T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE_SetTable(GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons, addonsTable)	
+
+	return (GNOMTEC_REVISION >= revision)
 end
 
-function GnomTEC:DebugMessage(addon, message)
+--[[
+GnomTEC:LogMessage()
+Parameters: addon, level, message
+	addon - Ace3 addon object
+	level - debug level of the message
+		0 	- FATAL	(severe error which leads to abort of addon)
+		1	- ERROR	(harmful situation)
+		2	- WARN	(potentially harmful situation)
+		3	- INFO	(information about addon states)
+		4	- DEBUG	(debugging message)
+	message - message to show in log
+Returns: -
+--]]
+function GnomTEC:LogMessage(addon, level, message)
+	local name = "<nil>"
+	local color = {1.0,1.0,1.0}
+	
 	if (addon) then
-		GnomTEC_Assistant:AddMessage2Log(addon:GetName()..": "..message,1.0,1.0,0.0)
-	else
-		GnomTEC_Assistant:AddMessage2Log(message,1.0,0.0,0.0)
+		name = addon:GetName() or "<???>"
 	end
+	
+	if (0 == level) then			-- FATAL
+		color = {1.0,0.0,0.0}
+	elseif (1 == level) then	-- ERROR
+		color = {1.0,0.5,0.0}
+	elseif (2 == level) then	-- WARN
+		color = {1.0,1.0,0.0}
+	elseif (3 == level) then	-- INFO
+		color = {1.0,1.0,1.0}
+	else								-- DEBUG
+		color = {0.5,0.5,0.5}
+	end
+	
+	message = message or "?"
+		
+	GnomTEC_Assistant:AddMessage2Log(name..": "..message,unpack(color))
 end
 
