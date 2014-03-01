@@ -1,4 +1,13 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+	<Frame name="GnomTEC_Assistant_Timer" parent="UIParent" frameStrata="BACKGROUND" hidden="false">
+		<Size x="1" y="1" />
+		<Anchors>
+			<Anchor point="BOTTOMLEFT" relativeTo="$parent_Tabulator" relativePoint="BOTTOM"/>
+		</Anchors>
+		<Scripts>
+			<OnUpdate>GnomTEC_Assistant:TimerEvent();</OnUpdate>
+		</Scripts>
+	</Frame>
 	<Frame name="GnomTEC_Assistant_Window" inherits="T_GNOMTEC_FRAME_WINDOW" movable="true" resizable="true" hidden="true">
 		<Size x="610" y="500" />
 		<Frames>
