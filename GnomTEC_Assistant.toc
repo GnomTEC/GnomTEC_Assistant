@@ -21,5 +21,9 @@ locale\locale.xml
 
 Templates.xml
 
+GnomTEC.lua
+
 GnomTEC_Assistant.lua
 GnomTEC_Assistant.xml
+GnomTEC_Assistant_Chat.lua
+GnomTEC_Assistant_Comm.lua
