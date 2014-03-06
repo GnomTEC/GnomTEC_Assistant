@@ -12,7 +12,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 -- ----------------------------------------------------------------------
 -- Module Global Constants (local)
 -- ----------------------------------------------------------------------
-
+-- Log levels
+local LOG_FATAL 	= 0
+local LOG_ERROR	= 1
+local LOG_WARN		= 2
+local LOG_INFO 	= 3
+local LOG_DEBUG 	= 4
 
 -- ----------------------------------------------------------------------
 -- Modul Global Variables
@@ -30,6 +35,24 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 
 local function GnomTEC_LogMessage(level, message)
 	GnomTEC:LogMessage(GnomTEC_Assistant, level, message)
+end
+
+-- ----------------------------------------------------------------------
+-- Helper Functions (local)
+-- ----------------------------------------------------------------------
+
+-- function which returns also nil for empty strings
+local function emptynil( x ) return x ~= "" and x or nil end
+
+local function fullunitname(unitName)
+	if (nil ~= emptynil(unitName)) then
+		local player, realm = strsplit( "-", unitName, 2 )
+		if (not realm) then
+			_,realm = UnitFullName("player")
+		end
+		unitName = player.."-"..realm
+	end
+	return unitName
 end
 
 -- ----------------------------------------------------------------------
@@ -51,63 +74,110 @@ end
 -- Event handler
 -- ----------------------------------------------------------------------
 function GnomTEC_Assistant:CHAT_MSG_BATTLEGROUND(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_CHANNEL(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_CHANNEL_JOIN(eventName, arg1, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_EMOTE(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_GUILD(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_OFFICER(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_PARTY(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_RAID(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_SAY(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_TEXT_EMOTE(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_WHISPER(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 function GnomTEC_Assistant:CHAT_MSG_YELL(eventName, message, sender)	
-	-- Trigger the static data request for sender
-	GnomTEC_Assistant:RequestStaticData(sender)
+	-- Trigger data exchange with sender
+	sender = fullunitname(sender)
+	
+	if (emptynil(sender)) then
+		GnomTEC_Assistant:CommRequestTimestamps(sender)
+	end
 end
 
 

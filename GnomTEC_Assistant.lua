@@ -20,7 +20,7 @@ local addonVersion = "5.4.7.1"
 local addonInfo = {
 	["Name"] = "GnomTEC Assistant",
 	["Version"] = addonVersion,
-	["Date"] = "2014-03-02",
+	["Date"] = "2014-03-06",
 	["Author"] = "GnomTEC",
 	["Email"] = "info@gnomtec.de",
 	["Website"] = "http://www.gnomtec.de/",
@@ -40,8 +40,7 @@ local LOG_DEBUG 	= 4
 -- default data for database
 local defaultsDb = {
 	global = {
-		lastTimestamp = 0,
-		staticData = {}
+		commLastTimestamp = 0,
 	},
 	profile = {
 		minimap = {
@@ -142,7 +141,7 @@ end
 
 
 -- ----------------------------------------------------------------------
--- Local functions
+-- Helper Functions (local)
 -- ----------------------------------------------------------------------
 
 -- function which returns also nil for empty strings
@@ -176,6 +175,18 @@ local function cleanpipe( x )
 	return strtrim(x)
 end
 
+local function fullunitname(unitName)
+	if (nil ~= emptynil(unitName)) then
+		local player, realm = strsplit( "-", unitName, 2 )
+		if (not realm) then
+			_,realm = UnitFullName("player")
+		end
+		unitName = player.."-"..realm
+	end
+	return unitName
+end
+
+
 local function pairsByKeys (t, f)
 	local a = {}
 		for n in pairs(t) do table.insert(a, n) end
@@ -206,6 +217,10 @@ local function Fixed_UnitIsPlayer(unitId)
 	end
 end
 
+-- ----------------------------------------------------------------------
+-- Local functions
+-- ----------------------------------------------------------------------
+
 function GnomTEC_Assistant:AddMessage2Log(...)
 	GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Log_Text:AddMessage(...)
 end
@@ -216,47 +231,37 @@ function	GnomTEC_Assistant:AddToooltipLines_Addons(tooltip)
 	tooltip:AddLine("Registrierte Addons",1.0,1.0,1.0)
 	for key, value in pairsByKeys(GnomTEC_Assistant.addonsList) do
 		if (not value["AvailableVersion"]) then
-			tooltip:AddDoubleLine(value["AddonInfo"]["Name"],value["AddonInfo"]["Version"],1.0,1.0,0.0,1.0,1.0,1.0)
+			tooltip:AddDoubleLine(value["AddonInfo"]["Name"],value["AddonInfo"]["Version"],1.0,1.0,0.0,0.0,1.0,0.0)
 		else
 			tooltip:AddDoubleLine(value["AddonInfo"]["Name"],value["AddonInfo"]["Version"],1.0,1.0,0.0,1.0,0.5,0.0)
 		end		
 	end
 	tooltip:AddLine(" ")
-	tooltip:AddLine("Abfrage von Daten anderer Spieler",1.0,1.0,1.0)
-	tooltip:AddDoubleLine("Anzahl getätigter Abfragen",GnomTEC_Assistant.commRequestCount,1.0,1.0,0.0,1.0,1.0,1.0)
-	tooltip:AddDoubleLine("Übertragene Bytes",GnomTEC_Assistant.commRequestBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+	tooltip:AddLine("Übertragen Daten (Gesamt)",1.0,1.0,1.0)
+	tooltip:AddDoubleLine("Gesendete Bytes",GnomTEC_Assistant.commSendBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+	tooltip:AddDoubleLine("Empfangene Bytes",GnomTEC_Assistant.commReceiveBytes,1.0,1.0,0.0,1.0,1.0,1.0)
 	tooltip:AddLine(" ")
-	tooltip:AddLine("Anfrage von anderern Spieler von Daten",1.0,1.0,1.0)
-	tooltip:AddDoubleLine("Anzahl getätigter Anfragen",GnomTEC_Assistant.commResponseCount,1.0,1.0,0.0,1.0,1.0,1.0)
-	tooltip:AddDoubleLine("Übertragene Bytes",GnomTEC_Assistant.commResponseBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+	tooltip:AddLine("Abfrage an andere Spieler",1.0,1.0,1.0)
+	tooltip:AddDoubleLine("Anzahl Abfragen",GnomTEC_Assistant.commRequestCount,1.0,1.0,0.0,1.0,1.0,1.0)
+	tooltip:AddDoubleLine("Gesendete Bytes",GnomTEC_Assistant.commRequestSendBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+	tooltip:AddDoubleLine("Empfangene Bytes",GnomTEC_Assistant.commRequestReceiveBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+	tooltip:AddLine(" ")
+	tooltip:AddLine("Anfrage von anderern Spieler",1.0,1.0,1.0)
+	tooltip:AddDoubleLine("Anzahl Anfragen",GnomTEC_Assistant.commResponseCount,1.0,1.0,0.0,1.0,1.0,1.0)
+	tooltip:AddDoubleLine("Gesendete Bytes",GnomTEC_Assistant.commResponseSendBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+	tooltip:AddDoubleLine("Empfangene Bytes",GnomTEC_Assistant.commResponseReceiveBytes,1.0,1.0,0.0,1.0,1.0,1.0)
 end
 
-function GnomTEC_Assistant:CreateTimestamp()
-	local timestamp = time()
-	
-	if (timestamp < self.db.global.lastTimestamp) then
-		timestamp = self.db.global.lastTimestamp + 1
+function GnomTEC_Assistant:UpdateAddonsTable()
+	GnomTEC_Assistant.addonsTable = {}
+	for key, value in pairsByKeys(GnomTEC_Assistant.addonsList) do
+		if (not value["AvailableVersion"]) then
+			table.insert(GnomTEC_Assistant.addonsTable,{ {value["AddonInfo"]["Name"]}, {"|cFF00FF00"..value["AddonInfo"]["Version"].."|r"}, {value["AddonInfo"]["Date"]}, {value["AddonInfo"]["Author"]} })
+		else
+			table.insert(GnomTEC_Assistant.addonsTable,{ {value["AddonInfo"]["Name"]}, {"|cFFFF8000"..value["AddonInfo"]["Version"].."|r"}, {value["AddonInfo"]["Date"]}, {value["AddonInfo"]["Author"]} })
+		end		
 	end
-
-	self.db.global.lastTimestamp = timestamp
-
-	return timestamp
-end
-
-function GnomTEC_Assistant:GetStaticData(target)
-	local player, realm = strsplit( "-", target, 2 )
-	realm = string.gsub(realm or GetRealmName(), "%s+", "")
-
-	if (not self.db.global.staticData[realm]) then self.db.global.staticData[realm] = {} end
-	if (not self.db.global.staticData[realm][player]) then
-		self.db.global.staticData[realm][player] = {}
-		self.db.global.staticData[realm][player].scantime = 0
-		self.db.global.staticData[realm][player].supported = false
-		self.db.global.staticData[realm][player].time = 0
-		self.db.global.staticData[realm][player].addons = {}
-	end
-
-	return self.db.global.staticData[realm][player]
+	T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE_SetTable(GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons, GnomTEC_Assistant.addonsTable)	
 end
 
 -- ----------------------------------------------------------------------
@@ -285,38 +290,19 @@ end
 function GnomTEC_Assistant:UPDATE_MOUSEOVER_UNIT(eventName)
 	if (not UnitIsUnit("mouseover", "player")) then
 		local player, realm = UnitName("mouseover")
-		realm = string.gsub(realm or GetRealmName(), "%s+", "")
+		if (not realm) then
+			_,realm = UnitFullName("player")
+		end
 
  		if Fixed_UnitIsPlayer("mouseover") and player and realm then
-			GnomTEC_Assistant:RequestStaticData(player.."-"..realm)
+			-- Trigger data exchange with unit
+			GnomTEC_Assistant:CommRequestTimestamps(player.."-"..realm)
 	 	end
  	end
  end
  
  function GnomTEC_Assistant:GNOMTEC_UPDATE_STATICDATA(eventName, sender, addonName, data)
- 	if (self:GetName() == addonName) then
- 		for key, value in pairs(data) do
- 			if (GnomTEC_Assistant.addonsList[key]) then
- 				local version = addonInfo["Version"] 
- 				local _,_,_,revision = strsplit( ".", version, 4 )
- 				local myVersion = GnomTEC_Assistant.addonsList[key]["Version"]
- 				local _,_,_,myRevision = strsplit( ".", myVersion, 4 )
- 				
- 				if (tonumber(myRevision) < tonumber(revision)) then
- 					if (not GnomTEC_Assistant.addonsList[key]["AvailableVersion"]) then
- 						GnomTEC_Assistant.addonsList[key]["AvailableVersion"] = version
- 					else
-		 				local availableVersion = GnomTEC_Assistant.addonsList[key]["AvailableVersion"]
- 						local _,_,_,availableRevision = strsplit( ".", availableVersion, 4 )
-
-		 				if (tonumber(availableRevision) < tonumber(myRevision)) then
-	 						GnomTEC_Assistant.addonsList[key]["AvailableVersion"] = version
-		 				end
- 					end	
- 				end
- 			end
-		end
-	end
+	-- TBD
  end
  
 -- ----------------------------------------------------------------------
@@ -336,10 +322,6 @@ function GnomTEC_Assistant:OnInitialize()
  	-- Code that you want to run when the addon is first loaded goes here.
 	self.db = LibStub("AceDB-3.0"):New("GnomTEC_AssistantDB", defaultsDb, true)
 
-	-- cleanup all staticData (at least for alpha versions)
-	self.db.global.lastTimestamp = 0
-	self.db.global.staticData = {}
-	
 	-- initialize libdatabroker dataobjects
 	GnomTEC_Assistant.ldbDataObjs["Addons"] = ldb:NewDataObject("GnomTEC_Assistant", {
 		type = "data source",
@@ -374,7 +356,6 @@ end
 -- function called on enable of addon
 function GnomTEC_Assistant:OnEnable()
     -- Called when the addon is enabled
-	local realm = GetRealmName()
 
 	GnomTEC_LogMessage(LOG_INFO,"GnomTEC_Assistant Enabled")
 

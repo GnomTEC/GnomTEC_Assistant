@@ -22,10 +22,6 @@ local LOG_WARN		= 2
 local LOG_INFO 	= 3
 local LOG_DEBUG 	= 4
 
--- ----------------------------------------------------------------------
--- GnomTEC API Global Variables (local)
--- ----------------------------------------------------------------------
-
 
 -- ----------------------------------------------------------------------
 -- GnomTEC API Startup Initialization
@@ -42,6 +38,24 @@ GnomTEC.callbacks = GnomTEC.callbacks or LibStub("CallbackHandler-1.0"):New(Gnom
 
 local function GnomTEC_LogMessage(level, message)
 	GnomTEC:LogMessage(GnomTEC_Assistant, level, message)
+end
+
+-- ----------------------------------------------------------------------
+-- Helper Functions (local)
+-- ----------------------------------------------------------------------
+
+-- function which returns also nil for empty strings
+local function emptynil( x ) return x ~= "" and x or nil end
+
+local function fullunitname(unitName)
+	if (nil ~= emptynil(unitName)) then
+		local player, realm = strsplit( "-", unitName, 2 )
+		if (not realm) then
+			_,realm = UnitFullName("player")
+		end
+		unitName = player.."-"..realm
+	end
+	return unitName
 end
 
 -- ----------------------------------------------------------------------
@@ -74,6 +88,8 @@ function GnomTEC:RegisterAddon(addon, addonInfo, revision)
 		["AddonInfo"] = addonInfo,
 		["Revision"] = revision	
 	}
+	
+	GnomTEC_Assistant:CommUpdateAddonInfo(addonName, addonInfo["Name"], addonInfo["Version"], addonInfo["Date"], 0)
 
 	if (GnomTEC_Assistant.ldbDataObjs["Addons"]) then
 		local count = 0
@@ -88,9 +104,7 @@ function GnomTEC:RegisterAddon(addon, addonInfo, revision)
 		GnomTEC_LogMessage(LOG_WARN, (addonInfo["Name"]).." benötigt aktuellere GnomTEC API")
 	end
 	
-	table.insert(GnomTEC_Assistant.addonsTable,{ {addonInfo["Name"]}, {addonInfo["Version"]}, {addonInfo["Date"]}, {addonInfo["Author"]} })
-	T_GNOMTEC_SCROLLFRAME_CONTAINER_TABLE_SetTable(GnomTEC_Assistant_Window_InnerFrame_Container_InnerFrame_Addons, GnomTEC_Assistant.addonsTable)	
-
+	GnomTEC_Assistant:UpdateAddonsTable()
 	GnomTEC:UpdateStaticData(GnomTEC_Assistant, GnomTEC_Assistant.addonsList)
 	
 	return (GNOMTEC_REVISION >= revision)
@@ -170,7 +184,7 @@ Parameters: addon, data
 Returns: -
 --]]
 function GnomTEC:UpdateStaticData(addon, data)
-
+--[[
 	if (not addon) then
 		GnomTEC_LogMessage(LOG_ERROR,"UpdateStaticData() called from unknown addon")
 	else
@@ -190,77 +204,6 @@ function GnomTEC:UpdateStaticData(addon, data)
 			GnomTEC.callbacks:Fire("GNOMTEC_UPDATE_STATICDATA", UnitName("player"), addonName, data)
 		end
 	end
+--]]
 end
 
---[[
-GnomTEC:GetPlayerStaticData()
-Parameters: addon, player
-	addon 	- Ace3 addon object
-	player  	- name of player to get static data for given addon
-Returns: data
-	data 		- the static data for the player
---]]
-function GnomTEC:GetPlayerStaticData(addon, player)
-	if (not addon) then
-		GnomTEC_LogMessage(LOG_ERROR,"GetPlayerStaticData() called from unknown addon")
-	else
-		local addonName = addon:GetName()
-		if (not addonName) then
-			GnomTEC_LogMessage(LOG_ERROR,"GetPlayerStaticData() called from unknown addon")
-		elseif (not GnomTEC_Assistant.addonsList[addonName]) then
-			GnomTEC_LogMessage(LOG_ERROR,"GetPlayerStaticData() called from unregistered addon "..addonName)
-		else	
-			local sd = GnomTEC_Assistant:GetStaticData(player)
-			if (not sd.addons[addonName]) then
-				return nil
-			else
-				return sd.addons[addonName].data
-			end
-		end
-	end
-end
-
---[[
-GnomTEC:IteratorRealms()
-Parameters: f
-	f - (optional) comparision function for table.dort
-Returns: iterator
-	iterator - an iteration function over all realms with data 
---]]
-function GnomTEC:IteratorRealms(f)
-	local a = {}
-		for n in pairs(GnomTEC_Assistant.db.global.staticData) do table.insert(a, n) end
-		table.sort(a,f)
-		local i = 0      -- iterator variable
-		local iterator = function ()   -- iterator function
-			i = i + 1
-			if a[i] == nil then return nil
-			else return a[i]
-			end
-		end
-	return iterator
-end
-
---[[
-GnomTEC:IteratorPlayers()
-Parameters: realm, f
-	realm - realm to iterate for known players
-	f 		- (optional) comparision function for table.dort
-Returns: iterator
-	iterator - an iteration function over all players of a realms with data 
---]]
-function GnomTEC:IteratorPlayers(realm, f)
-	local a = {}
-		if (GnomTEC_Assistant.db.global.staticData[realm]) then
-			for n in pairs(GnomTEC_Assistant.db.global.staticData[realm]) do table.insert(a, n) end
-		end
-		table.sort(a,f)
-		local i = 0      -- iterator variable
-		local iterator = function ()   -- iterator function
-			i = i + 1
-			if a[i] == nil then return nil
-			else return a[i]
-			end
-		end
-	return iterator
-end
