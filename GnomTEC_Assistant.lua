@@ -131,8 +131,8 @@ GnomTEC_Assistant.ldbDataObjs= {}
 -- Local stubs for the GnomTEC API
 -- ----------------------------------------------------------------------
 
-local function GnomTEC_LogMessage(level, message)
-	GnomTEC:LogMessage(GnomTEC_Assistant, level, message)
+local function GnomTEC_LogMessage(level, message, ...)
+	GnomTEC:LogMessage(GnomTEC_Assistant, level, message, ...)
 end
 
 local function GnomTEC_RegisterAddon()
@@ -346,6 +346,7 @@ function GnomTEC_Assistant:OnInitialize()
 	-- initialize modules
 	GnomTEC_Assistant:ModuleChatInitialize()
 	GnomTEC_Assistant:ModuleCommInitialize()
+	GnomTEC_Assistant:ModuleGUIInitialize()
 		
 	-- we also register us in your own list
   	GnomTEC_RegisterAddon() 	
@@ -389,6 +390,7 @@ function GnomTEC_Assistant:OnEnable()
 	-- Enable Modules
 	GnomTEC_Assistant:ModuleChatEnable()
 	GnomTEC_Assistant:ModuleCommEnable()
+	GnomTEC_Assistant:ModuleGUIEnable()
 	
 	-- show minimap button
 	self.db.profile.minimap.hide = false
@@ -401,6 +403,7 @@ function GnomTEC_Assistant:OnDisable()
 	-- Called when the addon is disabled
 	GnomTEC_Assistant:ModuleChatDisable()
 	GnomTEC_Assistant:ModuleCommDisable()
+	GnomTEC_Assistant:ModuleGUIDisable()
 	GnomTEC_Assistant:UnregisterAllEvents();
 
 	self.db.profile.minimap.hide = true

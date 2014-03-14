@@ -104,8 +104,8 @@ GnomTEC_Assistant.commUnitInformations = {}
 -- Local stubs for the GnomTEC API
 -- ----------------------------------------------------------------------
 
-local function GnomTEC_LogMessage(level, message)
-	GnomTEC:LogMessage(GnomTEC_Assistant, level, message)
+local function GnomTEC_LogMessage(level, message, ...)
+	GnomTEC:LogMessage(GnomTEC_Assistant, level, message, ...)
 end
 
 -- ----------------------------------------------------------------------
@@ -141,9 +141,7 @@ function GnomTEC_Assistant:CommStatisticLogSend(isRequest, count, numBytes, addo
 		end
 		GnomTEC_Assistant.commResponseSendBytes = GnomTEC_Assistant.commResponseSendBytes + numBytes
 	end
-	GnomTEC_Assistant.commSendBytes = GnomTEC_Assistant.commSendBytes + numBytes
-	
---	GnomTEC_LogMessage(LOG_DEBUG, addonName.." sent "..numBytes.." Bytes to ".. unitName)
+	GnomTEC_Assistant.commSendBytes = GnomTEC_Assistant.commSendBytes + numBytes	
 end
 
 function GnomTEC_Assistant:CommStatisticLogReceive(isRequest, count, numBytes, addonName, unitName)
@@ -159,8 +157,6 @@ function GnomTEC_Assistant:CommStatisticLogReceive(isRequest, count, numBytes, a
 		GnomTEC_Assistant.commResponseReceiveBytes = GnomTEC_Assistant.commResponseReceiveBytes + numBytes
 	end
 	GnomTEC_Assistant.commReceiveBytes = GnomTEC_Assistant.commReceiveBytes + numBytes
-
---	GnomTEC_LogMessage(LOG_DEBUG, addonName.." received "..numBytes.." Bytes from ".. unitName)
 end
 
 function GnomTEC_Assistant:CommGetUnitInfo(target)
@@ -201,8 +197,6 @@ function GnomTEC_Assistant:CommUpdateAddonInfo(addonName, name, version, date, c
 	}
 	
 	GnomTEC_Assistant.commAddonsTimestamp = GnomTEC_Assistant:CommCreateTimestamp()
-	GnomTEC_LogMessage(LOG_DEBUG,"Addon added to communication list: "..addonName.." ...new timestamp: "..GnomTEC_Assistant.commAddonsTimestamp)
-
 end
 
 function GnomTEC_Assistant:CommSend(addonName, target, comm, ...)
@@ -210,7 +204,6 @@ function GnomTEC_Assistant:CommSend(addonName, target, comm, ...)
 	local unitInfo = GnomTEC_Assistant:CommGetUnitInfo(target)
 
 	if (unitInfo.supported == false) and ( now < unitInfo.scantime + COMM_PROBE_FREQUENCY ) then
---		GnomTEC_LogMessage(LOG_DEBUG,"No GnomTEC Support detected for "..target.." ...waiting for scantime")
 		return
 	elseif not unitInfo.supported then
 		unitInfo.scantime = now
@@ -233,20 +226,17 @@ function GnomTEC_Assistant:CommRequestTimestamps(target, force)
 
 	if (unitInfo.time + COMM_FIELD_UPDATE_FREQUENCY < now) or force then
 		unitInfo.time = now
-		GnomTEC_LogMessage(LOG_DEBUG,"CommRequestTimestamps("..target..")")
 		GnomTEC_Assistant:CommSend("GnomTEC_Assistant", target, COMM_REQ_TIMESTAMPS, nil)
 	end
 end
 
 function GnomTEC_Assistant:CommResponseTimestamps(target)
-	GnomTEC_LogMessage(LOG_DEBUG,"CommResponseTimestamps("..target..", "..GnomTEC_Assistant.commAddonsTimestamp..","..GnomTEC_Assistant.commDataTimestamp..")")
 	GnomTEC_Assistant:CommSend("GnomTEC_Assistant", target, COMM_RES_TIMESTAMPS, GnomTEC_Assistant.commAddonsTimestamp, GnomTEC_Assistant.commDataTimestamp)
 end
 
 function GnomTEC_Assistant:CommRequestAddons(target)
 	local unitInfo = GnomTEC_Assistant:CommGetUnitInfo(target)
 
-	GnomTEC_LogMessage(LOG_DEBUG,"CommRequestAddons("..target..", "..unitInfo.ts_addons..")")
 	GnomTEC_Assistant:CommSend("GnomTEC_Assistant", target, COMM_REQ_ADDONS, unitInfo.ts_addons)
 end
 
@@ -258,7 +248,6 @@ function GnomTEC_Assistant:CommResponseAddons(target)
 		end
 	end
 
-	GnomTEC_LogMessage(LOG_DEBUG,"CommResponseAddons("..target..", "..GnomTEC_Assistant.commAddonsTimestamp..", Addons="..count..")")
 	GnomTEC_Assistant:CommSend("GnomTEC_Assistant", target, COMM_RES_ADDONS, GnomTEC_Assistant.commAddonsTimestamp, GnomTEC_Assistant.commAddons)
 end
 
@@ -266,7 +255,6 @@ function GnomTEC_Assistant:CommRequestData(target, addonName)
 	local unitInfo = GnomTEC_Assistant:CommGetUnitInfo(target)
 	
 	if (unitInfo.Addons[addonName]) then
-		GnomTEC_LogMessage(LOG_DEBUG,"CommRequestData("..target..", "..unitInfo.Addons[addonName]..", "..addonName..")")
 		GnomTEC_Assistant:CommSend(addonName, target, COMM_REQ_DATA, unitInfo.Addons[addonName], addonName)
 	end
 end
@@ -274,7 +262,6 @@ end
 function GnomTEC_Assistant:CommResponseData(target, addonName)
 	
 	if (GnomTEC_Assistant.commData[addonName]) then
-		GnomTEC_LogMessage(LOG_DEBUG,"CommResponseData("..target..", "..GnomTEC_Assistant.commData[addonName]["Timestamp"]..", data)")
 		GnomTEC_Assistant:CommSend(addonName, target, COMM_RES_DATA, GnomTEC_Assistant.commData[addonName]["Timestamp"], GnomTEC_Assistant.commData[addonName]["Data"])
 	end	
 end

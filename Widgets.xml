@@ -1,0 +1,10 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  <Include file="Widgets\GnomTECLayout.lua"/>
+  <Include file="Widgets\GnomTECLayoutFill.lua"/>
+  <Include file="Widgets\GnomTECWidget.lua"/>
+  <Include file="Widgets\GnomTECWidgetContainer.lua"/> 
+  <Include file="Widgets\GnomTECWidgetContainerWindow.lua"/>
+  <Include file="Widgets\GnomTECWidgetMap.lua"/>
+</Ui>
+
+

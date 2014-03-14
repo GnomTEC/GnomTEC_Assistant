@@ -117,6 +117,11 @@ function T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE_ChangeSize(frame, larger)
 	return (width-frame:GetWidth()), (height-frame:GetHeight())
 end
 
-function T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE_OnClick(button,id)
-
+function T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE_OnClick(button,rowId)
+	local parent = button:GetParent()
+	local lineId = parent:GetID()
+	
+	if button.GnomTEC_OnSelect then
+		button.GnomTEC_OnSelect(button, lineId, rowId)
+	end
 end

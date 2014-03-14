@@ -37,13 +37,13 @@
 									<Button name="$parent_TabDemo" inherits="T_GNOMTEC_BUTTON_TABULATOR" id="3">
 										<Size x="80"/>
 										<Anchors>
-											<Anchor point="LEFT" relativeTo="$parent_TabLog" relativePoint="RIGHT"/>
+											<Anchor point="RIGHT"/>
 										</Anchors>
 									</Button>
 									<Frame name="$parent_Spacer" inherits="T_GNOMTEC_FRAME_SPACER">
 										<Anchors>
-											<Anchor point="LEFT" relativeTo="$parent_TabDemo" relativePoint="RIGHT"/>
-											<Anchor point="RIGHT"/>
+											<Anchor point="LEFT" relativeTo="$parent_TabLog" relativePoint="RIGHT"/>
+											<Anchor point="RIGHT" relativeTo="$parent_TabDemo" relativePoint="LEFT"/>
 										</Anchors>
 									</Frame>
 								</Frames>
@@ -111,6 +111,11 @@
 																<Anchors>
 																	<Anchor point="LEFT"/>
 																</Anchors>
+																<Scripts>
+																	<GnomTEC_OnSelect>
+																		GnomTEC:LogMessage(nil, 0, "GnomTEC_OnSelect()")
+																	</GnomTEC_OnSelect>
+																</Scripts>
 															</Button>
 															<Button name="$parent_Row2" inherits="T_GNOMTEC_BUTTON_TABLECELL_SINGLELINE" id="2">
 																<Size x="100"/>

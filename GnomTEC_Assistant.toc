@@ -20,6 +20,7 @@ embeds.xml
 locale\locale.xml
 
 Templates.xml
+Widgets.xml
 
 GnomTEC.lua
 
@@ -27,3 +28,4 @@ GnomTEC_Assistant.lua
 GnomTEC_Assistant.xml
 GnomTEC_Assistant_Chat.lua
 GnomTEC_Assistant_Comm.lua
+GnomTEC_Assistant_GUI.lua

@@ -36,8 +36,8 @@ GnomTEC.callbacks = GnomTEC.callbacks or LibStub("CallbackHandler-1.0"):New(Gnom
 -- Local stubs for the GnomTEC API
 -- ----------------------------------------------------------------------
 
-local function GnomTEC_LogMessage(level, message)
-	GnomTEC:LogMessage(GnomTEC_Assistant, level, message)
+local function GnomTEC_LogMessage(level, message, ...)
+	GnomTEC:LogMessage(GnomTEC_Assistant, level, message, ...)
 end
 
 -- ----------------------------------------------------------------------
@@ -112,7 +112,7 @@ end
 
 --[[
 GnomTEC:LogMessage()
-Parameters: addon, level, message
+Parameters: addon, level, message, ...
 	addon - Ace3 addon object
 	level - debug level of the message
 		0 	- FATAL	(severe error which leads to abort of addon)
@@ -120,10 +120,11 @@ Parameters: addon, level, message
 		2	- WARN	(potentially harmful situation)
 		3	- INFO	(information about addon states)
 		4	- DEBUG	(debugging message)
-	message - message to show in log
+	message 	- message to show in log
+	...		- more arguments which will inserted in message with string.format()
 Returns: -
 --]]
-function GnomTEC:LogMessage(addon, level, message)
+function GnomTEC:LogMessage(addon, level, message, ...)
 	local addonName = "<nil>"
 	local color = {1.0,1.0,1.0}
 	
@@ -145,7 +146,7 @@ function GnomTEC:LogMessage(addon, level, message)
 	
 	message = message or "?"
 		
-	GnomTEC_Assistant:AddMessage2Log(addonName..": "..message,unpack(color))
+	GnomTEC_Assistant:AddMessage2Log(date("%T")..": "..addonName..": "..string.format(message,...),unpack(color))
 end
 
 --[[

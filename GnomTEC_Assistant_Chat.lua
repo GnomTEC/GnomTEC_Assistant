@@ -33,8 +33,8 @@ local LOG_DEBUG 	= 4
 -- Local stubs for the GnomTEC API
 -- ----------------------------------------------------------------------
 
-local function GnomTEC_LogMessage(level, message)
-	GnomTEC:LogMessage(GnomTEC_Assistant, level, message)
+local function GnomTEC_LogMessage(level, message, ...)
+	GnomTEC:LogMessage(GnomTEC_Assistant, level, message, ...)
 end
 
 -- ----------------------------------------------------------------------
