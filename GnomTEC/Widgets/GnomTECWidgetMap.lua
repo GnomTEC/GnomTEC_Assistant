@@ -6,7 +6,7 @@
 -- http://www.gnomtec.de/
 -- **********************************************************************
 -- load localization first.
-local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
+local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 
 
 -- ----------------------------------------------------------------------
@@ -60,6 +60,12 @@ function GnomTECWidgetMap(title, parent)
 	-- protected methods
 	-- function protected.f()
 	
+	-- public methods
+	-- function self.f()
+	function self.LogMessage(level, message, ...)
+		protected.LogMessage("<Widget> GnomTECWidgetMap", level, message, ...)
+	end
+
 	function self.GetMinReseize()
 		
 		local minWidth = (32 * 1000.0 * 4.0 / 1024.0)
@@ -171,7 +177,7 @@ function GnomTECWidgetMap(title, parent)
 		
 		parent.AddChild(self, protected)
 
-		protected.LogMessage(LOG_DEBUG, "New GnomTECWidgetMap instance created (%s)", protected.widgetUID)
+		self.LogMessage(LOG_DEBUG, "New GnomTECWidgetMap instance created (%s)", protected.widgetUID)
 	end
 	
 	-- return the instance

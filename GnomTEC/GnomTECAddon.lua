@@ -1,16 +1,16 @@
 ﻿-- **********************************************************************
--- GnomTEC Assistant
+-- GnomTECAddon Class
 -- Version: 5.4.7.1
 -- Author: GnomTEC
 -- Copyright 2014 by GnomTEC
 -- http://www.gnomtec.de/
 -- **********************************************************************
 -- load localization first.
-local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
+local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 
 
 -- ----------------------------------------------------------------------
--- Addon Global Constants (local)
+-- Class Global Constants (local)
 -- ----------------------------------------------------------------------
 -- Log levels
 local LOG_FATAL 	= 0
@@ -20,12 +20,12 @@ local LOG_INFO 	= 3
 local LOG_DEBUG 	= 4
 
 -- ----------------------------------------------------------------------
--- Addon Static Variables (local)
+-- Class Static Variables (local)
 -- ----------------------------------------------------------------------
-
+local lastUID = 0
 
 -- ----------------------------------------------------------------------
--- Addon Startup Initialization
+-- Class Startup Initialization
 -- ----------------------------------------------------------------------
 
 
@@ -35,12 +35,12 @@ local LOG_DEBUG 	= 4
 
 
 -- ----------------------------------------------------------------------
--- Addon Class
+-- Class
 -- ----------------------------------------------------------------------
 
-local function GnomTECAssistant()
+function GnomTECAddon(addonTitle)
 	-- call base class
-	local self, protected = GnomTECAddon("GnomTEC_Assistant")
+	local self, protected = GnomTEC()
 		
 	-- public fields go in the instance table
 	-- self.field = value
@@ -51,52 +51,66 @@ local function GnomTECAssistant()
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
 	-- local field
-	local mainWindow = nil
-	local mainWindowMap = nil
+	local addonTitle = addonTitle
+	local aceAddon = nil
 		
 	-- private methods
 	-- local function f()
 
 	-- protected methods
 	-- function protected.f()
-	local base_OnInitialize = protected.OnInitialize
 	function protected.OnInitialize()
 	 	-- Code that you want to run when the addon is first loaded goes here.
-	 	base_OnInitialize()
+		self.db = LibStub("AceDB-3.0"):New(addonTitle.."DB", defaultsDb, true)
 	end
 
-	local base_OnEnable = protected.OnEnable
 	function protected.OnEnable()
   	  -- Called when the addon is enabled
-  	  base_OnEnable()
-  	  
-		mainWindow = GnomTECWidgetContainerWindow("GnomTEC Widget Test", GnomTECLayoutFill())
-		mainWindowMap = GnomTECWidgetMap("Map", mainWindow)
-		mainWindow.Show()
 	end
 
-	local base_OnDisable = protected.OnDisable
 	function protected.OnDisable()
 		-- Called when the addon is disabled
-		base_OnDisable()
+		aceAddon:UnregisterAllEvents();
 	end
 	
 	-- public methods
 	-- function self.f()
+	function self.LogMessage(level, message, ...)
+		protected.LogMessage(addonTitle, level, message, ...)
+aceAddon:Print(message, ...)
+	end
+
+	function self.GetAddonTitle()
+		return addonTitle
+	end
 	
 	-- constructor
 	do
-		self.LogMessage(LOG_DEBUG, "Willkommen bei GnomTEC Assistant")
+		lastUID = lastUID + 1
+		protected.addonUID = "GnomTECAddonInstance"..lastUID
+		
+		aceAddon = LibStub("AceAddon-3.0"):NewAddon(addonTitle, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceComm-3.0", "AceSerializer-3.0")
+		aceAddon:Print(addonTitle)
+
+		function aceAddon:OnInitialize()
+			aceAddon:Print("OnInitialize")
+			protected.OnInitialize()
+		end
+		function aceAddon:OnEnable()
+			aceAddon:Print("OnEnable")
+			protected.OnEnable()
+		end
+		function aceAddon:OnDisable()
+			aceAddon:Print("OnDisable")
+			protected.OnDisable()
+		end
+		
+		
+		protected.LogMessage("<class> GnomTECAddon", LOG_DEBUG, "New GnomTECAddon instance created (%s)", protected.addonUID)
 	end
 	
-	-- return the instance table
-	return self
+	-- return the instance and protected table
+	return self, protected
 end
-
--- ----------------------------------------------------------------------
--- Addon Instantiation
--- ----------------------------------------------------------------------
-
-GnomTEC_Assistant = GnomTECAssistant()
 
 

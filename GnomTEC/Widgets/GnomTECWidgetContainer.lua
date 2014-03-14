@@ -6,7 +6,7 @@
 -- http://www.gnomtec.de/
 -- **********************************************************************
 -- load localization first.
-local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
+local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 
 
 -- ----------------------------------------------------------------------
@@ -63,6 +63,11 @@ function GnomTECWidgetContainer(title, parent, layout)
 	-- function protected.f()
 	
 	-- public methods
+	-- function self.f()
+	function self.LogMessage(level, message, ...)
+		protected.LogMessage("<Widget> GnomTECWidgetContainer", level, message, ...)
+	end
+
 	function self.AddChild(child, childProtected)
 		self.RemoveChild(child)
 		table.insert(protected.childs, {widget = child, widgetProtected = childProtected})
@@ -160,7 +165,7 @@ function GnomTECWidgetContainer(title, parent, layout)
 	-- constructor
 	do
 		layout.Init(self, protected)
-		protected.LogMessage(LOG_DEBUG, "New GnomTECWidgetContainer instance created (%s)", protected.widgetUID)
+		self.LogMessage(LOG_DEBUG, "New GnomTECWidgetContainer instance created (%s)", protected.widgetUID)
 	end
 	
 	-- return the instance and protected table

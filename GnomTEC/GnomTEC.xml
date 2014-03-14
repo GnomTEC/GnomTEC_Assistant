@@ -1,4 +1,6 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+	<!-- External Libraries -->
   <Script file="Libs\LibStub\LibStub.lua"/>
   <Include file="Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
   <Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>
@@ -19,6 +21,23 @@
   <Include file="Libs\LibTourist-3.0\lib.xml"/>
   <Include file="Libs\libdatabroker-1-1\LibDataBroker-1.1.lua"/>  
   <Include file="Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua"/>  
+
+	<!-- GnomTEC Framework Localization -->
+	<Include file="locale\locale.xml"/>
+	
+	<!-- GnomTEC Framework Base Class -->
+	<Include file="GnomTEC.lua"/>
+
+	<!-- GnomTEC Framework Widget Classes -->
+  <Include file="Widgets\GnomTECLayout.lua"/>
+  <Include file="Widgets\GnomTECLayoutFill.lua"/>
+  <Include file="Widgets\GnomTECWidget.lua"/>
+  <Include file="Widgets\GnomTECWidgetContainer.lua"/> 
+  <Include file="Widgets\GnomTECWidgetContainerWindow.lua"/>
+  <Include file="Widgets\GnomTECWidgetMap.lua"/>
+  
+  <!-- GnomTEC Framework Classes -->
+  <Include file="GnomTECAddon.lua"/>
 </Ui>
 
 

@@ -6,7 +6,7 @@
 -- http://www.gnomtec.de/
 -- **********************************************************************
 -- load localization first.
-local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
+local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 
 
 -- ----------------------------------------------------------------------
@@ -59,6 +59,11 @@ function GnomTECLayoutFill()
 	-- function protected.f()
 	
 	-- public methods
+	-- function self.f()
+	function self.LogMessage(level, message, ...)
+		protected.LogMessage("<Layout> GnomTECLayoutFill", level, message, ...)
+	end
+
 	local base_Init = self.Init
 	function self.Init(containerWidget, containerProtected)
 		base_Init(containerWidget, containerProtected)
@@ -183,7 +188,7 @@ function GnomTECLayoutFill()
 	-- constructor
 	do
 
-		protected.LogMessage(LOG_DEBUG, "New GnomTECLayoutFill instance created (%s)", protected.layoutUID)
+		self.LogMessage(LOG_DEBUG, "New GnomTECLayoutFill instance created (%s)", protected.layoutUID)
 	end
 	
 	-- return the instance and protected table

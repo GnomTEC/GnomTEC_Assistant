@@ -1,16 +1,16 @@
 ﻿-- **********************************************************************
--- GnomTEC Assistant
+-- GnomTEC Base Class
 -- Version: 5.4.7.1
 -- Author: GnomTEC
 -- Copyright 2014 by GnomTEC
 -- http://www.gnomtec.de/
 -- **********************************************************************
 -- load localization first.
-local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
+local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 
 
 -- ----------------------------------------------------------------------
--- Addon Global Constants (local)
+-- Class Global Constants (local)
 -- ----------------------------------------------------------------------
 -- Log levels
 local LOG_FATAL 	= 0
@@ -20,12 +20,12 @@ local LOG_INFO 	= 3
 local LOG_DEBUG 	= 4
 
 -- ----------------------------------------------------------------------
--- Addon Static Variables (local)
+-- Class Static Variables (local)
 -- ----------------------------------------------------------------------
-
+local lastUID = 0
 
 -- ----------------------------------------------------------------------
--- Addon Startup Initialization
+-- Class Startup Initialization
 -- ----------------------------------------------------------------------
 
 
@@ -35,68 +35,50 @@ local LOG_DEBUG 	= 4
 
 
 -- ----------------------------------------------------------------------
--- Addon Class
+-- Class
 -- ----------------------------------------------------------------------
 
-local function GnomTECAssistant()
-	-- call base class
-	local self, protected = GnomTECAddon("GnomTEC_Assistant")
-		
+function GnomTEC()
+	-- the new instance
+	local self = {}
+	
 	-- public fields go in the instance table
 	-- self.field = value
 
+	-- create protected table
+	local protected = {}
+
 	-- protected fields go in the protected table
 	-- protected.field = value
+	protected.UID = nil
 	
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
 	-- local field
-	local mainWindow = nil
-	local mainWindowMap = nil
 		
 	-- private methods
 	-- local function f()
 
 	-- protected methods
 	-- function protected.f()
-	local base_OnInitialize = protected.OnInitialize
-	function protected.OnInitialize()
-	 	-- Code that you want to run when the addon is first loaded goes here.
-	 	base_OnInitialize()
-	end
-
-	local base_OnEnable = protected.OnEnable
-	function protected.OnEnable()
-  	  -- Called when the addon is enabled
-  	  base_OnEnable()
-  	  
-		mainWindow = GnomTECWidgetContainerWindow("GnomTEC Widget Test", GnomTECLayoutFill())
-		mainWindowMap = GnomTECWidgetMap("Map", mainWindow)
-		mainWindow.Show()
-	end
-
-	local base_OnDisable = protected.OnDisable
-	function protected.OnDisable()
-		-- Called when the addon is disabled
-		base_OnDisable()
+	function protected.LogMessage(title, level, message, ...)
+--		GnomTEC:LogMessage(addonTitle, level, message, ...)
 	end
 	
 	-- public methods
 	-- function self.f()
+
 	
 	-- constructor
 	do
-		self.LogMessage(LOG_DEBUG, "Willkommen bei GnomTEC Assistant")
+		lastUID = lastUID + 1
+		protected.UID = "GnomTECInstance"..lastUID
+		
+		protected.LogMessage("<class> GnomTEC", LOG_DEBUG, "New GnomTEC instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance table
-	return self
+	return self, protected
 end
-
--- ----------------------------------------------------------------------
--- Addon Instantiation
--- ----------------------------------------------------------------------
-
-GnomTEC_Assistant = GnomTECAssistant()
 
 

@@ -6,7 +6,7 @@
 -- http://www.gnomtec.de/
 -- **********************************************************************
 -- load localization first.
-local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
+local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 
 
 -- ----------------------------------------------------------------------
@@ -58,6 +58,13 @@ function GnomTECWidgetContainerWindow(title, layout)
 	
 	-- private methods
 	-- local function f()
+
+	-- public methods
+	-- function self.f()
+	function self.LogMessage(level, message, ...)
+		protected.LogMessage("<Widget> GnomTECWidgetContainerWindow", level, message, ...)
+	end
+
 	local function StartResize()
 		if (protected.widgetFrame:IsResizable()) then
 			protected.widgetFrame:StartSizing()
@@ -194,8 +201,8 @@ function GnomTECWidgetContainerWindow(title, layout)
 		widgetFrame:SetHeight("64")
 		
 		local backdrop = {
-			bgFile 	= [[Interface\Addons\GnomTEC_Assistant\Textures\UI-Window-Background]],
-			edgeFile	= [[Interface\Addons\GnomTEC_Assistant\Textures\UI-Window-Border]],
+			bgFile 	= [[Interface\Addons\GnomTEC_Assistant\GnomTEC\Textures\UI-Window-Background]],
+			edgeFile	= [[Interface\Addons\GnomTEC_Assistant\GnomTEC\Textures\UI-Window-Border]],
 			tile 		= true,
 			edgeSize = 32,
 			TileSize	= 32,
@@ -247,7 +254,7 @@ function GnomTECWidgetContainerWindow(title, layout)
 		lastWidth = 64
 		lastHeight = 64
 
-		protected.LogMessage(LOG_DEBUG, "New GnomTECWidgetContainerWindow instance created (%s)", protected.widgetUID)
+		self.LogMessage(LOG_DEBUG, "New GnomTECWidgetContainerWindow instance created (%s)", protected.widgetUID)
 	end
 	
 	-- return the instance
