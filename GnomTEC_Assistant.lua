@@ -22,6 +22,18 @@ local LOG_DEBUG 	= 4
 -- ----------------------------------------------------------------------
 -- Addon Static Variables (local)
 -- ----------------------------------------------------------------------
+local addonDataObject =	{
+		type = "launcher",
+		label = "GnomTEC Assistant",
+		icon = "Interface\\Icons\\Inv_Misc_Tournaments_banner_Gnome",
+		OnClick = function(self, button)
+			GnomTEC_Assistant.ShowMainWindow()
+		end,
+		OnTooltipShow = function(tooltip)
+			tooltip:AddLine(" ")
+			tooltip:AddLine("Hinweis: Links-Klick um GnomTEC Assistant zu öffnen",0.0,1.0,0.0)
+		end,
+	}
 
 
 -- ----------------------------------------------------------------------
@@ -70,9 +82,11 @@ local function GnomTECAssistant()
   	  -- Called when the addon is enabled
   	  base_OnEnable()
   	  
-		mainWindow = GnomTECWidgetContainerWindow("GnomTEC Widget Test", GnomTECLayoutFill())
+		mainWindow = GnomTECWidgetContainerWindow("GnomTEC Widget Test", GnomTECLayoutVertical())
 		mainWindowMap = GnomTECWidgetMap("Map", mainWindow)
-		mainWindow.Show()
+		
+		addonDataObject = self.NewDataObject("", addonDataObject)
+		self.ShowMinimapIcon(addonDataObject)
 	end
 
 	local base_OnDisable = protected.OnDisable
@@ -83,7 +97,9 @@ local function GnomTECAssistant()
 	
 	-- public methods
 	-- function self.f()
-	
+	function self.ShowMainWindow()
+		mainWindow.Show()
+	end
 	-- constructor
 	do
 		self.LogMessage(LOG_DEBUG, "Willkommen bei GnomTEC Assistant")

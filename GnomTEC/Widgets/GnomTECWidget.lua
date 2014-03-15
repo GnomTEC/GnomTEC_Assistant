@@ -51,6 +51,10 @@ function GnomTECWidget(title, parent)
 	protected.widgetTitle = nil
 	protected.widgetUID = nil
 	protected.widgetFrame = nil
+	protected.widgetRelativeWidth = 100
+	protected.widgetRelativeHeight = 100
+
+	
 
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
@@ -127,6 +131,15 @@ function GnomTECWidget(title, parent)
 	function self.GetWidgetUID()
 		return protected.widgetUID
 	end
+	
+	function self.GetRelativeWidth()
+		return protected.widgetRelativeWidth
+	end
+
+	function self.GetRelativeHeight()
+		return protected.widgetRelativeHeight
+	end
+	
 	
 	function self.SetTitle(title)
 		protected.widgetTitle = title

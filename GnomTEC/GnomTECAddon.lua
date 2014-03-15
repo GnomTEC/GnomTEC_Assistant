@@ -23,16 +23,20 @@ local LOG_DEBUG 	= 4
 -- Class Static Variables (local)
 -- ----------------------------------------------------------------------
 local lastUID = 0
+local dataObjects = {}
 
 -- ----------------------------------------------------------------------
 -- Class Startup Initialization
 -- ----------------------------------------------------------------------
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
+local icon = LibStub("LibDBIcon-1.0")
 
 
 -- ----------------------------------------------------------------------
 -- Helper Functions (local)
 -- ----------------------------------------------------------------------
-
+-- function which returns also nil for empty strings
+local function emptynil( x ) return x ~= "" and x or nil end
 
 -- ----------------------------------------------------------------------
 -- Class
@@ -53,6 +57,7 @@ function GnomTECAddon(addonTitle)
 	-- local field
 	local addonTitle = addonTitle
 	local aceAddon = nil
+	local minimapIconDataObject = nil
 		
 	-- private methods
 	-- local function f()
@@ -62,6 +67,9 @@ function GnomTECAddon(addonTitle)
 	function protected.OnInitialize()
 	 	-- Code that you want to run when the addon is first loaded goes here.
 		self.db = LibStub("AceDB-3.0"):New(addonTitle.."DB", defaultsDb, true)
+		if (not self.db.profile.GnomTECAddon) then
+			self.db.profile.GnomTECAddon = {}
+		end
 	end
 
 	function protected.OnEnable()
@@ -77,9 +85,44 @@ function GnomTECAddon(addonTitle)
 	-- function self.f()
 	function self.LogMessage(level, message, ...)
 		protected.LogMessage(addonTitle, level, message, ...)
-aceAddon:Print(message, ...)
+aceAddon:Print(string.format(message, ...))
 	end
 
+	function self.NewDataObject(name, dataObject)
+		if (emptynil(name)) then
+			name = addonTitle..": "..name
+		else
+			name = addonTitle
+		end
+		
+		dataObject = ldb:NewDataObject(name, dataObject)
+		dataObjects[addonTitle][name] = dataObject
+		
+		return dataObject 
+	end
+	
+	function self.ShowMinimapIcon(dataObject)
+		if (dataObject) and (not minimapIconDataObject) then
+			minimapIconDataObject = dataObject
+			if (not self.db.profile.GnomTECAddon.minimapIcon) then
+				self.db.profile.GnomTECAddon.minimapIcon = {hide = false}
+			end
+			icon:Register(addonTitle, minimapIconDataObject, self.db.profile.GnomTECAddon.minimapIcon)
+		end
+		
+		if (minimapIconDataObject) then
+			self.db.profile.GnomTECAddon.minimapIcon.hide = false
+			icon:Show(addonTitle)
+		end
+	end
+
+	function self.HideMinimapIcon()
+		if (minimapIconDataObject) then
+			self.db.profile.GnomTECAddon.minimapIcon.hide = true
+			icon:Hide(addonTitle)
+		end
+	end
+	
 	function self.GetAddonTitle()
 		return addonTitle
 	end
@@ -88,6 +131,8 @@ aceAddon:Print(message, ...)
 	do
 		lastUID = lastUID + 1
 		protected.addonUID = "GnomTECAddonInstance"..lastUID
+		
+		dataObjects[addonTitle]= {}
 		
 		aceAddon = LibStub("AceAddon-3.0"):NewAddon(addonTitle, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceComm-3.0", "AceSerializer-3.0")
 		aceAddon:Print(addonTitle)
@@ -104,7 +149,6 @@ aceAddon:Print(message, ...)
 			aceAddon:Print("OnDisable")
 			protected.OnDisable()
 		end
-		
 		
 		protected.LogMessage("<class> GnomTECAddon", LOG_DEBUG, "New GnomTECAddon instance created (%s)", protected.addonUID)
 	end
