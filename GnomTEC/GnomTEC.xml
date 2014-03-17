@@ -36,6 +36,7 @@
   <Include file="Widgets\GnomTECWidgetContainer.lua"/> 
   <Include file="Widgets\GnomTECWidgetContainerWindow.lua"/>
   <Include file="Widgets\GnomTECWidgetMap.lua"/>
+  <Include file="Widgets\GnomTECWidgetScrollingMessage.lua"/>
   
   <!-- GnomTEC Framework Classes -->
   <Include file="GnomTECAddon.lua"/>

@@ -12,6 +12,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- ----------------------------------------------------------------------
 -- Layout Global Constants (local)
 -- ----------------------------------------------------------------------
+-- Class levels
+local CLASS_CLASS		= 0
+local CLASS_LAYOUT	= 1
+local CLASS_WIDGET	= 2
+local CLASS_ADDON		= 3
+
 -- Log levels
 local LOG_FATAL 	= 0
 local LOG_ERROR	= 1
@@ -60,8 +66,8 @@ function GnomTECLayoutVertical()
 	
 	-- public methods
 	-- function self.f()
-	function self.LogMessage(level, message, ...)
-		protected.LogMessage("<Layout> GnomTECLayoutFill", level, message, ...)
+	function self.LogMessage(logLevel, message, ...)
+		protected.LogMessage(CLASS_LAYOUT, logLevel, "GnomTECLayoutVertical", message, ...)
 	end
 
 	local base_Init = self.Init
@@ -132,34 +138,32 @@ function GnomTECLayoutVertical()
 		return isProp
 	end
 	
-	function self.ResizeByWidth(pixelWidth)
+	function self.ResizeByWidth(pixelWidth, pixelHeight)
 		-- should be calculated according childs and layouter
-		local pixelHeight = 0
 		for idx, value in ipairs(protected.containerProtected.childs) do
 			if (value.widget.IsShown()) then
-				pixelHeight = value.widget.ResizeByWidth(pixelWidth)
+				pixelWidth, pixelHeight = value.widget.ResizeByWidth(pixelWidth, pixelHeight)
 				break
 			end
 		end
 
 		-- we don't change the size in layouter as we don't know what to do
 		-- but we can compute the needed size of layout and report it to the container widget
-		return pixelHeight
+		return pixelWidth, pixelHeight
 	end
 
-	function self.ResizeByHeight(pixelHeight)
+	function self.ResizeByHeight(pixelWidth, pixelHeight)
 		-- should be calculated according childs and layouter
-		local pixelWidth = 0
 		for idx, value in ipairs(protected.containerProtected.childs) do
 			if (value.widget.IsShown()) then
-				pixelWidth = value.widget.ResizeByHeight(pixelHeight)
+				pixelWidth, pixelHeight = value.widget.ResizeByHeight(pixelWidth, pixelHeight)
 				break
 			end
 		end
 
 		-- we don't change the size in layouter as we don't know what to do
 		-- but we can compute the needed size of layout and report it to the container widget
-		return pixelWidth
+		return pixelWidth, pixelHeight
 	end
 
 	function self.TriggerResize(child, dx, dy)
@@ -193,8 +197,7 @@ function GnomTECLayoutVertical()
 	
 	-- constructor
 	do
-
-		self.LogMessage(LOG_DEBUG, "New GnomTECLayoutVertical instance created (%s)", protected.layoutUID)
+		protected.LogMessage(CLASS_LAYOUT, LOG_DEBUG, "GnomTECLayoutVertical", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance and protected table

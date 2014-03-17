@@ -12,6 +12,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- ----------------------------------------------------------------------
 -- Widget Global Constants (local)
 -- ----------------------------------------------------------------------
+-- Class levels
+local CLASS_CLASS		= 0
+local CLASS_LAYOUT	= 1
+local CLASS_WIDGET	= 2
+local CLASS_ADDON		= 3
+
 -- Log levels
 local LOG_FATAL 	= 0
 local LOG_ERROR	= 1
@@ -61,8 +67,8 @@ function GnomTECWidgetContainerWindow(title, layout)
 
 	-- public methods
 	-- function self.f()
-	function self.LogMessage(level, message, ...)
-		protected.LogMessage("<Widget> GnomTECWidgetContainerWindow", level, message, ...)
+	function self.LogMessage(logLevel, message, ...)
+		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetContainerWindow", message, ...)
 	end
 
 	local function StartResize()
@@ -105,15 +111,15 @@ function GnomTECWidgetContainerWindow(title, layout)
 	function self.GetMinReseize()
 		local minWidth, minHeight = base_GetMinReseize()
 		
-		minWidth = minWidth + 10
-		minHeight = minHeight + 65
+		minWidth = minWidth + 14
+		minHeight = minHeight + 67
 		
-		if (minWidth < 64) then
-			minWidth = 64
+		if (minWidth < 100) then
+			minWidth = 100
 		end
 
-		if (minHeight < 64) then
-			minHeight = 64
+		if (minHeight < 100) then
+			minHeight = 100
 		end
 
 		return minWidth, minHeight
@@ -123,17 +129,17 @@ function GnomTECWidgetContainerWindow(title, layout)
 	function self.GetMaxReseize()
 		local maxWidth, maxHeight = base_GetMaxReseize()
 		
-		maxWidth = maxWidth + 10
-		maxHeight = maxHeight + 65
+		maxWidth = maxWidth + 14
+		maxHeight = maxHeight + 67
 		
-		if (maxWidth < 64) then
-			maxWidth = 64
+		if (maxWidth < 100) then
+			maxWidth = 100
 		elseif (maxWidth > UIParent:GetWidth()) then
 			maxWidth = UIParent:GetWidth()
 		end
 
-		if (maxHeight < 64) then
-			maxHeight = 64
+		if (maxHeight < 100) then
+			maxHeight = 100
 		elseif (maxHeight > UIParent:GetHeight()) then
 			maxHeight = UIParent:GetHeight()
 		end
@@ -142,37 +148,31 @@ function GnomTECWidgetContainerWindow(title, layout)
 	end
 
 	local base_ResizeByWidth = self.ResizeByWidth
-	function self.ResizeByWidth(pixelWidth)
-		local pixelHeight = base_ResizeByWidth(pixelWidth - 10)
-		pixelHeight = pixelHeight + 65
+	function self.ResizeByWidth(pixelWidth, pixelHeight)
+		pixelWidth, pixelHeight = base_ResizeByWidth(pixelWidth - 14, pixelHeight - 67)
+		pixelWidth = pixelWidth + 14
+		pixelHeight = pixelHeight + 67
 		if (math.abs(self.GetPixelWidth() - pixelWidth) >= 1) then
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: old width (%i)", self.GetPixelWidth())
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: new width (%i)", pixelWidth)
 			protected.widgetFrame:SetWidth(pixelWidth)
 		end
 		if (math.abs(self.GetPixelHeight() - pixelHeight) >= 1) then
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: old height (%i)", self.GetPixelHeight())
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: new height (%i)", pixelHeight)
 			protected.widgetFrame:SetHeight(pixelHeight)
 		end
-		return self.GetPixelHeight()
+		return pixelWidth, pixelHeight
 	end
 
 	local base_ResizeByHeight = self.ResizeByHeight
-	function self.ResizeByHeight(pixelHeight)
-		local pixelWidth = base_ResizeByHeight(pixelHeight - 65)
-		pixelWidth = pixelWidth + 10
+	function self.ResizeByHeight(pixelWidth, pixelHeight)
+		pixelWidth, pixelHeight = base_ResizeByHeight(pixelWidth - 14, pixelHeight - 67)
+		pixelWidth = pixelWidth + 14
+		pixelHeight = pixelHeight + 67
 		if (math.abs(self.GetPixelWidth() - pixelWidth) >= 1) then
-			protected.LogMessage(LOG_DEBUG, "ResizeByHeight: old width (%i)", self.GetPixelWidth())
-			protected.LogMessage(LOG_DEBUG, "ResizeByHeight: new width (%i)", pixelWidth)
 			protected.widgetFrame:SetWidth(pixelWidth)
 		end
 		if (math.abs(self.GetPixelHeight() - pixelHeight) >= 1) then
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: old height (%i)", self.GetPixelHeight())
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: new height (%i)", pixelHeight)
 			protected.widgetFrame:SetHeight(pixelHeight)
 		end
-		return self.GetPixelWidth()
+		return pixelWidth, pixelHeight
 	end
 	
 	local base_SetTitle = self.SetTitle
@@ -197,8 +197,8 @@ function GnomTECWidgetContainerWindow(title, layout)
 		
 		-- should be configurable later eg. saveable
 		widgetFrame:SetPoint("CENTER")		
-		widgetFrame:SetWidth("64")		
-		widgetFrame:SetHeight("64")
+		widgetFrame:SetWidth("400")		
+		widgetFrame:SetHeight("200")
 		
 		local backdrop = {
 			bgFile 	= [[Interface\Addons\GnomTEC_Assistant\GnomTEC\Textures\UI-Window-Background]],
@@ -219,6 +219,9 @@ function GnomTECWidgetContainerWindow(title, layout)
 		widgetFrame:SetScript("OnSizeChanged", OnSizeChanged)
 		widgetFrame:SetMovable(true)
 		widgetFrame:SetResizable(true)
+		widgetFrame:SetClampedToScreen(true)
+		widgetFrame:SetToplevel(true)
+		
 		
 		
 		closeButton:SetPoint("TOPRIGHT")
@@ -245,16 +248,16 @@ function GnomTECWidgetContainerWindow(title, layout)
 		headerTitle:SetPoint("TOPLEFT", 0, -3)
 		headerTitle:SetPoint("RIGHT")
 
-		containerFrame:SetPoint("TOPLEFT", 5, -30)
-		containerFrame:SetPoint("BOTTOMRIGHT", -5, 30)
+		containerFrame:SetPoint("TOPLEFT", 7, -32)
+		containerFrame:SetPoint("BOTTOMRIGHT", -7, 35)
 		
 		self.SetTitle(title)
 
 		-- this enables resizing
-		lastWidth = 64
-		lastHeight = 64
+		lastWidth = 400
+		lastHeight = 200
 
-		self.LogMessage(LOG_DEBUG, "New GnomTECWidgetContainerWindow instance created (%s)", protected.widgetUID)
+		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetContainerWindow", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance

@@ -12,6 +12,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- ----------------------------------------------------------------------
 -- Layout Global Constants (local)
 -- ----------------------------------------------------------------------
+-- Class levels
+local CLASS_CLASS		= 0
+local CLASS_LAYOUT	= 1
+local CLASS_WIDGET	= 2
+local CLASS_ADDON		= 3
+
 -- Log levels
 local LOG_FATAL 	= 0
 local LOG_ERROR	= 1
@@ -63,8 +69,8 @@ function GnomTECLayout()
 	
 	-- public methods
 	-- function self.f()
-	function self.LogMessage(level, message, ...)
-		protected.LogMessage("<Layout> GnomTECLayout", level, message, ...)
+	function self.LogMessage(logLevel, message, ...)
+		protected.LogMessage(CLASS_LAYOUT, logLevel, "GnomTECLayout", message, ...)
 	end
 
 	function self.Init(containerWidget, containerProtected)
@@ -93,20 +99,20 @@ function GnomTECLayout()
 		return false
 	end
 	
-	function self.ResizeByWidth(pixelWidth)
+	function self.ResizeByWidth(pixelWidth, pixelHeight)
 		-- should be calculated according childs and layouter
 
 		-- we don't change the size in layouter as we don't know what to do
 		-- but we can compute the needed size of layout and report it to the container widget
-		return protected.containerProtected.widgetFrame:GetHeight()
+		return pixelWidth, pixelHeight
 	end
 
-	function self.ResizeByHeight(pixelHeight)
+	function self.ResizeByHeight(pixelWidth, pixelHeight)
 		-- should be calculated according childs and layouter
 
 		-- we don't change the size in layouter as we don't know what to do
 		-- but we can compute the needed size of layout and report it to the container widget
-		return protected.containerProtected.widgetFrame:GetWidth()
+		return pixelWidth, pixelHeight
 	end
 	
 	function self.TriggerResize(child, dx, dy)
@@ -119,7 +125,7 @@ function GnomTECLayout()
 		lastUID = lastUID + 1
 		protected.layoutUID = "GnomTECLayoutInstance"..lastUID
 
-		self.LogMessage(LOG_DEBUG, "New GnomTECLayout instance created (%s)", protected.layoutUID)
+		protected.LogMessage(CLASS_LAYOUT, LOG_DEBUG, "GnomTECLayout", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance and protected table

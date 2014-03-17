@@ -12,6 +12,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- ----------------------------------------------------------------------
 -- Widget Global Constants (local)
 -- ----------------------------------------------------------------------
+-- Class levels
+local CLASS_CLASS		= 0
+local CLASS_LAYOUT	= 1
+local CLASS_WIDGET	= 2
+local CLASS_ADDON		= 3
+
 -- Log levels
 local LOG_FATAL 	= 0
 local LOG_ERROR	= 1
@@ -68,14 +74,15 @@ function GnomTECWidget(title, parent)
 	
 	-- public methods
 	-- function self.f()
-	function self.LogMessage(level, message, ...)
-		protected.LogMessage("<Widget> GnomTECWidget", level, message, ...)
+	function self.LogMessage(logLevel, message, ...)
+		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidget", message, ...)
 	end
 
 	function self.Show()
 		if (not self.IsShown()) then
 			protected.widgetFrame:Show()
 			self.TriggerResize(self, 0, 0)
+			self.SafeCall(self.OnShow,self)
 		end
 	end
 
@@ -83,6 +90,7 @@ function GnomTECWidget(title, parent)
 		if (self.IsShown()) then
 			protected.widgetFrame:Hide()
 			self.TriggerResize(self, 0, 0)
+			self.SafeCall(self.OnHide,self)
 		end
 	end
 
@@ -110,16 +118,16 @@ function GnomTECWidget(title, parent)
 		return false
 	end
 	
-	function self.ResizeByWidth(pixelWidth)
+	function self.ResizeByWidth(pixelWidth, pixelHeight)
 		-- we don't change the size in base classes as we don't know what to do
 		-- but we can support derived classes with standard values
-		return self.GetPixelHeight()
+		return pixelWidth, pixelHeight
 	end
 
-	function self.ResizeByHeight(pixelHeight)
+	function self.ResizeByHeight(pixelWidth, pixelHeight)
 		-- we don't change the size in base classes as we don't know what to do
 		-- but we can support derived classes with standard values
-		return self.GetPixelWidth()
+		return pixelWidth, pixelHeight
 	end
 		
 	function self.TriggerResize(widget, dx, dy)
@@ -156,7 +164,7 @@ function GnomTECWidget(title, parent)
 		protected.widgetParent = parent
 		protected.widgetTitle = title
 		
-		self.LogMessage(LOG_DEBUG, "New GnomTECWidget instance created (%s)", protected.widgetUID)
+		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidget", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance and protected table

@@ -12,6 +12,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- ----------------------------------------------------------------------
 -- Widget Global Constants (local)
 -- ----------------------------------------------------------------------
+-- Class levels
+local CLASS_CLASS		= 0
+local CLASS_LAYOUT	= 1
+local CLASS_WIDGET	= 2
+local CLASS_ADDON		= 3
+
 -- Log levels
 local LOG_FATAL 	= 0
 local LOG_ERROR	= 1
@@ -62,8 +68,8 @@ function GnomTECWidgetMap(title, parent)
 	
 	-- public methods
 	-- function self.f()
-	function self.LogMessage(level, message, ...)
-		protected.LogMessage("<Widget> GnomTECWidgetMap", level, message, ...)
+	function self.LogMessage(logLevel, message, ...)
+		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetMap", message, ...)
 	end
 
 	function self.GetMinReseize()
@@ -94,8 +100,8 @@ function GnomTECWidgetMap(title, parent)
 		return true
 	end
 
-	function self.ResizeByWidth(pixelWidth)
-		local pixelHeight = pixelWidth * 1024.0 / 1000.0 / 4.0	-- frameWidth * textureSize / visibleSize / numTiles
+	function self.ResizeByWidth(pixelWidth, pixelHeight)
+		pixelHeight = pixelWidth * 1024.0 / 1000.0 / 4.0	-- frameWidth * textureSize / visibleSize / numTiles
 
 		for r = 1, 3 do
 			for c = 1, 4 do
@@ -109,20 +115,16 @@ function GnomTECWidgetMap(title, parent)
 		pixelHeight = (pixelHeight * 667.0 * 3.0 / 768.0)
 
 		if (math.abs(self.GetPixelWidth() - pixelWidth) >= 1) then
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: old width (%i)", self.GetPixelWidth())
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: new width (%i)", pixelWidth)
 			protected.widgetFrame:SetWidth(pixelWidth)
 		end
 		if (math.abs(self.GetPixelHeight() - pixelHeight) >= 1) then
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: old height (%i)", self.GetPixelHeight())
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: new height (%i)", pixelHeight)
 			protected.widgetFrame:SetHeight(pixelHeight)
 		end
-		return self.GetPixelHeight()
+		return pixelWidth, pixelHeight
 	end
 
-	function self.ResizeByHeight(pixelHeight)
-		local pixelWidth = pixelHeight * 768.0 / 667.0 / 3.0 	-- frameHeight * textureSize / visibleSize / numTiles
+	function self.ResizeByHeight(pixelWidth, pixelHeight)
+		pixelWidth = pixelHeight * 768.0 / 667.0 / 3.0 	-- frameHeight * textureSize / visibleSize / numTiles
 
 		for r = 1, 3 do
 			for c = 1, 4 do
@@ -136,16 +138,12 @@ function GnomTECWidgetMap(title, parent)
 		pixelWidth = (pixelWidth * 1000.0 * 4.0 / 1024.0)
 
 		if (math.abs(self.GetPixelWidth() - pixelWidth) >= 1) then
-			protected.LogMessage(LOG_DEBUG, "ResizeByHeight: old width (%i)", self.GetPixelWidth())
-			protected.LogMessage(LOG_DEBUG, "ResizeByHeight: new width (%i)", pixelWidth)
 			protected.widgetFrame:SetWidth(pixelWidth)
 		end
 		if (math.abs(self.GetPixelHeight() - pixelHeight) >= 1) then
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: old height (%i)", self.GetPixelHeight())
-			protected.LogMessage(LOG_DEBUG, "ResizeByWidth: new height (%i)", pixelHeight)
 			protected.widgetFrame:SetHeight(pixelHeight)
 		end
-		return self.GetPixelWidth()
+		return pixelWidth, pixelHeight
 	end
 	
 	-- constructor
@@ -177,7 +175,7 @@ function GnomTECWidgetMap(title, parent)
 		
 		parent.AddChild(self, protected)
 
-		self.LogMessage(LOG_DEBUG, "New GnomTECWidgetMap instance created (%s)", protected.widgetUID)
+		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetMap", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance

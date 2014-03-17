@@ -12,6 +12,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- ----------------------------------------------------------------------
 -- Class Global Constants (local)
 -- ----------------------------------------------------------------------
+-- Class levels
+local CLASS_CLASS		= 0
+local CLASS_LAYOUT	= 1
+local CLASS_WIDGET	= 2
+local CLASS_ADDON		= 3
+
 -- Log levels
 local LOG_FATAL 	= 0
 local LOG_ERROR	= 1
@@ -61,31 +67,33 @@ function GnomTECAddon(addonTitle)
 		
 	-- private methods
 	-- local function f()
-
-	-- protected methods
-	-- function protected.f()
-	function protected.OnInitialize()
+	local function OnInitialize()
 	 	-- Code that you want to run when the addon is first loaded goes here.
 		self.db = LibStub("AceDB-3.0"):New(addonTitle.."DB", defaultsDb, true)
 		if (not self.db.profile.GnomTECAddon) then
 			self.db.profile.GnomTECAddon = {}
 		end
+		self.SafeCall(protected.OnInitialize)
 	end
 
-	function protected.OnEnable()
+	local function OnEnable()
   	  -- Called when the addon is enabled
+		self.SafeCall(protected.OnEnable)
 	end
 
-	function protected.OnDisable()
+	local function OnDisable()
 		-- Called when the addon is disabled
+		self.SafeCall(protected.OnDisable)
 		aceAddon:UnregisterAllEvents();
 	end
+
+	-- protected methods
+	-- function protected.f()
 	
 	-- public methods
 	-- function self.f()
-	function self.LogMessage(level, message, ...)
-		protected.LogMessage(addonTitle, level, message, ...)
-aceAddon:Print(string.format(message, ...))
+	function self.LogMessage(logLevel, message, ...)
+		protected.LogMessage(CLASS_ADDON, logLevel, addonTitle, message, ...)
 	end
 
 	function self.NewDataObject(name, dataObject)
@@ -135,22 +143,18 @@ aceAddon:Print(string.format(message, ...))
 		dataObjects[addonTitle]= {}
 		
 		aceAddon = LibStub("AceAddon-3.0"):NewAddon(addonTitle, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceComm-3.0", "AceSerializer-3.0")
-		aceAddon:Print(addonTitle)
 
 		function aceAddon:OnInitialize()
-			aceAddon:Print("OnInitialize")
-			protected.OnInitialize()
+			OnInitialize()
 		end
 		function aceAddon:OnEnable()
-			aceAddon:Print("OnEnable")
-			protected.OnEnable()
+			OnEnable()
 		end
 		function aceAddon:OnDisable()
-			aceAddon:Print("OnDisable")
-			protected.OnDisable()
+			OnDisable()
 		end
 		
-		protected.LogMessage("<class> GnomTECAddon", LOG_DEBUG, "New GnomTECAddon instance created (%s)", protected.addonUID)
+		protected.LogMessage(CLASS_CLASS, LOG_DEBUG, "GnomTECAddon", "New instance created (%s)", protected.addonUID)
 	end
 	
 	-- return the instance and protected table

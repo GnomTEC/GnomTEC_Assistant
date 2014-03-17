@@ -12,6 +12,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- ----------------------------------------------------------------------
 -- Widget Global Constants (local)
 -- ----------------------------------------------------------------------
+-- Class levels
+local CLASS_CLASS		= 0
+local CLASS_LAYOUT	= 1
+local CLASS_WIDGET	= 2
+local CLASS_ADDON		= 3
+
 -- Log levels
 local LOG_FATAL 	= 0
 local LOG_ERROR	= 1
@@ -64,8 +70,8 @@ function GnomTECWidgetContainer(title, parent, layout)
 	
 	-- public methods
 	-- function self.f()
-	function self.LogMessage(level, message, ...)
-		protected.LogMessage("<Widget> GnomTECWidgetContainer", level, message, ...)
+	function self.LogMessage(logLevel, message, ...)
+		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetContainer", message, ...)
 	end
 
 	function self.AddChild(child, childProtected)
@@ -113,22 +119,22 @@ function GnomTECWidgetContainer(title, parent, layout)
 		return isProp
 	end
 	
-	function self.ResizeByWidth(pixelWidth)
+	function self.ResizeByWidth(pixelWidth, pixelHeight)
 		-- should be calculated according childs and layouter
-		local pixelHeight = layout.ResizeByWidth(pixelWidth)
+		pixelWidth, pixelHeight = layout.ResizeByWidth(pixelWidth, pixelHeight)
 
 		-- we don't change the size in base classes as we don't know what to do
 		-- but we can compute the needed size of container frame and report it to derived class
-		return pixelHeight
+		return pixelWidth, pixelHeight
 	end
 
-	function self.ResizeByHeight(pixelHeight)
+	function self.ResizeByHeight(pixelWidth, pixelHeight)
 		-- should be calculated according childs and layouter
-		local pixelWidth = layout.ResizeByHeight(pixelHeight)
+		pixelWidth, pixelHeight = layout.ResizeByHeight(pixelWidth, pixelHeight)
 
 		-- we don't change the size in base classes as we don't know what to do
 		-- but we can compute the needed size of container frame and report it to derived class
-		return pixelWidth
+		return pixelWidth, pixelHeight
 	end
 	
 	function self.TriggerResize(child, dx, dy)
@@ -141,23 +147,24 @@ function GnomTECWidgetContainer(title, parent, layout)
 			local width = self.GetPixelWidth()
 			local height = self.GetPixelHeight()
 			
+			if (width < minWidth) then
+				width = minWidth
+			elseif (width > maxWidth) then
+				width = maxWidth
+			end
+
+			if (height < minHeight) then
+				height = minHeight
+			elseif (height > maxHeight) then
+				height = maxHeight
+			end
 			
 			if (math.abs(dx) >= math.abs(dy)) then
 				-- take width and resize widget
-				if (width < minWidth) then
-					width = minWidth
-				elseif (width > maxWidth) then
-					width = maxWidth
-				end
-				self.ResizeByWidth(width)
+				self.ResizeByWidth(width, height)
 			else
 				-- take height and resize widget
-				if (height < minHeight) then
-					height = minHeight
-				elseif (height > maxHeight) then
-					height = maxHeight
-				end
-				self.ResizeByHeight(height)
+				self.ResizeByHeight(width, height)
 			end
 		end
 	end
@@ -165,7 +172,7 @@ function GnomTECWidgetContainer(title, parent, layout)
 	-- constructor
 	do
 		layout.Init(self, protected)
-		self.LogMessage(LOG_DEBUG, "New GnomTECWidgetContainer instance created (%s)", protected.widgetUID)
+		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetContainer", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance and protected table
