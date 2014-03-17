@@ -71,7 +71,7 @@ function GnomTEC()
 	-- protected methods
 	-- function protected.f()
 	function protected.LogMessage(classLevel, logLevel, title, message, ...)
-		local timestamp = date("%T")
+		local timestamp = date("%H:%M:%S")
 		table.insert(logBuffer, {timestamp, classLevel, logLevel, title, message, ...})
 		while (maxLogBuffer < #logBuffer) do
 			table.remove(logBuffer, 1)
