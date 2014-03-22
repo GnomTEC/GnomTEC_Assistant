@@ -13,8 +13,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- Class Global Constants (local)
 -- ----------------------------------------------------------------------
 -- Class levels
-local CLASS_CLASS		= 0
-local CLASS_LAYOUT	= 1
+local CLASS_BASE		= 0
+local CLASS_CLASS		= 1
 local CLASS_WIDGET	= 2
 local CLASS_ADDON		= 3
 

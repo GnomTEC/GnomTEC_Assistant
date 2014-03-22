@@ -29,15 +29,18 @@
 	<Include file="GnomTEC.lua"/>
 
 	<!-- GnomTEC Framework Widget Classes -->
-  <Include file="Widgets\GnomTECLayout.lua"/>
-  <Include file="Widgets\GnomTECLayoutFill.lua"/>
-  <Include file="Widgets\GnomTECLayoutVertical.lua"/>
   <Include file="Widgets\GnomTECWidget.lua"/>
   <Include file="Widgets\GnomTECWidgetContainer.lua"/> 
+  <Include file="Widgets\GnomTECWidgetContainerLayoutFill.lua"/> 
+  <Include file="Widgets\GnomTECWidgetContainerLayoutHorizontal.lua"/> 
+  <Include file="Widgets\GnomTECWidgetContainerLayoutVertical.lua"/> 
   <Include file="Widgets\GnomTECWidgetContainerWindow.lua"/>
+  <Include file="Widgets\GnomTECWidgetEditBox.lua"/>
   <Include file="Widgets\GnomTECWidgetMap.lua"/>
+  <Include file="Widgets\GnomTECWidgetPanelButton.lua"/>
   <Include file="Widgets\GnomTECWidgetScrollingMessage.lua"/>
-  
+  <Include file="Widgets\GnomTECWidgetText.lua"/>
+
   <!-- GnomTEC Framework Classes -->
   <Include file="GnomTECAddon.lua"/>
 </Ui>

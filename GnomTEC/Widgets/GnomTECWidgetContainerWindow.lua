@@ -13,8 +13,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- Widget Global Constants (local)
 -- ----------------------------------------------------------------------
 -- Class levels
-local CLASS_CLASS		= 0
-local CLASS_LAYOUT	= 1
+local CLASS_BASE		= 0
+local CLASS_CLASS		= 1
 local CLASS_WIDGET	= 2
 local CLASS_ADDON		= 3
 
@@ -38,23 +38,25 @@ local LOG_DEBUG 	= 4
 -- ----------------------------------------------------------------------
 -- Helper Functions (local)
 -- ----------------------------------------------------------------------
-
+-- function which returns also nil for empty strings
+local function emptynil( x ) return x ~= "" and x or nil end
 
 -- ----------------------------------------------------------------------
 -- Widget Class
 -- ----------------------------------------------------------------------
 
-function GnomTECWidgetContainerWindow(title, layout)
+function GnomTECWidgetContainerWindow(init)
 
 	-- call base class
-	local self, protected = GnomTECWidgetContainer(title, nil, layout)
+	local self, protected = GnomTECWidgetContainer(init)
 	
 	-- public fields go in the instance table
 	-- self.field = value
 
 	-- protected fields go in the protected table
 	-- protected.field = value
-	protected.headerTitle = nil
+	protected.title = nil
+	protected.titleFontString = nil
 	
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
@@ -175,13 +177,23 @@ function GnomTECWidgetContainerWindow(title, layout)
 		return pixelWidth, pixelHeight
 	end
 	
-	local base_SetTitle = self.SetTitle
 	function self.SetTitle(title)
-		base_SetTitle(title)
-		protected.headerTitle:SetText(title)
+		protected.title = emptynil(title)
+		if (protected.titleFontString) then
+			protected.titleFontString:SetText(protected.title or "")
+		end
 	end
+	
+	function self.GetTitle()
+		return emptynil(protected.title)
+	end	
+
 	-- constructor
 	do
+		if (not init) then
+			init = {}
+		end
+		
 		local widgetFrame = CreateFrame("Frame", nil, UIParent)
 		widgetFrame:Hide()
 
@@ -189,16 +201,28 @@ function GnomTECWidgetContainerWindow(title, layout)
 		local closeButton = CreateFrame("Button", nil, widgetFrame, "UIPanelCloseButton")
 		local reseizeButton = CreateFrame("Button", nil, widgetFrame)
 		local containerFrame = CreateFrame("Frame", nil, widgetFrame)
-		local headerTitle = headerFrame:CreateFontString()
+		local titleFontString = headerFrame:CreateFontString()
+		local labelFontString = containerFrame:CreateFontString()
 
 		protected.widgetFrame = widgetFrame 
 		protected.containerFrame = containerFrame 
-		protected.headerTitle = headerTitle 
+		protected.titleFontString = titleFontString 
+		protected.labelFontString = labelFontString 
 		
 		-- should be configurable later eg. saveable
 		widgetFrame:SetPoint("CENTER")		
-		widgetFrame:SetWidth("400")		
-		widgetFrame:SetHeight("200")
+		local w, r = self.GetWidth()
+		if (not r) then
+			widgetFrame:SetWidth(w)		
+		else
+			widgetFrame:SetWidth(400)		
+		end
+		local h, r = self.GetHeight()
+		if (not r) then
+			widgetFrame:SetHeight(h)		
+		else
+			widgetFrame:SetHeight(200)
+		end
 		
 		local backdrop = {
 			bgFile 	= [[Interface\Addons\GnomTEC_Assistant\GnomTEC\Textures\UI-Window-Background]],
@@ -221,8 +245,7 @@ function GnomTECWidgetContainerWindow(title, layout)
 		widgetFrame:SetResizable(true)
 		widgetFrame:SetClampedToScreen(true)
 		widgetFrame:SetToplevel(true)
-		
-		
+		widgetFrame:EnableMouse(true)
 		
 		closeButton:SetPoint("TOPRIGHT")
 
@@ -240,22 +263,31 @@ function GnomTECWidgetContainerWindow(title, layout)
 		headerFrame:SetScript("OnMouseDown", StartMoving)
 		headerFrame:SetScript("OnMouseUp", StopMoving)
 
-		headerTitle:SetFontObject(GameFontNormal)
-		headerTitle:SetJustifyH("CENTER")
-		headerTitle:SetTextColor(1.0, 1.0, 0.0, 1.0)
-		headerTitle:SetWidth("32")		
-		headerTitle:SetHeight("14")
-		headerTitle:SetPoint("TOPLEFT", 0, -3)
-		headerTitle:SetPoint("RIGHT")
+		titleFontString:SetFontObject(GameFontNormal)
+		titleFontString:SetJustifyH("CENTER")
+		titleFontString:SetTextColor(1.0, 1.0, 0.0, 1.0)
+		titleFontString:SetWidth("32")		
+		titleFontString:SetHeight("14")
+		titleFontString:SetPoint("TOPLEFT", 0, -3)
+		titleFontString:SetPoint("RIGHT")
 
 		containerFrame:SetPoint("TOPLEFT", 7, -32)
 		containerFrame:SetPoint("BOTTOMRIGHT", -7, 35)
 		
-		self.SetTitle(title)
+		labelFontString:SetFontObject(GameFontNormal)
+		labelFontString:SetJustifyH("CENTER")
+		labelFontString:SetTextColor(0.5, 0.5, 0.5, 1.0)
+		labelFontString:SetWidth("32")		
+		labelFontString:SetHeight("14")
+		labelFontString:SetPoint("TOPLEFT", 0, -3)
+		labelFontString:SetPoint("RIGHT")
+
+		self.SetLabel(init.label)
+		self.SetTitle(init.title)
 
 		-- this enables resizing
-		lastWidth = 400
-		lastHeight = 200
+		lastWidth = self.GetPixelWidth()
+		lastHeight = self.GetPixelHeight()
 
 		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetContainerWindow", "New instance created (%s)", protected.UID)
 	end

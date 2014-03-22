@@ -13,8 +13,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- Class Global Constants (local)
 -- ----------------------------------------------------------------------
 -- Class levels
-local CLASS_CLASS		= 0
-local CLASS_LAYOUT	= 1
+local CLASS_BASE		= 0
+local CLASS_CLASS		= 1
 local CLASS_WIDGET	= 2
 local CLASS_ADDON		= 3
 
@@ -92,6 +92,10 @@ function GnomTEC()
 	
 	-- public methods
 	-- function self.f()
+	function self.LogMessage(logLevel, message, ...)
+		protected.LogMessage(CLASS_BASE, logLevel, "GnomTEC", message, ...)
+	end
+
 	function self.SafeCall(func, ...)
 		if type(func) == "function" then
 			return func(...)
@@ -102,7 +106,7 @@ function GnomTEC()
 		if type(logReceiver) == "function" then
 			self.UnregisterLogReceiver(logReceiver)
 			table.insert(logReceivers, {func=logReceiver, logReceived=0})
-			protected.LogMessage(CLASS_CLASS, LOG_DEBUG, "GnomTEC", "log receiver registered")
+			protected.LogMessage(CLASS_BASE, LOG_DEBUG, "GnomTEC", "log receiver registered")
 		end
 	end
 
@@ -117,7 +121,7 @@ function GnomTEC()
 			end
 			if (pos > 0) then
 				table.remove(logReceivers, pos)
-				protected.LogMessage(CLASS_CLASS, LOG_DEBUG, "GnomTEC", "log receiver unregistered")
+				protected.LogMessage(CLASS_BASE, LOG_DEBUG, "GnomTEC", "log receiver unregistered")
 			end
 		end
 	end
@@ -128,7 +132,7 @@ function GnomTEC()
 		lastUID = lastUID + 1
 		protected.UID = "GnomTECInstance"..lastUID
 		
-		protected.LogMessage(CLASS_CLASS, LOG_DEBUG, "GnomTEC", "New instance created (%s)", protected.UID)
+		protected.LogMessage(CLASS_BASE, LOG_DEBUG, "GnomTEC", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance table

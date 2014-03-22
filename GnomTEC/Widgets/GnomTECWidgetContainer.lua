@@ -13,8 +13,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- Widget Global Constants (local)
 -- ----------------------------------------------------------------------
 -- Class levels
-local CLASS_CLASS		= 0
-local CLASS_LAYOUT	= 1
+local CLASS_BASE		= 0
+local CLASS_CLASS		= 1
 local CLASS_WIDGET	= 2
 local CLASS_ADDON		= 3
 
@@ -38,16 +38,18 @@ local LOG_DEBUG 	= 4
 -- ----------------------------------------------------------------------
 -- Helper Functions (local)
 -- ----------------------------------------------------------------------
+-- function which returns also nil for empty strings
+local function emptynil( x ) return x ~= "" and x or nil end
 
 
 -- ----------------------------------------------------------------------
 -- Widget Class
 -- ----------------------------------------------------------------------
 
-function GnomTECWidgetContainer(title, parent, layout)
+function GnomTECWidgetContainer(init)
 
 	-- call base class
-	local self, protected = GnomTECWidget(title, parent)
+	local self, protected = GnomTECWidget(init)
 	
 	-- public fields go in the instance table
 	-- self.field = value
@@ -56,11 +58,11 @@ function GnomTECWidgetContainer(title, parent, layout)
 	-- protected.field = value
 	protected.childs = {}
 	protected.containerFrame = nil
-	
+	protected.labelFontString = nil
+
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
 	-- local field
-	local layout = layout
 	
 	-- private methods
 	-- local function f()
@@ -71,7 +73,7 @@ function GnomTECWidgetContainer(title, parent, layout)
 	-- public methods
 	-- function self.f()
 	function self.LogMessage(logLevel, message, ...)
-		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetContainer", message, ...)
+		protected.LogMessage(CLASS_CLASS, logLevel, "GnomTECWidgetContainer", message, ...)
 	end
 
 	function self.AddChild(child, childProtected)
@@ -79,8 +81,13 @@ function GnomTECWidgetContainer(title, parent, layout)
 		table.insert(protected.childs, {widget = child, widgetProtected = childProtected})
 		childProtected.widgetFrame:SetParent(protected.containerFrame)
 		childProtected.widgetFrame:ClearAllPoints()
-		childProtected.widgetFrame:SetPoint("TOPLEFT", 0, 0)
-
+		if (not self.GetLabel()) then
+			childProtected.widgetFrame:SetPoint("CENTER")
+		else
+			childProtected.widgetFrame:SetPoint("CENTER", 0, -10)
+		end		
+		childProtected.widgetFrame:Show()
+		
 		self.TriggerResize(child, 0, 0)
 	end
 
@@ -94,34 +101,123 @@ function GnomTECWidgetContainer(title, parent, layout)
 		
 		if (pos) then
 			table.remove(protected.childs, pos)
-			self.TriggerResize(child, 0, 0)
+			self.TriggerResize(nil, 0, 0)
 		end
 	end
 	
 	function self.GetMinReseize()
+		-- should be calculated according childs and layout
 		-- should be calculated according childs and layouter
-		local minWidth, minHeight = layout.GetMinReseize()
+		local minWidth = 0
+		local minHeight = 0
+
+		for idx, value in ipairs(protected.childs) do
+			if (value.widget.IsShown()) then
+				minWidth, minHeight = value.widget.GetMinReseize()
+				break
+			end
+		end
+
+		if (self.GetLabel()) then
+			minHeight = minHeight + 20
+		end
+		
+		if (minWidth > UIParent:GetWidth()) then
+			minWidth = UIParent:GetWidth()
+		end
+		if (minHeight > UIParent:GetHeight()) then
+			minHeight = UIParent:GetHeight()
+		end
 
 		return minWidth, minHeight
 	end
 
 	function self.GetMaxReseize()
-		-- should be calculated according childs and layouter
-		local maxWidth, maxHeight = layout.GetMaxReseize()
+		-- should be calculated according childs and layout
+		local maxWidth = 0
+		local maxHeight = 0
+
+		for idx, value in ipairs(protected.childs) do
+			if (value.widget.IsShown()) then
+				maxWidth, maxHeight = value.widget.GetMaxReseize()
+				break
+			end
+		end
+
+		if (self.GetLabel()) then
+			maxHeight = maxHeight + 20
+		end
+
+		if (maxWidth > UIParent:GetWidth()) then
+			maxWidth = UIParent:GetWidth()
+		end
+		if (maxHeight > UIParent:GetHeight()) then
+			maxHeight = UIParent:GetHeight()
+		end
 		
 		return maxWidth, maxHeight
 	end
 
-	function self.IsProportionalReseize()
-		-- should be calculated according childs and layouter
-		local isProp = layout.IsProportionalReseize()
+	function self.IsHeightDependingOnWidth()
+		-- should be calculated according childs and layout
+		local depends = false
+		
+		for idx, value in ipairs(protected.containerProtected.childs) do
+			if (value.widget.IsShown()) then
+				depends = value.widget.IsHeightDependingOnWidth()
+				break
+			end
+		end
+		return depends
+	end
 
-		return isProp
+	function self.IsWidthDependingOnHeight()
+		-- should be calculated according childs and layout
+		local depends = false
+		
+		for idx, value in ipairs(protected.containerProtected.childs) do
+			if (value.widget.IsShown()) then
+				depends = value.widget.IsWidthDependingOnHeight()
+				break
+			end
+		end
+		return depends
+	end
+	
+	function self.PrepareResize()
+		local child = nil
+		
+		-- for fill layout only one child should be visible
+		for idx, value in ipairs(protected.childs) do
+			if (not child) then
+				if (value.widget.IsShown()) then
+					child = value.widget
+					if (not self.GetLabel()) then
+						value.widgetProtected.widgetFrame:SetPoint("CENTER")
+					else
+						value.widgetProtected.widgetFrame:SetPoint("CENTER", 0, -10)
+					end		
+					child.PrepareResize()
+				end
+			else
+				if (child ~= value.widget) then
+					value.widget.Hide()
+				end
+			end
+		end
 	end
 	
 	function self.ResizeByWidth(pixelWidth, pixelHeight)
-		-- should be calculated according childs and layouter
-		pixelWidth, pixelHeight = layout.ResizeByWidth(pixelWidth, pixelHeight)
+		for idx, value in ipairs(protected.childs) do
+			if (value.widget.IsShown()) then
+				if (not self.GetLabel()) then
+					pixelWidth, pixelHeight = value.widget.ResizeByWidth(pixelWidth, pixelHeight)
+				else
+					pixelWidth, pixelHeight = value.widget.ResizeByWidth(pixelWidth, pixelHeight - 20)
+				end
+				break
+			end
+		end
 
 		-- we don't change the size in base classes as we don't know what to do
 		-- but we can compute the needed size of container frame and report it to derived class
@@ -129,8 +225,16 @@ function GnomTECWidgetContainer(title, parent, layout)
 	end
 
 	function self.ResizeByHeight(pixelWidth, pixelHeight)
-		-- should be calculated according childs and layouter
-		pixelWidth, pixelHeight = layout.ResizeByHeight(pixelWidth, pixelHeight)
+		for idx, value in ipairs(protected.childs) do
+			if (value.widget.IsShown()) then
+				if (not self.GetLabel()) then
+					pixelWidth, pixelHeight = value.widget.ResizeByHeight(pixelWidth, pixelHeight)
+				else
+					pixelWidth, pixelHeight = value.widget.ResizeByHeight(pixelWidth, pixelHeight - 20)
+				end
+				break
+			end
+		end
 
 		-- we don't change the size in base classes as we don't know what to do
 		-- but we can compute the needed size of container frame and report it to derived class
@@ -138,10 +242,11 @@ function GnomTECWidgetContainer(title, parent, layout)
 	end
 	
 	function self.TriggerResize(child, dx, dy)
-		layout.TriggerResize(child, dx, dy)
 		if (protected.widgetParent) then
 			protected.widgetParent.TriggerResize(self, dx, dy)
 		else
+			self.PrepareResize()
+
 			local minWidth, minHeight = self.GetMinReseize()
 			local maxWidth, maxHeight = self.GetMaxReseize()
 			local width = self.GetPixelWidth()
@@ -168,11 +273,21 @@ function GnomTECWidgetContainer(title, parent, layout)
 			end
 		end
 	end
+
+	function self.SetLabel(label)
+		protected.label = emptynil(label)
+		if (protected.labelFontString) then
+			protected.labelFontString:SetText(protected.label or "")
+		end
+	end
 	
 	-- constructor
 	do
-		layout.Init(self, protected)
-		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetContainer", "New instance created (%s)", protected.UID)
+		if (not init) then
+			init = {}
+		end
+
+		protected.LogMessage(CLASS_CLASS, LOG_DEBUG, "GnomTECWidgetContainer", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance and protected table

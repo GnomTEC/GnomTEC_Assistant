@@ -1,5 +1,5 @@
 ﻿-- **********************************************************************
--- GnomTECLayout
+-- GnomTECWidgetPanelButton
 -- Version: 5.4.7.1
 -- Author: GnomTEC
 -- Copyright 2014 by GnomTEC
@@ -10,11 +10,11 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 
 
 -- ----------------------------------------------------------------------
--- Layout Global Constants (local)
+-- Widget Global Constants (local)
 -- ----------------------------------------------------------------------
 -- Class levels
-local CLASS_CLASS		= 0
-local CLASS_LAYOUT	= 1
+local CLASS_BASE		= 0
+local CLASS_CLASS		= 1
 local CLASS_WIDGET	= 2
 local CLASS_ADDON		= 3
 
@@ -26,43 +26,44 @@ local LOG_INFO 	= 3
 local LOG_DEBUG 	= 4
 
 -- ----------------------------------------------------------------------
--- Layout Static Variables (local)
--- ----------------------------------------------------------------------
-local lastUID = 0
-
-
--- ----------------------------------------------------------------------
--- Layout Startup Initialization
+-- Widget Static Variables (local)
 -- ----------------------------------------------------------------------
 
 
 -- ----------------------------------------------------------------------
--- Layout Functions (local)
+-- Widget Startup Initialization
 -- ----------------------------------------------------------------------
 
 
 -- ----------------------------------------------------------------------
--- Layout Class
+-- Helper Functions (local)
 -- ----------------------------------------------------------------------
 
-function GnomTECLayout()
+
+-- ----------------------------------------------------------------------
+-- Widget Class
+-- ----------------------------------------------------------------------
+
+function GnomTECWidgetPanelButton(init)
+
 	-- call base class
-	local self, protected = GnomTEC()
+	local self, protected = GnomTECWidget(init)
 	
 	-- public fields go in the instance table
 	-- self.field = value
 
 	-- protected fields go in the protected table
 	-- protected.field = value
-	protected.containerWidget = nil
-	protected.containerProtected = nil
-
+	
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
 	-- local field
-		
+	
 	-- private methods
 	-- local function f()
+	local function OnClick(frame, button)
+		self.SafeCall(self.OnClick, self, button)
+	end
 
 	-- protected methods
 	-- function protected.f()
@@ -70,66 +71,93 @@ function GnomTECLayout()
 	-- public methods
 	-- function self.f()
 	function self.LogMessage(logLevel, message, ...)
-		protected.LogMessage(CLASS_LAYOUT, logLevel, "GnomTECLayout", message, ...)
+		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetPanelButton", message, ...)
 	end
 
-	function self.Init(containerWidget, containerProtected)
-		protected.containerWidget = containerWidget
-		protected.containerProtected = containerProtected
-	end
-	
 	function self.GetMinReseize()
-		-- should be calculated according childs and layouter
-		local minWidth = 0
-		local minHeight = 0
-
+		local minWidth = protected.widgetFrame:GetTextWidth() + 10
+		local minHeight = 24
+		
 		return minWidth, minHeight
 	end
 
-	function self.GetMaxReseize()
-		-- should be calculated according childs and layouter
+	function self.GetMaxReseize()		
 		local maxWidth = UIParent:GetWidth()
-		local maxHeight = UIParent:GetHeight()
-		
+		local maxHeight = 24
+
 		return maxWidth, maxHeight
 	end
 
-	function self.IsProportionalReseize()
-		-- should be calculated according childs and layouter
+	function self.IsHeightDependingOnWidth()
 		return false
 	end
-	
-	function self.ResizeByWidth(pixelWidth, pixelHeight)
-		-- should be calculated according childs and layouter
 
-		-- we don't change the size in layouter as we don't know what to do
-		-- but we can compute the needed size of layout and report it to the container widget
-		return pixelWidth, pixelHeight
+	function self.IsWidthDependingOnHeight()
+		return false
+	end
+
+	function self.ResizeByWidth(pixelWidth, pixelHeight)
+		protected.widgetFrame:SetWidth(pixelWidth)
+		protected.widgetFrame:SetHeight(24)
+
+		return pixelWidth, 24
 	end
 
 	function self.ResizeByHeight(pixelWidth, pixelHeight)
-		-- should be calculated according childs and layouter
+		protected.widgetFrame:SetWidth(pixelWidth)
+		protected.widgetFrame:SetHeight(24)
 
-		-- we don't change the size in layouter as we don't know what to do
-		-- but we can compute the needed size of layout and report it to the container widget
-		return pixelWidth, pixelHeight
+		return pixelWidth, 24
 	end
 	
-	function self.TriggerResize(child, dx, dy)
-		-- a resize is triggered by some child
-		-- here we can prepare for later resize
+	function self.Disable()
+		protected.widgetFrame:Disable()
+	end
+
+	function self.Enable()
+		protected.widgetFrame:Enable()
 	end
 	
 	-- constructor
 	do
-		lastUID = lastUID + 1
-		protected.layoutUID = "GnomTECLayoutInstance"..lastUID
+		if (not init) then
+			init = {}
+		end
+		
+		local widgetFrame = CreateFrame("Button", nil, UIParent, "UIPanelButtonTemplate")
+		widgetFrame:Hide()
 
-		protected.LogMessage(CLASS_LAYOUT, LOG_DEBUG, "GnomTECLayout", "New instance created (%s)", protected.UID)
+		protected.widgetFrame = widgetFrame 
+		
+		-- should be configurable later eg. saveable
+		widgetFrame:SetPoint("CENTER")		
+		local w, r = self.GetWidth()
+		if (not r) then
+			widgetFrame:SetWidth(w)		
+		else
+			widgetFrame:SetWidth("16")		
+		end
+		
+		protected.widgetHeight = 24
+		protected.widgetHeightIsRelative = false
+		widgetFrame:SetHeight(protected.widgetHeight)
+		
+		widgetFrame:SetText(init.label or "")				
+		widgetFrame:SetScript("OnClick",OnClick)
+		
+		if (init.disabled) then
+			self.Disable()
+		end
+		
+		if (init.parent) then
+			init.parent.AddChild(self, protected)
+		end
+
+		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetPanelButton", "New instance created (%s)", protected.UID)
 	end
 	
-	-- return the instance and protected table
-	return self, protected
+	-- return the instance
+	return self
 end
 
 

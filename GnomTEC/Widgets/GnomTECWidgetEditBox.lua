@@ -1,5 +1,5 @@
 ﻿-- **********************************************************************
--- GnomTECWidgetScrollingMessage
+-- GnomTECWidgetEditBox
 -- Version: 5.4.7.1
 -- Author: GnomTEC
 -- Copyright 2014 by GnomTEC
@@ -44,7 +44,7 @@ local LOG_DEBUG 	= 4
 -- Widget Class
 -- ----------------------------------------------------------------------
 
-function GnomTECWidgetScrollingMessage(init)
+function GnomTECWidgetEditBox(init)
 
 	-- call base class
 	local self, protected = GnomTECWidget(init)
@@ -54,7 +54,7 @@ function GnomTECWidgetScrollingMessage(init)
 
 	-- protected fields go in the protected table
 	-- protected.field = value
-	protected.scrollingMessageFrame = nil
+	protected.editBoxFrame = nil
 	protected.slider = nil
 	
 	-- private fields are implemented using locals
@@ -64,70 +64,44 @@ function GnomTECWidgetScrollingMessage(init)
 	-- private methods
 	-- local function f()
 	local function OnMouseWheel(frame, delta)
-		local num = protected.scrollingMessageFrame:GetNumMessages()
-		local cur = protected.scrollingMessageFrame:GetCurrentScroll()
-		local disp = protected.scrollingMessageFrame:GetNumLinesDisplayed()
-
-		local newValue = cur + delta
-
-		if (newValue < 0) then
-			newValue = 0
-		elseif (newValue > (num-disp)) then
-			newValue = (num-disp)
-		end
-		protected.scrollingMessageFrame:SetScrollOffset(newValue)
-	end
-
-	local function OnMessageScrollChanged(frame)
-		local num = protected.scrollingMessageFrame:GetNumMessages()
-		local cur = protected.scrollingMessageFrame:GetCurrentScroll()
-		local disp = protected.scrollingMessageFrame:GetNumLinesDisplayed()
-		local thumbTexture = protected.slider:GetThumbTexture()
-		
-		if (num > disp) then
-			protected.slider:SetMinMaxValues(0, num-disp);
-			protected.slider:SetValue(num-disp-cur);
-			local thumbSize = protected.slider:GetHeight() / num-disp
-			if (thumbSize < 16) then
-				thumbSize = 16
-			end 
-			thumbTexture:SetHeight(thumbSize)
-		else
-			protected.slider:SetMinMaxValues(0, 0);
-			protected.slider:SetValue(0);   	
-			thumbTexture:SetHeight(protected.slider:GetHeight())
-		end
+		protected.slider:SetValue(protected.slider:GetValue() - delta*14);
 	end
 
 	local function OnValueChanged(frame, value)
-		local num = protected.scrollingMessageFrame:GetNumMessages()
-		local disp = protected.scrollingMessageFrame:GetNumLinesDisplayed()
-		local cur = num - disp - floor(value)
-
-		if (num > disp) then
-			protected.scrollingMessageFrame:SetScrollOffset(cur)
-		else
-			protected.scrollingMessageFrame:SetScrollOffset(0)
-		end		
+		protected.widgetFrame:SetVerticalScroll(value);
 	end
 
 	local function OnClickUpButton(frame, button)
-		protected.scrollingMessageFrame:ScrollUp()
+		protected.slider:SetValue(protected.slider:GetValue() - (protected.slider:GetHeight() / 2))
 		PlaySound("UChatScrollButton");
 	end
 
 	local function OnClickDownButton(frame, button)
-		protected.scrollingMessageFrame:ScrollDown()
+		protected.slider:SetValue(protected.slider:GetValue() + (protected.slider:GetHeight() / 2))
 		PlaySound("UChatScrollButton");
 	end
+	
+	local function OnSizeChangedEditBox(frame, width, height)
+		protected.widgetFrame:UpdateScrollChildRect();
+	end
 
+	local function OnEscapePressed(frame)
+		protected.editBoxFrame:ClearFocus();
+	end
+	
+	local function OnScrollRangeChanged(frame, xExtent, yExtent)
+		protected.widgetFrame:UpdateScrollChildRect()
+		protected.slider:SetMinMaxValues(0, protected.widgetFrame:GetVerticalScrollRange());
+		protected.slider:SetValue(protected.widgetFrame:GetVerticalScroll());   
+	end
+	
 	-- protected methods
 	-- function protected.f()
 	
 	-- public methods
 	-- function self.f()
 	function self.LogMessage(logLevel, message, ...)
-		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetScrollingMessage", message, ...)
+		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetEditBox", message, ...)
 	end
 
 	function self.GetMinReseize()
@@ -166,12 +140,12 @@ function GnomTECWidgetScrollingMessage(init)
 		return pixelWidth, pixelHeight
 	end
 	
-	function self.AddMessage(text, ...)
-		protected.scrollingMessageFrame:AddMessage(text, ...)
+	function self.SetText(text)
+		protected.editBoxFrame:SetText(text or "")
 	end
 
-	function self.GetNumMessages(...)
-		return protected.scrollingMessageFrame:GetNumMessages(...)
+	function self.GetText()
+		return protected.editBoxFrame:GetText()
 	end
 	
 	-- constructor
@@ -180,16 +154,16 @@ function GnomTECWidgetScrollingMessage(init)
 			init = {}
 		end
 		
-		local widgetFrame = CreateFrame("Frame", nil, UIParent)
+		local widgetFrame = CreateFrame("ScrollFrame", nil, UIParent)
 		widgetFrame:Hide()
 
-		local scrollingMessageFrame = CreateFrame("ScrollingMessageFrame", nil, widgetFrame)
+		local editBoxFrame = CreateFrame("EditBox", nil, widgetFrame)
 		local slider = CreateFrame("Slider", nil, widgetFrame)
 		local upButton = CreateFrame("Button", nil, slider, "UIPanelScrollUpButtonTemplate")
 		local downButton = CreateFrame("Button", nil, slider, "UIPanelScrollDownButtonTemplate")
 		
 		protected.widgetFrame = widgetFrame 
-		protected.scrollingMessageFrame = scrollingMessageFrame 
+		protected.editBoxFrame = editBoxFrame 
 		protected.slider = slider 
 		
 		-- should be configurable later eg. saveable
@@ -207,17 +181,23 @@ function GnomTECWidgetScrollingMessage(init)
 			widgetFrame:SetHeight("400")
 		end
 		
-		scrollingMessageFrame:SetPoint("TOPLEFT")		
-		scrollingMessageFrame:SetPoint("BOTTOMRIGHT", -16, 0)	
-		scrollingMessageFrame:SetFading(false)
-		scrollingMessageFrame:SetIndentedWordWrap(true) 
-		scrollingMessageFrame:SetMaxLines(1024)
-		scrollingMessageFrame:SetFontObject(ChatFontNormal)
-		scrollingMessageFrame:SetJustifyH("LEFT")
-		
-		scrollingMessageFrame:SetScript("OnMouseWheel", OnMouseWheel)
-		scrollingMessageFrame:SetScript("OnMessageScrollChanged", OnMessageScrollChanged)
-		
+		widgetFrame:SetScript("OnScrollRangeChanged", OnScrollRangeChanged)
+		widgetFrame:SetScript("OnMouseWheel", OnMouseWheel)
+
+		widgetFrame:SetScrollChild(editBoxFrame)
+
+		editBoxFrame:SetAllPoints(true)
+		editBoxFrame:SetMultiLine(true)
+		editBoxFrame:SetFontObject(ChatFontNormal)
+		editBoxFrame:SetJustifyH("LEFT")
+		editBoxFrame:EnableKeyboard(false);
+		editBoxFrame:EnableMouse(false);			
+		editBoxFrame:SetAutoFocus(false);			
+
+		editBoxFrame:SetScript("OnMouseWheel", OnMouseWheel)
+		editBoxFrame:SetScript("OnSizeChanged", OnChangedEditBoxSize)
+		editBoxFrame:SetScript("OnEscapePressed", OnEscapePressed)
+
 		slider:SetWidth(16)
 		slider:SetPoint("TOPRIGHT", 0, -16)	
 		slider:SetPoint("BOTTOMRIGHT", 0, 16)	
@@ -233,11 +213,17 @@ function GnomTECWidgetScrollingMessage(init)
 		downButton:SetScript("OnMouseWheel", OnMouseWheel)
 		downButton:SetScript("OnClick", OnClickDownButton)
 				
+		widgetFrame:UpdateScrollChildRect();
+		slider:SetMinMaxValues(0, widgetFrame:GetVerticalScrollRange());
+		slider:SetValue(widgetFrame:GetVerticalScroll());   
+
+		self.SetText(init.text)
+		
 		if (init.parent) then
 			init.parent.AddChild(self, protected)
 		end
 
-		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetScrollingMessage", "New instance created (%s)", protected.UID)
+		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetEditBox", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance

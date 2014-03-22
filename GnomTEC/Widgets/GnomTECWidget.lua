@@ -13,8 +13,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- Widget Global Constants (local)
 -- ----------------------------------------------------------------------
 -- Class levels
-local CLASS_CLASS		= 0
-local CLASS_LAYOUT	= 1
+local CLASS_BASE		= 0
+local CLASS_CLASS		= 1
 local CLASS_WIDGET	= 2
 local CLASS_ADDON		= 3
 
@@ -38,13 +38,15 @@ local lastUID = 0
 -- ----------------------------------------------------------------------
 -- Helper Functions (local)
 -- ----------------------------------------------------------------------
+-- function which returns also nil for empty strings
+local function emptynil( x ) return x ~= "" and x or nil end
 
 
 -- ----------------------------------------------------------------------
 -- Widget Class
 -- ----------------------------------------------------------------------
 
-function GnomTECWidget(title, parent)
+function GnomTECWidget(init)
 	-- call base class
 	local self, protected = GnomTEC()
 	
@@ -54,12 +56,12 @@ function GnomTECWidget(title, parent)
 	-- protected fields go in the protected table
 	-- protected.field = value
 	protected.widgetParent = nil
-	protected.widgetTitle = nil
 	protected.widgetUID = nil
 	protected.widgetFrame = nil
-	protected.widgetRelativeWidth = 100
-	protected.widgetRelativeHeight = 100
-
+	protected.widgetWidth = nil
+	protected.widgetWidthIsRelative = nil
+	protected.widgetHeightIsRelative = nil
+	protected.label = nil
 	
 
 	-- private fields are implemented using locals
@@ -75,7 +77,7 @@ function GnomTECWidget(title, parent)
 	-- public methods
 	-- function self.f()
 	function self.LogMessage(logLevel, message, ...)
-		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidget", message, ...)
+		protected.LogMessage(CLASS_CLASS, logLevel, "GnomTECWidget", message, ...)
 	end
 
 	function self.Show()
@@ -99,11 +101,11 @@ function GnomTECWidget(title, parent)
 	end
 	
 	function self.GetPixelWidth()
-		return protected.widgetFrame:GetWidth()
+		return floor(protected.widgetFrame:GetWidth())
 	end
 
 	function self.GetPixelHeight()
-		return protected.widgetFrame:GetHeight()
+		return floor(protected.widgetFrame:GetHeight())
 	end
 	
 	function self.GetMinReseize()
@@ -114,8 +116,15 @@ function GnomTECWidget(title, parent)
 		return UIParent:GetWidth(), UIParent:GetHeight()
 	end
 
-	function self.IsProportionalReseize()
+	function self.IsHeightDependingOnWidth()
 		return false
+	end
+
+	function self.IsWidthDependingOnHeight()
+		return false
+	end
+	
+	function self.PrepareResize()
 	end
 	
 	function self.ResizeByWidth(pixelWidth, pixelHeight)
@@ -140,31 +149,64 @@ function GnomTECWidget(title, parent)
 		return protected.widgetUID
 	end
 	
-	function self.GetRelativeWidth()
-		return protected.widgetRelativeWidth
+	function self.GetWidth()
+		return protected.widgetWidth, protected.widgetWidthIsRelative
 	end
 
-	function self.GetRelativeHeight()
-		return protected.widgetRelativeHeight
-	end
-	
-	
-	function self.SetTitle(title)
-		protected.widgetTitle = title
+	function self.GetHeight()
+		return protected.widgetHeight,  protected.widgetHeightIsRelative
 	end
 
-	function self.GetTitle()
-		return protected.widgetTitle
-	end
+	function self.SetLabel(label)
+		protected.label = emptynil(label)
+	end	
+
+	function self.GetLabel()
+		return emptynil(protected.label)
+	end	
+	
+	
 	
 	-- constructor
 	do
 		lastUID = lastUID + 1
 		protected.widgetUID = "GnomTECWidgetInstance"..lastUID
-		protected.widgetParent = parent
-		protected.widgetTitle = title
+
+		if (not init) then
+			init = {}
+		end
 		
-		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidget", "New instance created (%s)", protected.UID)
+		protected.widgetParent = init.parent
+
+		local width, widthUnit = string.match(init.width or "", "(%d+)(.)")
+		if (not width) then
+			protected.widgetWidth = 100
+			protected.widgetWidthIsRelative = true
+		else
+			protected.widgetWidth = width
+			if ("%" == widthUnit) then
+				protected.widgetWidthIsRelative = true
+			else
+				protected.widgetWidthIsRelative = false
+			end
+		end
+
+		local height, heightUnit = string.match(init.height or "", "(%d+)(.)")
+		if (not height) then
+			protected.widgetHeight = 100
+			protected.widgetHeightIsRelative = true
+		else
+			protected.widgetHeight = height
+			if ("%" == heightUnit) then
+				protected.widgetHeightIsRelative = true
+			else
+				protected.widgetHeightIsRelative = false
+			end
+		end
+
+		self.SetLabel(init.label)
+
+		protected.LogMessage(CLASS_CLASS, LOG_DEBUG, "GnomTECWidget", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance and protected table

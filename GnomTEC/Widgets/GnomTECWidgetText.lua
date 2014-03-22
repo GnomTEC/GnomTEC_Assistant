@@ -1,5 +1,5 @@
 ﻿-- **********************************************************************
--- GnomTECWidgetMap
+-- GnomTECWidgetText
 -- Version: 5.4.7.1
 -- Author: GnomTEC
 -- Copyright 2014 by GnomTEC
@@ -38,13 +38,15 @@ local LOG_DEBUG 	= 4
 -- ----------------------------------------------------------------------
 -- Helper Functions (local)
 -- ----------------------------------------------------------------------
+-- function which returns also nil for empty strings
+local function emptynil( x ) return x ~= "" and x or nil end
 
 
 -- ----------------------------------------------------------------------
 -- Widget Class
 -- ----------------------------------------------------------------------
 
-function GnomTECWidgetMap(init)
+function GnomTECWidgetText(init)
 
 	-- call base class
 	local self, protected = GnomTECWidget(init)
@@ -54,7 +56,8 @@ function GnomTECWidgetMap(init)
 
 	-- protected fields go in the protected table
 	-- protected.field = value
-	protected.mapTextures = {}
+	protected.text = nil
+	protected.textFontString = nil
 	
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
@@ -62,104 +65,82 @@ function GnomTECWidgetMap(init)
 	
 	-- private methods
 	-- local function f()
-		
+
 	-- protected methods
 	-- function protected.f()
 	
 	-- public methods
 	-- function self.f()
 	function self.LogMessage(logLevel, message, ...)
-		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetMap", message, ...)
+		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetText", message, ...)
 	end
 
 	function self.GetMinReseize()
+		local minWidth = 30
+		local minHeight = 16
 		
-		local minWidth = (32 * 1000.0 * 4.0 / 1024.0)
-		local minHeight = (32 * 667.0 * 3.0 / 768.0)
+		if (protected.textFontString) then
+			minWidth = protected.textFontString:GetStringWidth() + 30
+			minHeight = protected.textFontString:GetStringHeight() + 4
+		end
 		
 		return minWidth, minHeight
 	end
 
 	function self.GetMaxReseize()		
-		local maxWidth = UIParent:GetWidth() * 1024.0 / 1000.0 / 4.0	-- frameWidth * textureSize / visibleSize / numTiles
-		local maxHeight = UIParent:GetHeight() * 768.0 / 667.0 / 3.0 	-- frameHeight * textureSize / visibleSize / numTiles
-	
-		if maxWidth > maxHeight then
-			maxWidth = maxHeight
-		else
-			maxHeight = maxWidth
-		end
-
-		maxWidth = (maxWidth * 1000.0 * 4.0 / 1024.0)
-		maxHeight = (maxHeight * 667.0 * 3.0 / 768.0)
+		local maxWidth = UIParent:GetWidth()
+		local maxHeight = UIParent:GetHeight()
 
 		return maxWidth, maxHeight
 	end
 
 	function self.IsHeightDependingOnWidth()
-		return true
+		return false
 	end
 
 	function self.IsWidthDependingOnHeight()
-		return true
+		return false
 	end
-	
+
 	function self.ResizeByWidth(pixelWidth, pixelHeight)
-		pixelHeight = pixelWidth * 1024.0 / 1000.0 / 4.0	-- frameWidth * textureSize / visibleSize / numTiles
+		protected.widgetFrame:SetWidth(pixelWidth)
+		protected.widgetFrame:SetHeight(pixelHeight)
 
-		for r = 1, 3 do
-			for c = 1, 4 do
-				local texture = protected.mapTextures[4 * (r-1) + c]
-				texture:SetPoint("TOPLEFT",pixelHeight * (c-1), -pixelHeight * (r-1))
-				texture:SetWidth(pixelHeight)
-				texture:SetHeight(pixelHeight)
-			end
-		end				
-
-		pixelHeight = (pixelHeight * 667.0 * 3.0 / 768.0)
-
-		if (math.abs(self.GetPixelWidth() - pixelWidth) >= 1) then
-			protected.widgetFrame:SetWidth(pixelWidth)
-		end
-		if (math.abs(self.GetPixelHeight() - pixelHeight) >= 1) then
-			protected.widgetFrame:SetHeight(pixelHeight)
-		end
 		return pixelWidth, pixelHeight
 	end
 
 	function self.ResizeByHeight(pixelWidth, pixelHeight)
-		pixelWidth = pixelHeight * 768.0 / 667.0 / 3.0 	-- frameHeight * textureSize / visibleSize / numTiles
+		protected.widgetFrame:SetWidth(pixelWidth)
+		protected.widgetFrame:SetHeight(pixelHeight)
 
-		for r = 1, 3 do
-			for c = 1, 4 do
-				local texture = protected.mapTextures[4 * (r-1) + c]
-				texture:SetPoint("TOPLEFT",pixelWidth * (c-1), -pixelWidth * (r-1))
-				texture:SetWidth(pixelWidth)
-				texture:SetHeight(pixelWidth)
-			end
-		end				
-
-		pixelWidth = (pixelWidth * 1000.0 * 4.0 / 1024.0)
-
-		if (math.abs(self.GetPixelWidth() - pixelWidth) >= 1) then
-			protected.widgetFrame:SetWidth(pixelWidth)
-		end
-		if (math.abs(self.GetPixelHeight() - pixelHeight) >= 1) then
-			protected.widgetFrame:SetHeight(pixelHeight)
-		end
 		return pixelWidth, pixelHeight
 	end
+	
+	function self.SetText(text)
+		protected.text = emptynil(text)
+		if (protected.textFontString) then
+			protected.textFontString:SetText(protected.text or "")
+			self.TriggerResize(self, 0, 0)
+		end
+	end
+	
+	function self.GetText()
+		return emptynil(protected.title)
+	end	
 	
 	-- constructor
 	do
 		if (not init) then
 			init = {}
 		end
-
+		
 		local widgetFrame = CreateFrame("Frame", nil, UIParent)
 		widgetFrame:Hide()
 
+		local textFontString = widgetFrame:CreateFontString()
+		
 		protected.widgetFrame = widgetFrame 
+		protected.textFontString = textFontString 
 		
 		-- should be configurable later eg. saveable
 		widgetFrame:SetPoint("CENTER")		
@@ -167,31 +148,30 @@ function GnomTECWidgetMap(init)
 		if (not r) then
 			widgetFrame:SetWidth(w)		
 		else
-			widgetFrame:SetWidth((32 * 1000.0 * 4.0 / 1024.0))		
+			widgetFrame:SetWidth("32")		
 		end
 		local h, r = self.GetHeight()
 		if (not r) then
 			widgetFrame:SetHeight(h)		
 		else
-			widgetFrame:SetHeight((32 * 667.0 * 3.0 / 768.0))
+			widgetFrame:SetHeight("14")
 		end
 		
-		for r = 1, 3 do
-			for c = 1, 4 do
-				local texture = widgetFrame:CreateTexture(nil)
-				protected.mapTextures[4 * (r-1) + c] = texture
-				texture:SetTexture([[Interface\WorldMap\StormwindCity\StormwindCity]]..(4 * (r-1) + c))				
-				texture:SetPoint("TOPLEFT",32 * (c-1), -32 * (r-1))
-				texture:SetWidth(32)
-				texture:SetHeight(32)
-			end
-		end				
-				
+		textFontString:SetFontObject(GameFontNormal)
+		textFontString:SetJustifyH("CENTER")
+		textFontString:SetTextColor(1.0, 1.0, 1.0, 1.0)
+		textFontString:SetWidth("32")		
+		textFontString:SetHeight("14")
+		textFontString:SetPoint("TOPLEFT")
+		textFontString:SetPoint("BOTTOMRIGHT")
+
+		self.SetText(init.text)
+						
 		if (init.parent) then
 			init.parent.AddChild(self, protected)
 		end
 
-		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetMap", "New instance created (%s)", protected.UID)
+		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetText", "New instance created (%s)", protected.UID)
 	end
 	
 	-- return the instance
