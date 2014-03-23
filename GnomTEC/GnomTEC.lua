@@ -5,13 +5,20 @@
 -- Copyright 2014 by GnomTEC
 -- http://www.gnomtec.de/
 -- **********************************************************************
--- load localization first.
-local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
+local MAJOR, MINOR = "GnomTEC-1.0", 1
+local class, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
+if not class then return end -- No Upgrade needed.
 
 -- ----------------------------------------------------------------------
 -- Class Global Constants (local)
 -- ----------------------------------------------------------------------
+-- localization (will be loaded from base class later)
+local L = {}
+
+-- texure path
+local T = [[Interface\Addons\GnomTEC_Assistant\GnomTEC\Textures\]]
+
 -- Class levels
 local CLASS_BASE		= 0
 local CLASS_CLASS		= 1
@@ -36,7 +43,7 @@ local logReceivers = {}
 -- ----------------------------------------------------------------------
 -- Class Startup Initialization
 -- ----------------------------------------------------------------------
-
+L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 
 -- ----------------------------------------------------------------------
 -- Helper Functions (local)
@@ -88,6 +95,14 @@ function GnomTEC()
 			end
 			logReceivers[idx].logReceived = #logBuffer
 		end
+	end
+	
+	function protected.GetLocale()
+		return L
+	end
+
+	function protected.GetTexturePath()
+		return T
 	end
 	
 	-- public methods

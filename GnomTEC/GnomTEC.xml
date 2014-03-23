@@ -25,12 +25,15 @@
 	<!-- GnomTEC Framework Localization -->
 	<Include file="locale\locale.xml"/>
 	
-	<!-- GnomTEC Framework Base Class -->
+	<!-- GnomTEC Framework Base Classes -->
 	<Include file="GnomTEC.lua"/>
+	<Include file="GnomTECComm.lua"/>
 
-	<!-- GnomTEC Framework Widget Classes -->
+	<!-- GnomTEC Framework Base Widget Classes -->
   <Include file="Widgets\GnomTECWidget.lua"/>
   <Include file="Widgets\GnomTECWidgetContainer.lua"/> 
+
+	<!-- GnomTEC Framework Widget Classes -->
   <Include file="Widgets\GnomTECWidgetContainerLayoutFill.lua"/> 
   <Include file="Widgets\GnomTECWidgetContainerLayoutHorizontal.lua"/> 
   <Include file="Widgets\GnomTECWidgetContainerLayoutVertical.lua"/> 
@@ -40,6 +43,7 @@
   <Include file="Widgets\GnomTECWidgetPanelButton.lua"/>
   <Include file="Widgets\GnomTECWidgetScrollingMessage.lua"/>
   <Include file="Widgets\GnomTECWidgetText.lua"/>
+  <Include file="Widgets\GnomTECWidgetTextureButton.lua"/>
 
   <!-- GnomTEC Framework Classes -->
   <Include file="GnomTECAddon.lua"/>

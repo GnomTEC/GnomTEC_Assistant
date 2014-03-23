@@ -8,6 +8,22 @@
 -- load localization first.
 local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 
+-- ----------------------------------------------------------------------
+-- Addon Info Constants (local)
+-- ----------------------------------------------------------------------
+-- internal used version number since WoW only updates from TOC on game start
+local addonVersion = "5.4.7.1"
+
+-- addonInfo for addon registration to GnomTEC API
+local addonInfo = {
+	["Name"] = "GnomTEC Assistant",
+	["Version"] = addonVersion,
+	["Date"] = "2014-03-23",
+	["Author"] = "GnomTEC",
+	["Email"] = "info@gnomtec.de",
+	["Website"] = "http://www.gnomtec.de/",
+	["Copyright"] = "(c)2014 by GnomTEC",
+}
 
 -- ----------------------------------------------------------------------
 -- Addon Global Constants (local)
@@ -29,15 +45,17 @@ local LOG_DEBUG 	= 4
 -- Addon Static Variables (local)
 -- ----------------------------------------------------------------------
 local addonDataObject =	{
-	type = "launcher",
+	type = "data source",
+	text = "0 addons",
+	value = "0",
+	suffix = "addon(s)",
 	label = "GnomTEC Assistant",
 	icon = [[Interface\Icons\Inv_Misc_Tournaments_banner_Gnome]],
 	OnClick = function(self, button)
 		GnomTEC_Assistant.SwitchMainWindow()
 	end,
 	OnTooltipShow = function(tooltip)
-		tooltip:AddLine(" ")
-		tooltip:AddLine("Hinweis: Links-Klick um GnomTEC Assistant zu öffnen/schließen",0.0,1.0,0.0)
+		GnomTEC_Assistant.ShowAddonTooltip(tooltip)
 	end,
 }
 
@@ -46,7 +64,7 @@ local logDataObject =	{
 	text = "0 new",
 	value = "0",
 	suffix = "new",
-	label = "GnomTEC Log Messages",
+	label = "GnomTEC Logbuch",
 	icon = [[Interface\Icons\INV_Inscription_Scroll]],
 	OnClick = function(self, button)
 		GnomTEC_Assistant.SwitchLogWindow()
@@ -73,7 +91,7 @@ local logDataObject =	{
 
 local function GnomTECAssistant()
 	-- call base class
-	local self, protected = GnomTECAddon("GnomTEC_Assistant")
+	local self, protected = GnomTECAddon("GnomTEC_Assistant", addonInfo, 1)
 		
 	-- public fields go in the instance table
 	-- self.field = value
@@ -152,6 +170,16 @@ local function GnomTECAssistant()
 			logDataObject.text = logDataObject.value.." "..logDataObject.suffix
 		end
 	end
+
+	function AddonsListReceiver(pairsCommAddonsList)
+		local numAddons = 0
+		for key, value in pairsCommAddonsList() do
+			numAddons = numAddons + 1
+		end
+
+		addonDataObject.value = numAddons
+		addonDataObject.text = addonDataObject.value.." "..addonDataObject.suffix
+	end
 	
 	local function OnShowLogWindow()
 		logDataObject.value = 0
@@ -179,6 +207,8 @@ local function GnomTECAssistant()
 		self.SwitchLogWindow(false)
 		self.RegisterLogReceiver(LogReceiver)
 
+		self.RegisterAddonsListReceiver(AddonsListReceiver)
+		
 		addonDataObject = self.NewDataObject("", addonDataObject)
 		logDataObject = self.NewDataObject("Log Messages", logDataObject)
 		
@@ -188,6 +218,7 @@ local function GnomTECAssistant()
 	function protected.OnDisable()
 		-- Called when the addon is disabled
 		self.UnregisterLogReceiver(LogReceiver)
+		self.UnregisterAddonsListReceiver(AddonsListReceiver)
 	end
 	
 	-- public methods
@@ -200,7 +231,7 @@ local function GnomTECAssistant()
 
 			mainWindowWidgets.mainWindowLayoutFunctions = GnomTECWidgetContainerLayoutVertical({parent=mainWindowWidgets.mainWindowLayout, label="Hauptfunktionen"})
 
-			mainWindowWidgets.mainWindowLog = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutFunctions, label="GnomTEC Log Messages"})
+			mainWindowWidgets.mainWindowLog = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutFunctions, label="GnomTEC Logbuch"})
 			mainWindowWidgets.mainWindowLog.OnClick = OnClickMainWindowLog
 
 			mainWindowWidgets.mainWindowLayoutTest = GnomTECWidgetContainerLayoutVertical({parent=mainWindowWidgets.mainWindowLayout, label="Widget Tests"})
@@ -209,7 +240,7 @@ local function GnomTECAssistant()
 			mainWindowWidgets.mainWindowTestGnomTECWidgetContainerLayoutHorizontal.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestGnomTECWidgetContainerLayoutVertical = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetContainerLayoutVertical"})
 			mainWindowWidgets.mainWindowTestGnomTECWidgetContainerLayoutVertical.OnClick = OnClickMainWindowTest
-			mainWindowWidgets.mainWindowTestGnomTECWidgetEditBox = GnomTECWidgetPanelButton({disabled=true, parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetEditBox"})
+			mainWindowWidgets.mainWindowTestGnomTECWidgetEditBox = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetEditBox"})
 			mainWindowWidgets.mainWindowTestGnomTECWidgetEditBox.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestGnomTECWidgetMap = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetMap"})
 			mainWindowWidgets.mainWindowTestGnomTECWidgetMap.OnClick = OnClickMainWindowTest
@@ -219,6 +250,8 @@ local function GnomTECAssistant()
 			mainWindowWidgets.mainWindowTestGnomTECWidgetScrollingMessage.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestGnomTECWidgetText = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetText"})
 			mainWindowWidgets.mainWindowTestGnomTECWidgetText.OnClick = OnClickMainWindowTest
+			mainWindowWidgets.mainWindowTestGnomTECWidgetTextureButton = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetTextureButton"})
+			mainWindowWidgets.mainWindowTestGnomTECWidgetTextureButton.OnClick = OnClickMainWindowTest
 		end
 		
 		if (nil == show) then
@@ -239,7 +272,7 @@ local function GnomTECAssistant()
 	function self.SwitchLogWindow(show)
 		if (not logWindowWidgets) then
 			logWindowWidgets = {}
-			logWindowWidgets.logWindow = GnomTECWidgetContainerWindow({title="GnomTEC Log Messages"})
+			logWindowWidgets.logWindow = GnomTECWidgetContainerWindow({title="GnomTEC Logbuch"})
 			logWindowWidgets.logWindowMessages = GnomTECWidgetScrollingMessage({parent=logWindowWidgets.logWindow})
 			logWindowWidgets.logWindow.OnShow = OnShowLogWindow
 		end
@@ -291,7 +324,7 @@ local function GnomTECAssistant()
 			elseif ("GnomTECWidgetPanelButton" == test) then
 				testWindowWidgets[test] = {}
 				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})
-				testWindowWidgets[test].testWindowPanelWindow = GnomTECWidgetPanelButton({parent=testWindowWidgets[test].testWindow, label="Label"})
+				testWindowWidgets[test].testWindowPanelButton = GnomTECWidgetPanelButton({parent=testWindowWidgets[test].testWindow, label="Label"})
 			elseif ("GnomTECWidgetScrollingMessage" == test) then
 				testWindowWidgets[test] = {}
 				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})
@@ -310,7 +343,20 @@ local function GnomTECAssistant()
 				testWindowWidgets[test] = {}
 				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})
 				testWindowWidgets[test].testWindowText = GnomTECWidgetText({parent=testWindowWidgets[test].testWindow, text="text"})
+			elseif ("GnomTECWidgetTextureButton" == test) then
+				testWindowWidgets[test] = {}
+				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})
+				testWindowWidgets[test].testWindowLayout = GnomTECWidgetContainerLayoutHorizontal({parent=testWindowWidgets[test].testWindow})
+				testWindowWidgets[test].testWindowTextureButton = {}
+				for t=1, 5 do
+					testWindowWidgets[test].testWindowTextureButton[t] = GnomTECWidgetTextureButton({
+						parent=testWindowWidgets[test].testWindowLayout,
+						texture=[[Interface\ICONS\Ability_Creature_Cursed_0]]..t,
+					})
+				end
 			end
+
+
 		end
 		
 		if (testWindowWidgets[test]) then
@@ -330,19 +376,50 @@ local function GnomTECAssistant()
 		end
 	end
 	
-	
+	function	self.ShowAddonTooltip(tooltip)
+		tooltip:AddLine("GnomTEC Addon Informationen",1.0,1.0,1.0)
+		tooltip:AddLine(" ")
+		tooltip:AddLine("Registrierte Addons",1.0,1.0,1.0)
 
-	function self.ShowLogTooltip(tooltip)
-		tooltip:AddLine("Anzahl empfangener Nachrichten",1.0,1.0,1.0)
-		tooltip:AddDoubleLine("Nachrichten von Addons",logNumAddon,1.0,1.0,0.0,1.0,1.0,1.0)
-		tooltip:AddDoubleLine("Nachrichten von Widgets",logNumWidget,1.0,1.0,0.0,1.0,1.0,1.0)
-		tooltip:AddDoubleLine("Nachrichten von Klasssen",logNumClass,1.0,1.0,0.0,1.0,1.0,1.0)
-		tooltip:AddDoubleLine("Nachrichten von Basisklasse",logNumBase,1.0,1.0,0.0,1.0,1.0,1.0)
-		tooltip:AddDoubleLine("Nachrichten von Unbekannten",logNumOther,1.0,1.0,0.0,1.0,1.0,1.0)
-		tooltip:AddDoubleLine("Gesamte Anzahl von Nachrichten",logNumAll,1.0,1.0,1.0,1.0,1.0,1.0)
+		for key, value in self.pairsCommAddonsList() do
+			if (not value["AvailableVersion"]) then
+				tooltip:AddDoubleLine(value["AddonInfo"]["Name"],value["AddonInfo"]["Version"],1.0,1.0,0.0,0.0,1.0,0.0)
+			else
+				tooltip:AddDoubleLine(value["AddonInfo"]["Name"],value["AddonInfo"]["Version"],1.0,1.0,0.0,1.0,0.5,0.0)
+			end		
+		end
+
+		local statistics = self.CommGetStatistics()		
+		tooltip:AddLine(" ")
+		tooltip:AddLine("Übertragen Daten (Gesamt)",1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Gesendete Bytes",statistics.commSendBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Empfangene Bytes",statistics.commReceiveBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddLine(" ")
+		tooltip:AddLine("Abfrage an andere Spieler",1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Anzahl Abfragen",statistics.commRequestCount,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Gesendete Bytes",statistics.commRequestSendBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Empfangene Bytes",statistics.commRequestReceiveBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddLine(" ")
+		tooltip:AddLine("Anfrage von anderern Spieler",1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Anzahl Anfragen",statistics.commResponseCount,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Empfangene Bytes",statistics.commResponseReceiveBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Gesendete Bytes",statistics.commResponseSendBytes,1.0,1.0,0.0,1.0,1.0,1.0)
 
 		tooltip:AddLine(" ")
-		tooltip:AddLine("Hinweis: Links-Klick um die GnomTEC Log Messages zu öffnen/schließen",0.0,1.0,0.0)
+		tooltip:AddLine("Hinweis: Links-Klick um GnomTEC Assistant zu öffnen/schließen",0.0,1.0,0.0)
+	end	
+
+	function self.ShowLogTooltip(tooltip)
+		tooltip:AddLine("Anzahl Einträge im Logbuch",1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Einträge von Addons",logNumAddon,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Einträge von Widgets",logNumWidget,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Einträge von Klasssen",logNumClass,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Einträge von der Basisklasse",logNumBase,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Einträge von Unbekannten",logNumOther,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Gesamte Anzahl von Einträge",logNumAll,1.0,1.0,1.0,1.0,1.0,1.0)
+
+		tooltip:AddLine(" ")
+		tooltip:AddLine("Hinweis: Links-Klick um das GnomTEC Logbuch zu öffnen/schließen",0.0,1.0,0.0)
 	end
 
 	-- constructor

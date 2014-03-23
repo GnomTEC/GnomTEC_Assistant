@@ -5,13 +5,20 @@
 -- Copyright 2014 by GnomTEC
 -- http://www.gnomtec.de/
 -- **********************************************************************
--- load localization first.
-local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
+local MAJOR, MINOR = "GnomTECAddon-1.0", 1
+local class, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
+if not class then return end -- No Upgrade needed.
 
 -- ----------------------------------------------------------------------
 -- Class Global Constants (local)
 -- ----------------------------------------------------------------------
+-- localization (will be loaded from base class later)
+local L = {}
+
+-- texture path (will be loaded from base class later)
+local T = ""
+
 -- Class levels
 local CLASS_BASE		= 0
 local CLASS_CLASS		= 1
@@ -47,10 +54,19 @@ local function emptynil( x ) return x ~= "" and x or nil end
 -- ----------------------------------------------------------------------
 -- Class
 -- ----------------------------------------------------------------------
-
-function GnomTECAddon(addonTitle)
+--[[
+	addonInfo - table with addon informations as string
+		["Name"] 		- name
+		["Version"] 	- version
+		["Date"] = 		- date
+		["Author"] 		- author
+		["Email"] 		- contact email
+		["Website"] 	- URL to addon website
+		["Copyright"] 	- copyright information
+--]]
+function GnomTECAddon(addonTitle, addonInfo)
 	-- call base class
-	local self, protected = GnomTEC()
+	local self, protected = GnomTECComm(addonTitle, addonInfo, frameworkRevision)
 		
 	-- public fields go in the instance table
 	-- self.field = value
@@ -137,6 +153,12 @@ function GnomTECAddon(addonTitle)
 	
 	-- constructor
 	do
+		-- get localization first.
+		L = protected.GetLocale()
+
+		-- get texture path
+		T = protected.GetTexturePath()	
+
 		lastUID = lastUID + 1
 		protected.addonUID = "GnomTECAddonInstance"..lastUID
 		
@@ -154,7 +176,7 @@ function GnomTECAddon(addonTitle)
 			OnDisable()
 		end
 		
-		protected.LogMessage(CLASS_CLASS, LOG_DEBUG, "GnomTECAddon", "New instance created (%s)", protected.addonUID)
+		protected.LogMessage(CLASS_CLASS, LOG_DEBUG, "GnomTECAddon", "New instance created (%s / %s)", protected.UID, protected.addonUID)
 	end
 	
 	-- return the instance and protected table

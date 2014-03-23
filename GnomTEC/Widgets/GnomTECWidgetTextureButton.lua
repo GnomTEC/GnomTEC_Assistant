@@ -1,11 +1,11 @@
 ﻿-- **********************************************************************
--- GnomTECWidgetContainerLayoutFill
+-- GnomTECWidgetTextureButton
 -- Version: 5.4.7.1
 -- Author: GnomTEC
 -- Copyright 2014 by GnomTEC
 -- http://www.gnomtec.de/
 -- **********************************************************************
-local MAJOR, MINOR = "GnomTECWidgetContainerLayoutFill-1.0", 1
+local MAJOR, MINOR = "GnomTECWidgetTextureButton-1.0", 1
 local _widget, _oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not _widget then return end -- No Upgrade needed.
@@ -51,10 +51,10 @@ local LOG_DEBUG 	= 4
 -- Widget Class
 -- ----------------------------------------------------------------------
 
-function GnomTECWidgetContainerLayoutFill(init)
+function GnomTECWidgetTextureButton(init)
 
 	-- call base class
-	local self, protected = GnomTECWidgetContainer(init)
+	local self, protected = GnomTECWidget(init)
 	
 	-- public fields go in the instance table
 	-- self.field = value
@@ -68,6 +68,9 @@ function GnomTECWidgetContainerLayoutFill(init)
 	
 	-- private methods
 	-- local function f()
+	local function OnClick(frame, button)
+		self.SafeCall(self.OnClick, self, button)
+	end
 
 	-- protected methods
 	-- function protected.f()
@@ -75,28 +78,51 @@ function GnomTECWidgetContainerLayoutFill(init)
 	-- public methods
 	-- function self.f()
 	function self.LogMessage(logLevel, message, ...)
-		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetContainerLayoutFill", message, ...)
+		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetTextureButton", message, ...)
 	end
 
+	function self.GetMinReseize()
+		local minWidth = 36
+		local minHeight = 36
+		
+		return minWidth, minHeight
+	end
 
-	local base_ResizeByWidth = self.ResizeByWidth
+	function self.GetMaxReseize()		
+		local maxWidth = 36
+		local maxHeight = 36
+
+		return maxWidth, maxHeight
+	end
+
+	function self.IsHeightDependingOnWidth()
+		return false -- should be true when layouter is complete implemented
+	end
+
+	function self.IsWidthDependingOnHeight()
+		return false -- should be true when layouter is complete implemented
+	end
+
 	function self.ResizeByWidth(pixelWidth, pixelHeight)
-		pixelWidth, pixelHeight = base_ResizeByWidth(pixelWidth, pixelHeight)
+		protected.widgetFrame:SetWidth(36)
+		protected.widgetFrame:SetHeight(36)
 
-		protected.widgetFrame:SetWidth(pixelWidth)
-		protected.widgetFrame:SetHeight(pixelHeight)
-
-		return pixelWidth, pixelHeight
+		return 36, 36
 	end
 
-	local base_ResizeByHeight = self.ResizeByHeight
 	function self.ResizeByHeight(pixelWidth, pixelHeight)
-		pixelWidth, pixelHeight = base_ResizeByHeight(pixelWidth, pixelHeight)
+		protected.widgetFrame:SetWidth(36)
+		protected.widgetFrame:SetHeight(36)
 
-		protected.widgetFrame:SetWidth(pixelWidth)
-		protected.widgetFrame:SetHeight(pixelHeight)
+		return 36, 36
+	end
+	
+	function self.Disable()
+		protected.widgetFrame:Disable()
+	end
 
-		return pixelWidth, pixelHeight
+	function self.Enable()
+		protected.widgetFrame:Enable()
 	end
 	
 	-- constructor
@@ -110,50 +136,47 @@ function GnomTECWidgetContainerLayoutFill(init)
 		if (not init) then
 			init = {}
 		end
-
-		local widgetFrame = CreateFrame("Frame", nil, UIParent)
+		
+		local widgetFrame = CreateFrame("Button", nil, UIParent)
 		widgetFrame:Hide()
 
-		local containerFrame = widgetFrame
-		local labelFontString = containerFrame:CreateFontString()
-
 		protected.widgetFrame = widgetFrame 
-		protected.containerFrame = containerFrame 
-		protected.labelFontString = labelFontString
-
+		
 		-- should be configurable later eg. saveable
 		widgetFrame:SetPoint("CENTER")		
-		local w, r = self.GetWidth()
-		if (not r) then
-			widgetFrame:SetWidth(w)		
-		else
-			widgetFrame:SetWidth(400)		
+		widgetFrame:SetWidth("36")		
+		widgetFrame:SetHeight("36")
+
+		local texture
+		
+		if (init.texture) then
+			local texture = widgetFrame:CreateTexture(nil, "BORDER")
+			texture:SetTexture(init.texture)
+			texture:SetWidth(32)
+			texture:SetHeight(32)
+			texture:SetPoint("CENTER", widgetFrame)
 		end
-		local h, r = self.GetHeight()
-		if (not r) then
-			widgetFrame:SetHeight(h)		
-		else
-			widgetFrame:SetHeight(200)
+		widgetFrame:SetNormalTexture([[Interface\Buttons\UI-Quickslot2]])
+		texture = widgetFrame:GetNormalTexture()
+		texture:SetWidth(64)
+		texture:SetHeight(64)
+		widgetFrame:SetPushedTexture([[Interface\BUTTONS\UI-Quickslot-Depress]])
+		widgetFrame:SetHighlightTexture([[Interface\BUTTONS\ButtonHilight-Square]], "ADD")
+
+		widgetFrame:SetScript("OnClick",OnClick)
+		
+		if (init.disabled) then
+			self.Disable()
 		end
-
-		labelFontString:SetFontObject(GameFontNormal)
-		labelFontString:SetJustifyH("CENTER")
-		labelFontString:SetTextColor(0.5, 0.5, 0.5, 1.0)
-		labelFontString:SetWidth("32")		
-		labelFontString:SetHeight("14")
-		labelFontString:SetPoint("TOPLEFT", 0, -3)
-		labelFontString:SetPoint("RIGHT")
-
-		self.SetLabel(init.label)
-
+		
 		if (init.parent) then
 			init.parent.AddChild(self, protected)
 		end
 
-		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetContainerLayoutFill", "New instance created (%s)", protected.UID)
+		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetTextureButton", "New instance created (%s)", protected.UID)
 	end
 	
-	-- return the instance table
+	-- return the instance
 	return self
 end
 

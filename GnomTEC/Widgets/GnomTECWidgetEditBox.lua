@@ -5,13 +5,20 @@
 -- Copyright 2014 by GnomTEC
 -- http://www.gnomtec.de/
 -- **********************************************************************
--- load localization first.
-local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
+local MAJOR, MINOR = "GnomTECWidgetEditBox-1.0", 1
+local _widget, _oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
+if not _widget then return end -- No Upgrade needed.
 
 -- ----------------------------------------------------------------------
 -- Widget Global Constants (local)
 -- ----------------------------------------------------------------------
+-- localization (will be loaded from base class later)
+local L = {}
+
+-- texture path (will be loaded from base class later)
+local T = ""
+
 -- Class levels
 local CLASS_BASE		= 0
 local CLASS_CLASS		= 1
@@ -54,6 +61,7 @@ function GnomTECWidgetEditBox(init)
 
 	-- protected fields go in the protected table
 	-- protected.field = value
+	protected.scrollFrame = nil
 	protected.editBoxFrame = nil
 	protected.slider = nil
 	
@@ -68,7 +76,7 @@ function GnomTECWidgetEditBox(init)
 	end
 
 	local function OnValueChanged(frame, value)
-		protected.widgetFrame:SetVerticalScroll(value);
+		protected.scrollFrame:SetVerticalScroll(value);
 	end
 
 	local function OnClickUpButton(frame, button)
@@ -81,8 +89,13 @@ function GnomTECWidgetEditBox(init)
 		PlaySound("UChatScrollButton");
 	end
 	
+	local function OnChangedSizeWidgetFrame(frame, width, height)
+		protected.editBoxFrame:SetWidth(protected.widgetFrame:GetWidth() - 16)
+		protected.editBoxFrame:SetHeight(protected.widgetFrame:GetHeight())	
+	end
+	
 	local function OnSizeChangedEditBox(frame, width, height)
-		protected.widgetFrame:UpdateScrollChildRect();
+		protected.scrollFrame:UpdateScrollChildRect();
 	end
 
 	local function OnEscapePressed(frame)
@@ -90,9 +103,20 @@ function GnomTECWidgetEditBox(init)
 	end
 	
 	local function OnScrollRangeChanged(frame, xExtent, yExtent)
-		protected.widgetFrame:UpdateScrollChildRect()
-		protected.slider:SetMinMaxValues(0, protected.widgetFrame:GetVerticalScrollRange());
-		protected.slider:SetValue(protected.widgetFrame:GetVerticalScroll());   
+		protected.scrollFrame:UpdateScrollChildRect()
+		protected.slider:SetMinMaxValues(0, protected.scrollFrame:GetVerticalScrollRange());
+		protected.slider:SetValue(protected.scrollFrame:GetVerticalScroll());   
+	end
+	
+	local function OnCursorChanged(frame, x, y, width, height)
+		local widgetHeight = protected.widgetFrame:GetHeight()
+		local offset = protected.slider:GetValue()
+		
+		if (offset > -y) then
+			protected.slider:SetValue(-y)
+		elseif (offset+widgetHeight < -y + height) then
+			protected.slider:SetValue(-y+height-widgetHeight)
+		end
 	end
 	
 	-- protected methods
@@ -150,19 +174,27 @@ function GnomTECWidgetEditBox(init)
 	
 	-- constructor
 	do
+		-- get localization first.
+		L = protected.GetLocale()
+
+		-- get texture path
+		T = protected.GetTexturePath()	
+
 		if (not init) then
 			init = {}
 		end
 		
-		local widgetFrame = CreateFrame("ScrollFrame", nil, UIParent)
+		local widgetFrame = CreateFrame("Frame", nil, UIParent)
 		widgetFrame:Hide()
 
+		local scrollFrame = CreateFrame("ScrollFrame", nil, widgetFrame)
 		local editBoxFrame = CreateFrame("EditBox", nil, widgetFrame)
 		local slider = CreateFrame("Slider", nil, widgetFrame)
 		local upButton = CreateFrame("Button", nil, slider, "UIPanelScrollUpButtonTemplate")
 		local downButton = CreateFrame("Button", nil, slider, "UIPanelScrollDownButtonTemplate")
 		
 		protected.widgetFrame = widgetFrame 
+		protected.scrollFrame = scrollFrame 
 		protected.editBoxFrame = editBoxFrame 
 		protected.slider = slider 
 		
@@ -181,41 +213,47 @@ function GnomTECWidgetEditBox(init)
 			widgetFrame:SetHeight("400")
 		end
 		
-		widgetFrame:SetScript("OnScrollRangeChanged", OnScrollRangeChanged)
-		widgetFrame:SetScript("OnMouseWheel", OnMouseWheel)
+		widgetFrame:SetScript("OnSizeChanged", OnChangedSizeWidgetFrame)
 
-		widgetFrame:SetScrollChild(editBoxFrame)
+		scrollFrame:SetPoint("TOPLEFT", 0, 0)	
+		scrollFrame:SetPoint("BOTTOMRIGHT", -16, 0)	
+		scrollFrame:SetScript("OnScrollRangeChanged", OnScrollRangeChanged)
+		scrollFrame:SetScript("OnMouseWheel", OnMouseWheel)
+		scrollFrame:SetScrollChild(editBoxFrame)
 
-		editBoxFrame:SetAllPoints(true)
+		editBoxFrame:SetPoint("TOPLEFT", 0, 0)	
+		editBoxFrame:SetPoint("BOTTOMRIGHT", -16, 0)	
+		editBoxFrame:SetHeight(widgetFrame:GetHeight())	
+		editBoxFrame:SetWidth(widgetFrame:GetWidth() - 16)	
 		editBoxFrame:SetMultiLine(true)
 		editBoxFrame:SetFontObject(ChatFontNormal)
 		editBoxFrame:SetJustifyH("LEFT")
-		editBoxFrame:EnableKeyboard(false);
-		editBoxFrame:EnableMouse(false);			
+		editBoxFrame:EnableKeyboard(true);
+		editBoxFrame:EnableMouse(true);			
 		editBoxFrame:SetAutoFocus(false);			
-
 		editBoxFrame:SetScript("OnMouseWheel", OnMouseWheel)
-		editBoxFrame:SetScript("OnSizeChanged", OnChangedEditBoxSize)
+		editBoxFrame:SetScript("OnSizeChanged", OnSizeChangedEditBox)
 		editBoxFrame:SetScript("OnEscapePressed", OnEscapePressed)
+		editBoxFrame:SetScript("OnCursorChanged", OnCursorChanged)
 
 		slider:SetWidth(16)
-		slider:SetPoint("TOPRIGHT", 0, -16)	
-		slider:SetPoint("BOTTOMRIGHT", 0, 16)	
+		slider:SetPoint("TOPRIGHT", 0, -8)	
+		slider:SetPoint("BOTTOMRIGHT", 0, 8)	
 		slider:SetThumbTexture([[Interface\Buttons\UI-ScrollBar-Knob]])
 		slider:SetScript("OnMouseWheel", OnMouseWheel)
 		slider:SetScript("OnValueChanged", OnValueChanged)
 
-		upButton:SetPoint("BOTTOM", slider, "TOP")
+		upButton:SetPoint("TOP", slider, "TOP", 0, 8)
 		upButton:SetScript("OnMouseWheel", OnMouseWheel)
 		upButton:SetScript("OnClick", OnClickUpButton)
 
-		downButton:SetPoint("TOP", slider, "BOTTOM")
+		downButton:SetPoint("BOTTOM", slider, "BOTTOM", 0, -8)
 		downButton:SetScript("OnMouseWheel", OnMouseWheel)
 		downButton:SetScript("OnClick", OnClickDownButton)
 				
-		widgetFrame:UpdateScrollChildRect();
-		slider:SetMinMaxValues(0, widgetFrame:GetVerticalScrollRange());
-		slider:SetValue(widgetFrame:GetVerticalScroll());   
+		scrollFrame:UpdateScrollChildRect();
+		slider:SetMinMaxValues(0, scrollFrame:GetVerticalScrollRange());
+		slider:SetValue(scrollFrame:GetVerticalScroll());   
 
 		self.SetText(init.text)
 		

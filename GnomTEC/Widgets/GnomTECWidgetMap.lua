@@ -5,13 +5,20 @@
 -- Copyright 2014 by GnomTEC
 -- http://www.gnomtec.de/
 -- **********************************************************************
--- load localization first.
-local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
+local MAJOR, MINOR = "GnomTECWidgetMap-1.0", 1
+local _widget, _oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
+if not _widget then return end -- No Upgrade needed.
 
 -- ----------------------------------------------------------------------
 -- Widget Global Constants (local)
 -- ----------------------------------------------------------------------
+-- localization (will be loaded from base class later)
+local L = {}
+
+-- texture path (will be loaded from base class later)
+local T = ""
+
 -- Class levels
 local CLASS_BASE		= 0
 local CLASS_CLASS		= 1
@@ -152,6 +159,12 @@ function GnomTECWidgetMap(init)
 	
 	-- constructor
 	do
+		-- get localization first.
+		L = protected.GetLocale()
+
+		-- get texture path
+		T = protected.GetTexturePath()	
+
 		if (not init) then
 			init = {}
 		end
