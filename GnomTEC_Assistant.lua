@@ -248,6 +248,8 @@ local function GnomTECAssistant()
 			mainWindowWidgets.mainWindowTestGnomTECWidgetPanelButton.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestGnomTECWidgetScrollingMessage = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetScrollingMessage"})
 			mainWindowWidgets.mainWindowTestGnomTECWidgetScrollingMessage.OnClick = OnClickMainWindowTest
+			mainWindowWidgets.mainWindowTestGnomTECWidgetSpacer = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetSpacer"})
+			mainWindowWidgets.mainWindowTestGnomTECWidgetSpacer.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestGnomTECWidgetText = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetText"})
 			mainWindowWidgets.mainWindowTestGnomTECWidgetText.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestGnomTECWidgetTextureButton = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetTextureButton"})
@@ -339,6 +341,13 @@ local function GnomTECAssistant()
 						end
 					end
 				end
+			elseif ("GnomTECWidgetSpacer" == test) then
+				testWindowWidgets[test] = {}
+				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})
+				testWindowWidgets[test].testWindowLayout = GnomTECWidgetContainerLayoutVertical({parent=testWindowWidgets[test].testWindow})
+				testWindowWidgets[test].testWindowPanelButton1 = GnomTECWidgetPanelButton({parent=testWindowWidgets[test].testWindowLayout, label=[[\/ Spacer \/]]})
+				testWindowWidgets[test].testWindowSpacer = GnomTECWidgetSpacer({parent=testWindowWidgets[test].testWindowLayout})
+				testWindowWidgets[test].testWindowPanelButton2 = GnomTECWidgetPanelButton({parent=testWindowWidgets[test].testWindowLayout, label=[[/\ Spacer /\]]})
 			elseif ("GnomTECWidgetText" == test) then
 				testWindowWidgets[test] = {}
 				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})

@@ -42,6 +42,7 @@
   <Include file="Widgets\GnomTECWidgetMap.lua"/>
   <Include file="Widgets\GnomTECWidgetPanelButton.lua"/>
   <Include file="Widgets\GnomTECWidgetScrollingMessage.lua"/>
+  <Include file="Widgets\GnomTECWidgetSpacer.lua"/>
   <Include file="Widgets\GnomTECWidgetText.lua"/>
   <Include file="Widgets\GnomTECWidgetTextureButton.lua"/>
 

@@ -68,7 +68,8 @@ function GnomTECWidgetEditBox(init)
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
 	-- local field
-	
+	local lockSliderOrScrollUpdate = false
+				
 	-- private methods
 	-- local function f()
 	local function OnMouseWheel(frame, delta)
@@ -76,7 +77,11 @@ function GnomTECWidgetEditBox(init)
 	end
 
 	local function OnValueChanged(frame, value)
-		protected.scrollFrame:SetVerticalScroll(value);
+		if (not lockSliderOrScrollUpdate) then
+			lockSliderOrScrollUpdate = true
+			protected.scrollFrame:SetVerticalScroll(value);
+			lockSliderOrScrollUpdate = false
+		end
 	end
 
 	local function OnClickUpButton(frame, button)
@@ -103,9 +108,13 @@ function GnomTECWidgetEditBox(init)
 	end
 	
 	local function OnScrollRangeChanged(frame, xExtent, yExtent)
-		protected.scrollFrame:UpdateScrollChildRect()
-		protected.slider:SetMinMaxValues(0, protected.scrollFrame:GetVerticalScrollRange());
-		protected.slider:SetValue(protected.scrollFrame:GetVerticalScroll());   
+		if (not lockSliderOrScrollUpdate) then
+			lockSliderOrScrollUpdate = true
+			protected.scrollFrame:UpdateScrollChildRect()
+			protected.slider:SetMinMaxValues(0, protected.scrollFrame:GetVerticalScrollRange());
+			protected.slider:SetValue(protected.scrollFrame:GetVerticalScroll());   
+			lockSliderOrScrollUpdate = false
+		end
 	end
 	
 	local function OnCursorChanged(frame, x, y, width, height)

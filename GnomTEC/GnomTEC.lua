@@ -40,6 +40,8 @@ local maxLogBuffer = 1024
 local logBuffer = {}
 local logReceivers = {}
 
+local _timerFrame = nil
+
 -- ----------------------------------------------------------------------
 -- Class Startup Initialization
 -- ----------------------------------------------------------------------
@@ -48,6 +50,23 @@ L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 -- ----------------------------------------------------------------------
 -- Helper Functions (local)
 -- ----------------------------------------------------------------------
+
+
+-- ----------------------------------------------------------------------
+-- Class Static Methods (local)
+-- ----------------------------------------------------------------------
+
+
+-- ----------------------------------------------------------------------
+-- Class Static Event Handler (local)
+-- ----------------------------------------------------------------------
+-- the global timer function
+local function _OnUpdate(frame, elapsed)
+
+
+end
+ 
+ 
 
 
 -- ----------------------------------------------------------------------
@@ -89,9 +108,12 @@ function GnomTEC()
 			end
 		end
 		
+		-- send log entries to all receivers which have not received them
 		for idx, value in ipairs(logReceivers) do
-			for i=logReceivers[idx].logReceived + 1, #logBuffer do
-				value.func(unpack(logBuffer[i]))
+			if (logReceivers[idx].logReceived < #logBuffer) then
+				for i=logReceivers[idx].logReceived + 1, #logBuffer do
+					value.func(unpack(logBuffer[i]))
+				end
 			end
 			logReceivers[idx].logReceived = #logBuffer
 		end
@@ -146,6 +168,15 @@ function GnomTEC()
 	do
 		lastUID = lastUID + 1
 		protected.UID = "GnomTECInstance"..lastUID
+		
+		if (not _timerFrame) then
+			_timerFrame = CreateFrame("Frame", nil, UIParent)
+		
+			_timerFrame:SetPoint("BOTTOMLEFT")		
+			_timerFrame:SetWidth(0)	
+			_timerFrame:SetHeight(0)
+			_timerFrame:SetScript("OnUpdate", _OnUpdate)	
+		end
 		
 		protected.LogMessage(CLASS_BASE, LOG_DEBUG, "GnomTEC", "New instance created (%s)", protected.UID)
 	end

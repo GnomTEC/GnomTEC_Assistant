@@ -67,6 +67,7 @@ function GnomTECWidgetScrollingMessage(init)
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
 	-- local field
+	local lockSliderOrScrollUpdate = false
 	
 	-- private methods
 	-- local function f()
@@ -82,37 +83,50 @@ function GnomTECWidgetScrollingMessage(init)
 		elseif (newValue > (num-disp)) then
 			newValue = (num-disp)
 		end
-		protected.scrollingMessageFrame:SetScrollOffset(newValue)
+		if (cur ~= newValue) then
+			protected.scrollingMessageFrame:SetScrollOffset(newValue)
+		end
 	end
 
 	local function OnMessageScrollChanged(frame)
-		local num = protected.scrollingMessageFrame:GetNumMessages()
-		local cur = protected.scrollingMessageFrame:GetCurrentScroll()
-		local disp = protected.scrollingMessageFrame:GetNumLinesDisplayed()
+		if (not lockSliderOrScrollUpdate) then
+			lockSliderOrScrollUpdate = true
+			
+			local num = protected.scrollingMessageFrame:GetNumMessages()
+			local cur = protected.scrollingMessageFrame:GetCurrentScroll()
+			local disp = protected.scrollingMessageFrame:GetNumLinesDisplayed()
+			local _, max = protected.slider:GetMinMaxValues()
 		
-		if (num > disp) then
+			if (num <= disp) then
+				cur = 0
+				num = 0
+				disp = 0
+			end	
+
 			protected.slider:SetMinMaxValues(0, num-disp);
 			protected.slider:SetValue(num-disp-cur);
-			local thumbSize = protected.slider:GetHeight() / num-disp
-			if (thumbSize < 16) then
-				thumbSize = 16
-			end 
-		else
-			protected.slider:SetMinMaxValues(0, 0);
-			protected.slider:SetValue(0);   	
+
+			lockSliderOrScrollUpdate = false
 		end
 	end
 
 	local function OnValueChanged(frame, value)
-		local num = protected.scrollingMessageFrame:GetNumMessages()
-		local disp = protected.scrollingMessageFrame:GetNumLinesDisplayed()
-		local cur = num - disp - floor(value)
+		if (not lockSliderOrScrollUpdate) then
+			lockSliderOrScrollUpdate = true
+			
+			local num = protected.scrollingMessageFrame:GetNumMessages()
+			local disp = protected.scrollingMessageFrame:GetNumLinesDisplayed()
+			local cur = num - disp - floor(value)
 
-		if (num > disp) then
+			if (num <= disp) then
+				cur = 0
+			elseif (cur < 0) then
+				cur = 0
+			end		
+
 			protected.scrollingMessageFrame:SetScrollOffset(cur)
-		else
-			protected.scrollingMessageFrame:SetScrollOffset(0)
-		end		
+			lockSliderOrScrollUpdate = false
+		end
 	end
 
 	local function OnClickUpButton(frame, button)
@@ -234,6 +248,8 @@ function GnomTECWidgetScrollingMessage(init)
 		slider:SetThumbTexture([[Interface\Buttons\UI-ScrollBar-Knob]])
 		slider:SetScript("OnMouseWheel", OnMouseWheel)
 		slider:SetScript("OnValueChanged", OnValueChanged)
+		slider:SetMinMaxValues(0, 0);
+		slider:SetValue(0);   
 
 		upButton:SetPoint("TOP", slider, "TOP", 0, 8)
 		upButton:SetScript("OnMouseWheel", OnMouseWheel)
