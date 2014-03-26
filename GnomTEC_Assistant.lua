@@ -363,6 +363,13 @@ local function GnomTECAssistant()
 						texture=[[Interface\ICONS\Ability_Creature_Cursed_0]]..t,
 					})
 				end
+				for t=1, 5 do
+					testWindowWidgets[test].testWindowTextureButton[t+5] = GnomTECWidgetTextureButton({
+						parent=testWindowWidgets[test].testWindowLayout,
+						texture=[[Interface\ICONS\Ability_Creature_Cursed_0]]..t,
+						small=true
+					})
+				end
 			end
 
 

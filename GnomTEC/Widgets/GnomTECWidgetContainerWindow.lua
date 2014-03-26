@@ -121,7 +121,7 @@ function GnomTECWidgetContainerWindow(init)
 		local minWidth, minHeight = base_GetMinReseize()
 		
 		minWidth = minWidth + 14
-		minHeight = minHeight + 67
+		minHeight = minHeight + 34
 		
 		if (minWidth < 100) then
 			minWidth = 100
@@ -139,7 +139,7 @@ function GnomTECWidgetContainerWindow(init)
 		local maxWidth, maxHeight = base_GetMaxReseize()
 		
 		maxWidth = maxWidth + 14
-		maxHeight = maxHeight + 67
+		maxHeight = maxHeight + 34
 		
 		if (maxWidth < 100) then
 			maxWidth = 100
@@ -158,9 +158,9 @@ function GnomTECWidgetContainerWindow(init)
 
 	local base_ResizeByWidth = self.ResizeByWidth
 	function self.ResizeByWidth(pixelWidth, pixelHeight)
-		pixelWidth, pixelHeight = base_ResizeByWidth(pixelWidth - 14, pixelHeight - 67)
+		pixelWidth, pixelHeight = base_ResizeByWidth(pixelWidth - 14, pixelHeight - 34)
 		pixelWidth = pixelWidth + 14
-		pixelHeight = pixelHeight + 67
+		pixelHeight = pixelHeight + 34
 		if (math.abs(self.GetPixelWidth() - pixelWidth) >= 1) then
 			protected.widgetFrame:SetWidth(pixelWidth)
 		end
@@ -172,9 +172,9 @@ function GnomTECWidgetContainerWindow(init)
 
 	local base_ResizeByHeight = self.ResizeByHeight
 	function self.ResizeByHeight(pixelWidth, pixelHeight)
-		pixelWidth, pixelHeight = base_ResizeByHeight(pixelWidth - 14, pixelHeight - 67)
+		pixelWidth, pixelHeight = base_ResizeByHeight(pixelWidth - 14, pixelHeight - 34)
 		pixelWidth = pixelWidth + 14
-		pixelHeight = pixelHeight + 67
+		pixelHeight = pixelHeight + 34
 		if (math.abs(self.GetPixelWidth() - pixelWidth) >= 1) then
 			protected.widgetFrame:SetWidth(pixelWidth)
 		end
@@ -211,6 +211,7 @@ function GnomTECWidgetContainerWindow(init)
 		widgetFrame:Hide()
 
 		local headerFrame = CreateFrame("Frame", nil, widgetFrame)
+		local closeButtonFrame = CreateFrame("Frame", nil, widgetFrame)
 		local closeButton = CreateFrame("Button", nil, widgetFrame, "UIPanelCloseButton")
 		local reseizeButton = CreateFrame("Button", nil, widgetFrame)
 		local containerFrame = CreateFrame("Frame", nil, widgetFrame)
@@ -238,20 +239,20 @@ function GnomTECWidgetContainerWindow(init)
 		end
 		
 		local backdrop = {
-			bgFile 	= T..[[UI-Window-Background]],
-			edgeFile	= T..[[UI-Window-Border]],
+			bgFile 	= [[Interface\Tooltips\UI-Tooltip-Background]],
+			edgeFile	= [[Interface\Tooltips\UI-Tooltip-Border]],
 			tile 		= true,
-			edgeSize = 32,
-			TileSize	= 32,
+			edgeSize = 16,
+			TileSize	= 16,
 			insets 	= {
-				left 		= 5,
-				right 	= 5,
-				top 		= 5,
-				bottom	= 5
+				left 		= 4,
+				right 	= 4,
+				top 		= 4,
+				bottom	= 4
 			}
 		}
 		widgetFrame:SetBackdrop(backdrop)
-		widgetFrame:SetBackdropColor(0.0, 0.0, 0.0, 1.0)
+		widgetFrame:SetBackdropColor(0.0, 0.0, 0.0, 0.9)
 		widgetFrame:SetScript("OnShow", OnShow)
 		widgetFrame:SetScript("OnSizeChanged", OnSizeChanged)
 		widgetFrame:SetMovable(true)
@@ -260,7 +261,13 @@ function GnomTECWidgetContainerWindow(init)
 		widgetFrame:SetToplevel(true)
 		widgetFrame:EnableMouse(true)
 		
-		closeButton:SetPoint("TOPRIGHT")
+		closeButtonFrame:SetPoint("TOPRIGHT")
+		closeButtonFrame:SetWidth(24)		
+		closeButtonFrame:SetHeight(24)
+		closeButtonFrame:SetBackdrop(backdrop)
+		closeButtonFrame:SetBackdropColor(0.0, 0.0, 0.0, 0.9)
+		
+		closeButton:SetPoint("TOPRIGHT", 4, 4)
 
 		reseizeButton:SetPoint("BOTTOMRIGHT")
 		reseizeButton:SetWidth("16")		
@@ -271,21 +278,24 @@ function GnomTECWidgetContainerWindow(init)
 		reseizeButton:SetScript("OnMouseDown", StartResize)
 		reseizeButton:SetScript("OnMouseUp", StopResize)
 
-		headerFrame:SetPoint("TOPLEFT", 5, -6)
-		headerFrame:SetPoint("BOTTOMRIGHT", widgetFrame, "TOPRIGHT", -30, -26)
+		headerFrame:SetPoint("TOPLEFT")
+		headerFrame:SetPoint("BOTTOMRIGHT", widgetFrame, "TOPRIGHT", -20, -24)
+		headerFrame:SetBackdrop(backdrop)
+		headerFrame:SetBackdropColor(0.0, 0.0, 0.0, 0.9)
 		headerFrame:SetScript("OnMouseDown", StartMoving)
 		headerFrame:SetScript("OnMouseUp", StopMoving)
 
 		titleFontString:SetFontObject(GameFontNormal)
 		titleFontString:SetJustifyH("CENTER")
+		titleFontString:SetJustifyV("CENTER")
 		titleFontString:SetTextColor(1.0, 1.0, 0.0, 1.0)
+		titleFontString:SetPoint("TOPLEFT", 4, -4)
+		titleFontString:SetPoint("RIGHT", -4, 0)
 		titleFontString:SetWidth("32")		
-		titleFontString:SetHeight("14")
-		titleFontString:SetPoint("TOPLEFT", 0, -3)
-		titleFontString:SetPoint("RIGHT")
+		titleFontString:SetHeight("16")
 
-		containerFrame:SetPoint("TOPLEFT", 7, -32)
-		containerFrame:SetPoint("BOTTOMRIGHT", -7, 35)
+		containerFrame:SetPoint("TOPLEFT", 7, -25)
+		containerFrame:SetPoint("BOTTOMRIGHT", -7, 7)
 		
 		labelFontString:SetFontObject(GameFontNormal)
 		labelFontString:SetJustifyH("CENTER")

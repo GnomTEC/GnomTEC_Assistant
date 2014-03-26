@@ -65,6 +65,7 @@ function GnomTECWidgetTextureButton(init)
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
 	-- local field
+	local size = 36
 	
 	-- private methods
 	-- local function f()
@@ -82,15 +83,15 @@ function GnomTECWidgetTextureButton(init)
 	end
 
 	function self.GetMinReseize()
-		local minWidth = 36
-		local minHeight = 36
+		local minWidth = size
+		local minHeight = size
 		
 		return minWidth, minHeight
 	end
 
 	function self.GetMaxReseize()		
-		local maxWidth = 36
-		local maxHeight = 36
+		local maxWidth = size
+		local maxHeight = size
 
 		return maxWidth, maxHeight
 	end
@@ -104,17 +105,17 @@ function GnomTECWidgetTextureButton(init)
 	end
 
 	function self.ResizeByWidth(pixelWidth, pixelHeight)
-		protected.widgetFrame:SetWidth(36)
-		protected.widgetFrame:SetHeight(36)
+		protected.widgetFrame:SetWidth(size)
+		protected.widgetFrame:SetHeight(size)
 
-		return 36, 36
+		return size, size
 	end
 
 	function self.ResizeByHeight(pixelWidth, pixelHeight)
-		protected.widgetFrame:SetWidth(36)
-		protected.widgetFrame:SetHeight(36)
+		protected.widgetFrame:SetWidth(size)
+		protected.widgetFrame:SetHeight(size)
 
-		return 36, 36
+		return size, size
 	end
 	
 	function self.Disable()
@@ -137,6 +138,18 @@ function GnomTECWidgetTextureButton(init)
 			init = {}
 		end
 		
+		local borderSize
+		local textureSize
+		if (init.small) then
+			size = 18
+			borderSize = 26
+			textureSize = 16
+		else
+			size = 36
+			borderSize = 52
+			textureSize = 32
+		end
+		
 		local widgetFrame = CreateFrame("Button", nil, UIParent)
 		widgetFrame:Hide()
 
@@ -144,22 +157,23 @@ function GnomTECWidgetTextureButton(init)
 		
 		-- should be configurable later eg. saveable
 		widgetFrame:SetPoint("CENTER")		
-		widgetFrame:SetWidth("36")		
-		widgetFrame:SetHeight("36")
+		widgetFrame:SetWidth(size)		
+		widgetFrame:SetHeight(size)
 
 		local texture
 		
+		texture = widgetFrame:CreateTexture(nil, "BORDER")
+		texture:SetTexture([[Interface\BUTTONS\UI-Quickslot2]])
+		texture:SetWidth(borderSize)
+		texture:SetHeight(borderSize)
+		texture:SetPoint("CENTER", widgetFrame)
 		if (init.texture) then
-			local texture = widgetFrame:CreateTexture(nil, "BORDER")
+			texture = widgetFrame:CreateTexture(nil, "BORDER")
 			texture:SetTexture(init.texture)
-			texture:SetWidth(32)
-			texture:SetHeight(32)
+			texture:SetWidth(textureSize)
+			texture:SetHeight(textureSize)
 			texture:SetPoint("CENTER", widgetFrame)
 		end
-		widgetFrame:SetNormalTexture([[Interface\Buttons\UI-Quickslot2]])
-		texture = widgetFrame:GetNormalTexture()
-		texture:SetWidth(64)
-		texture:SetHeight(64)
 		widgetFrame:SetPushedTexture([[Interface\BUTTONS\UI-Quickslot-Depress]])
 		widgetFrame:SetHighlightTexture([[Interface\BUTTONS\ButtonHilight-Square]], "ADD")
 
