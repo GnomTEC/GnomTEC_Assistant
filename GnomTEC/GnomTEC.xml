@@ -1,26 +1,26 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
 	<!-- External Libraries -->
-  <Script file="Libs\LibStub\LibStub.lua"/>
-  <Include file="Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
-  <Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>
-  <Include file="Libs\AceEvent-3.0\AceEvent-3.0.xml"/>
-  <Include file="Libs\AceTimer-3.0\AceTimer-3.0.xml"/>
-  <Include file="Libs\AceBucket-3.0\AceBucket-3.0.xml"/>
-  <Include file="Libs\AceHook-3.0\AceHook-3.0.xml"/>
-  <Include file="Libs\AceDB-3.0\AceDB-3.0.xml"/>
-  <Include file="Libs\AceDBOptions-3.0\AceDBOptions-3.0.xml"/>
-  <Include file="Libs\AceLocale-3.0\AceLocale-3.0.xml"/>
-  <Include file="Libs\AceConsole-3.0\AceConsole-3.0.xml"/>
-  <Include file="Libs\AceGUI-3.0\AceGUI-3.0.xml"/>
-  <Include file="Libs\AceConfig-3.0\AceConfig-3.0.xml"/>
-  <Include file="Libs\AceComm-3.0\AceComm-3.0.xml"/>
-  <Include file="Libs\AceTab-3.0\AceTab-3.0.xml"/>
-  <Include file="Libs\AceSerializer-3.0\AceSerializer-3.0.xml"/>
-  <Include file="Libs\ChatThrottleLib\ChatThrottleLib.lua"/>
-  <Include file="Libs\LibTourist-3.0\lib.xml"/>
-  <Include file="Libs\libdatabroker-1-1\LibDataBroker-1.1.lua"/>  
-  <Include file="Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua"/>  
+	<Script file="Libs\LibStub\LibStub.lua"/>
+	<Include file="Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
+	<Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>
+	<Include file="Libs\AceEvent-3.0\AceEvent-3.0.xml"/>
+	<Include file="Libs\AceTimer-3.0\AceTimer-3.0.xml"/>
+	<Include file="Libs\AceBucket-3.0\AceBucket-3.0.xml"/>
+	<Include file="Libs\AceHook-3.0\AceHook-3.0.xml"/>
+	<Include file="Libs\AceDB-3.0\AceDB-3.0.xml"/>
+	<Include file="Libs\AceDBOptions-3.0\AceDBOptions-3.0.xml"/>
+	<Include file="Libs\AceLocale-3.0\AceLocale-3.0.xml"/>
+	<Include file="Libs\AceConsole-3.0\AceConsole-3.0.xml"/>
+	<Include file="Libs\AceGUI-3.0\AceGUI-3.0.xml"/>
+	<Include file="Libs\AceConfig-3.0\AceConfig-3.0.xml"/>
+	<Include file="Libs\AceComm-3.0\AceComm-3.0.xml"/>
+	<Include file="Libs\AceTab-3.0\AceTab-3.0.xml"/>
+	<Include file="Libs\AceSerializer-3.0\AceSerializer-3.0.xml"/>
+	<Include file="Libs\ChatThrottleLib\ChatThrottleLib.lua"/>
+	<Include file="Libs\LibTourist-3.0\lib.xml"/>
+	<Include file="Libs\libdatabroker-1-1\LibDataBroker-1.1.lua"/>  
+	<Include file="Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua"/>  
 
 	<!-- GnomTEC Framework Localization -->
 	<Include file="locale\locale.xml"/>
@@ -29,25 +29,44 @@
 	<Include file="GnomTEC.lua"/>
 	<Include file="GnomTECComm.lua"/>
 
+	<!-- GnomTEC Framework Base Widget Templates -->
+	<Include file="Templates\T_GNOMTECWIDGET.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETCONTAINER.xml"/> 
+
 	<!-- GnomTEC Framework Base Widget Classes -->
-  <Include file="Widgets\GnomTECWidget.lua"/>
-  <Include file="Widgets\GnomTECWidgetContainer.lua"/> 
+	<Include file="Widgets\GnomTECWidget.lua"/>
+	<Include file="Widgets\GnomTECWidgetContainer.lua"/> 
+
+	<!-- GnomTEC Framework Widget Templates -->
+	<Include file="Templates\T_GNOMTECWIDGETCONTAINERLAYOUTFILL.xml"/> 
+	<Include file="Templates\T_GNOMTECWIDGETCONTAINERLAYOUTHORIZONTAL.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETCONTAINERLAYOUTTABULATOR.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETCONTAINERLAYOUTVERTICAL.xml"/> 
+	<Include file="Templates\T_GNOMTECWIDGETCONTAINERWINDOW.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETEDITBOX.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETMAP.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETPANELBUTTON.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETSCROLLINGMESSAGE.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETSPACER.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETTEXT.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETTEXTUREBUTTON.xml"/>
 
 	<!-- GnomTEC Framework Widget Classes -->
-  <Include file="Widgets\GnomTECWidgetContainerLayoutFill.lua"/> 
-  <Include file="Widgets\GnomTECWidgetContainerLayoutHorizontal.lua"/> 
-  <Include file="Widgets\GnomTECWidgetContainerLayoutVertical.lua"/> 
-  <Include file="Widgets\GnomTECWidgetContainerWindow.lua"/>
-  <Include file="Widgets\GnomTECWidgetEditBox.lua"/>
-  <Include file="Widgets\GnomTECWidgetMap.lua"/>
-  <Include file="Widgets\GnomTECWidgetPanelButton.lua"/>
-  <Include file="Widgets\GnomTECWidgetScrollingMessage.lua"/>
-  <Include file="Widgets\GnomTECWidgetSpacer.lua"/>
-  <Include file="Widgets\GnomTECWidgetText.lua"/>
-  <Include file="Widgets\GnomTECWidgetTextureButton.lua"/>
+	<Include file="Widgets\GnomTECWidgetContainerLayoutFill.lua"/> 
+	<Include file="Widgets\GnomTECWidgetContainerLayoutHorizontal.lua"/>
+	<Include file="Widgets\GnomTECWidgetContainerLayoutTabulator.lua"/>
+	<Include file="Widgets\GnomTECWidgetContainerLayoutVertical.lua"/> 
+	<Include file="Widgets\GnomTECWidgetContainerWindow.lua"/>
+	<Include file="Widgets\GnomTECWidgetEditBox.lua"/>
+	<Include file="Widgets\GnomTECWidgetMap.lua"/>
+	<Include file="Widgets\GnomTECWidgetPanelButton.lua"/>
+	<Include file="Widgets\GnomTECWidgetScrollingMessage.lua"/>
+	<Include file="Widgets\GnomTECWidgetSpacer.lua"/>
+	<Include file="Widgets\GnomTECWidgetText.lua"/>
+	<Include file="Widgets\GnomTECWidgetTextureButton.lua"/>
 
-  <!-- GnomTEC Framework Classes -->
-  <Include file="GnomTECAddon.lua"/>
+	<!-- GnomTEC Framework Classes -->
+	<Include file="GnomTECAddon.lua"/>
 </Ui>
 
 

@@ -1,9 +1,22 @@
-﻿-- **********************************************************************
+-- **********************************************************************
 -- GnomTEC Assistant
--- Version: 5.4.7.1
--- Author: GnomTEC
--- Copyright 2014 by GnomTEC
--- http://www.gnomtec.de/
+-- Version: 5.4.8.1
+-- Author: Peter Jack
+-- URL: http://www.gnomtec.de/
+-- **********************************************************************
+-- Copyright © 2014 by Peter Jack
+--
+-- Licensed under the EUPL, Version 1.1 only (the "Licence");
+-- You may not use this work except in compliance with the Licence.
+-- You may obtain a copy of the Licence at:
+--
+-- http://ec.europa.eu/idabc/eupl5
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the Licence is distributed on an "AS IS" basis,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the Licence for the specific language governing permissions and
+-- limitations under the Licence.
 -- **********************************************************************
 -- load localization first.
 local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
@@ -11,18 +24,17 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 -- ----------------------------------------------------------------------
 -- Addon Info Constants (local)
 -- ----------------------------------------------------------------------
--- internal used version number since WoW only updates from TOC on game start
-local addonVersion = "5.4.7.1"
-
 -- addonInfo for addon registration to GnomTEC API
 local addonInfo = {
 	["Name"] = "GnomTEC Assistant",
-	["Version"] = addonVersion,
-	["Date"] = "2014-03-23",
-	["Author"] = "GnomTEC",
+	["Description"] = "Addon which will assist all GnomTEC addons in future with centralized templates and functionality.",	
+	["Version"] = "5.4.8.1",
+	["Date"] = "2014-09-16",
+	["Author"] = "Peter Jack",
 	["Email"] = "info@gnomtec.de",
 	["Website"] = "http://www.gnomtec.de/",
-	["Copyright"] = "(c)2014 by GnomTEC",
+	["Copyright"] = "© 2014 by Peter Jack",
+	["License"] = "European Union Public Licence (EUPL v.1.1)",	
 }
 
 -- ----------------------------------------------------------------------
@@ -91,8 +103,8 @@ local logDataObject =	{
 
 local function GnomTECAssistant()
 	-- call base class
-	local self, protected = GnomTECAddon("GnomTEC_Assistant", addonInfo, 1)
-		
+	local self, protected = GnomTECAddon("GnomTEC_Assistant", addonInfo)
+	
 	-- public fields go in the instance table
 	-- self.field = value
 

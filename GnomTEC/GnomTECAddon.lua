@@ -1,9 +1,22 @@
 ﻿-- **********************************************************************
 -- GnomTECAddon Class
--- Version: 5.4.7.1
--- Author: GnomTEC
--- Copyright 2014 by GnomTEC
--- http://www.gnomtec.de/
+-- Version: 5.4.8.1
+-- Author: Peter Jack
+-- URL: http://www.gnomtec.de/
+-- **********************************************************************
+-- Copyright © 2014 by Peter Jack
+--
+-- Licensed under the EUPL, Version 1.1 only (the "Licence");
+-- You may not use this work except in compliance with the Licence.
+-- You may obtain a copy of the Licence at:
+--
+-- http://ec.europa.eu/idabc/eupl5
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the Licence is distributed on an "AS IS" basis,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the Licence for the specific language governing permissions and
+-- limitations under the Licence.
 -- **********************************************************************
 local MAJOR, MINOR = "GnomTECAddon-1.0", 1
 local class, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
@@ -13,11 +26,11 @@ if not class then return end -- No Upgrade needed.
 -- ----------------------------------------------------------------------
 -- Class Global Constants (local)
 -- ----------------------------------------------------------------------
--- localization (will be loaded from base class later)
-local L = {}
+-- localization
+local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 
--- texture path (will be loaded from base class later)
-local T = ""
+-- texure path
+local T = [[Interface\Addons\]].. ... ..[[\GnomTEC\Textures\]]
 
 -- Class levels
 local CLASS_BASE		= 0
@@ -35,8 +48,8 @@ local LOG_DEBUG 	= 4
 -- ----------------------------------------------------------------------
 -- Class Static Variables (local)
 -- ----------------------------------------------------------------------
-local lastUID = 0
-local dataObjects = {}
+class.lastUID = class.lastUID or 0
+class.dataObjects = class.dataObjects or {}
 
 -- ----------------------------------------------------------------------
 -- Class Startup Initialization
@@ -56,17 +69,19 @@ local function emptynil( x ) return x ~= "" and x or nil end
 -- ----------------------------------------------------------------------
 --[[
 	addonInfo - table with addon informations as string
-		["Name"] 		- name
-		["Version"] 	- version
-		["Date"] = 		- date
-		["Author"] 		- author
-		["Email"] 		- contact email
-		["Website"] 	- URL to addon website
-		["Copyright"] 	- copyright information
+		["Name"] 			- name
+		["Description"]	- decription
+		["Version"] 		- version
+		["Date"] = 			- date
+		["Author"] 			- author
+		["Email"] 			- contact email
+		["Website"] 		- URL to addon website
+		["Copyright"] 		- copyright information
+		["License"] 		- license information	
 --]]
 function GnomTECAddon(addonTitle, addonInfo)
 	-- call base class
-	local self, protected = GnomTECComm(addonTitle, addonInfo, frameworkRevision)
+	local self, protected = GnomTECComm(addonTitle, addonInfo)
 		
 	-- public fields go in the instance table
 	-- self.field = value
@@ -79,6 +94,7 @@ function GnomTECAddon(addonTitle, addonInfo)
 	-- local field
 	local addonTitle = addonTitle
 	local aceAddon = nil
+	local aceOptionsMain = nil
 	local minimapIconDataObject = nil
 		
 	-- private methods
@@ -119,8 +135,8 @@ function GnomTECAddon(addonTitle, addonInfo)
 			name = addonTitle
 		end
 		
-		dataObject = ldb:NewDataObject(name, dataObject)
-		dataObjects[addonTitle][name] = dataObject
+		class.dataObject = ldb:NewDataObject(name, dataObject)
+		class.dataObjects[addonTitle][name] = dataObject
 		
 		return dataObject 
 	end
@@ -153,18 +169,69 @@ function GnomTECAddon(addonTitle, addonInfo)
 	
 	-- constructor
 	do
-		-- get localization first.
-		L = protected.GetLocale()
-
-		-- get texture path
-		T = protected.GetTexturePath()	
-
-		lastUID = lastUID + 1
-		protected.addonUID = "GnomTECAddonInstance"..lastUID
+		class.lastUID = class.lastUID + 1
+		protected.addonUID = "GnomTECAddonInstance"..class.lastUID
 		
-		dataObjects[addonTitle]= {}
+		class.dataObjects[addonTitle]= {}
+		
+		aceOptionsMain = {
+			name = addonInfo["Name"],
+			type = "group",
+			args = {
+				descriptionTitle = {
+					order = 1,
+					type = "description",
+					name = addonInfo["Description"],
+				},
+				descriptionAbout = {
+					name = "About",
+					type = "group",
+					guiInline = true,
+					order = 2,
+					args = {
+						descriptionVersion = {
+						order = 1,
+						type = "description",			
+						name = "|cffffd700".."Version"..": ".._G["GREEN_FONT_COLOR_CODE"]..addonInfo["Version"],
+						},
+						descriptionDate = {
+						order = 2,
+						type = "description",			
+						name = "|cffffd700".."Date"..": ".._G["GREEN_FONT_COLOR_CODE"]..addonInfo["Date"],
+						},
+						descriptionAuthor = {
+							order = 3,
+							type = "description",
+							name = "|cffffd700".."Author"..": ".."|cffff8c00"..addonInfo["Author"],
+						},
+						descriptionEmail = {
+							order = 4,
+							type = "description",
+							name = "|cffffd700".."Email"..": ".._G["HIGHLIGHT_FONT_COLOR_CODE"]..addonInfo["Email"],
+						},
+						descriptionWebsite = {
+							order = 5,
+							type = "description",
+							name = "|cffffd700".."Website"..": ".._G["HIGHLIGHT_FONT_COLOR_CODE"]..addonInfo["Website"],
+						},
+						descriptionCopyright = {
+							order = 6,
+							type = "description",
+							name = "|cffffd700".."Copyright"..": ".._G["HIGHLIGHT_FONT_COLOR_CODE"]..addonInfo["Copyright"],
+						},
+						descriptionLicense = {
+							order = 7,
+							type = "description",
+							name = "|cffffd700".."License"..": ".._G["HIGHLIGHT_FONT_COLOR_CODE"]..addonInfo["License"],
+						},
+					}
+				},
+			},
+		}
 		
 		aceAddon = LibStub("AceAddon-3.0"):NewAddon(addonTitle, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceComm-3.0", "AceSerializer-3.0")
+		LibStub("AceConfig-3.0"):RegisterOptionsTable(addonInfo["Name"].." Main", aceOptionsMain)
+		LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonInfo["Name"].." Main", addonInfo["Name"]);
 
 		function aceAddon:OnInitialize()
 			OnInitialize()

@@ -1,9 +1,22 @@
-﻿-- **********************************************************************
+-- **********************************************************************
 -- GnomTEC Base Class
--- Version: 5.4.7.1
--- Author: GnomTEC
--- Copyright 2014 by GnomTEC
--- http://www.gnomtec.de/
+-- Version: 5.4.8.1
+-- Author: Peter Jack
+-- URL: http://www.gnomtec.de/
+-- **********************************************************************
+-- Copyright © 2014 by Peter Jack
+--
+-- Licensed under the EUPL, Version 1.1 only (the "Licence");
+-- You may not use this work except in compliance with the Licence.
+-- You may obtain a copy of the Licence at:
+--
+-- http://ec.europa.eu/idabc/eupl5
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the Licence is distributed on an "AS IS" basis,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the Licence for the specific language governing permissions and
+-- limitations under the Licence.
 -- **********************************************************************
 local MAJOR, MINOR = "GnomTEC-1.0", 1
 local class, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
@@ -13,11 +26,11 @@ if not class then return end -- No Upgrade needed.
 -- ----------------------------------------------------------------------
 -- Class Global Constants (local)
 -- ----------------------------------------------------------------------
--- localization (will be loaded from base class later)
-local L = {}
+-- localization 
+local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
 
 -- texure path
-local T = [[Interface\Addons\GnomTEC_Assistant\GnomTEC\Textures\]]
+local T = [[Interface\Addons\]].. ... ..[[\GnomTEC\Textures\]]
 
 -- Class levels
 local CLASS_BASE		= 0
@@ -33,19 +46,18 @@ local LOG_INFO 	= 3
 local LOG_DEBUG 	= 4
 
 -- ----------------------------------------------------------------------
--- Class Static Variables (local)
+-- Class Static Variables
 -- ----------------------------------------------------------------------
-local lastUID = 0
-local maxLogBuffer = 1024
-local logBuffer = {}
-local logReceivers = {}
-
-local _timerFrame = nil
+class.lastUID = class.lastUID or 0
+class.maxLogBuffer = 1024
+class.logBuffer = class.logBuffer or {}
+class.logReceivers = class.logReceivers or {}
+class.timerFrame = class.timerFrame
 
 -- ----------------------------------------------------------------------
 -- Class Startup Initialization
 -- ----------------------------------------------------------------------
-L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC")
+
 
 -- ----------------------------------------------------------------------
 -- Helper Functions (local)
@@ -98,35 +110,27 @@ function GnomTEC()
 	-- function protected.f()
 	function protected.LogMessage(classLevel, logLevel, title, message, ...)
 		local timestamp = date("%H:%M:%S")
-		table.insert(logBuffer, {timestamp, classLevel, logLevel, title, message, ...})
-		while (maxLogBuffer < #logBuffer) do
-			table.remove(logBuffer, 1)
-			for idx, value in ipairs(logReceivers) do
-				if (logReceivers[idx].logReceived > 0) then
-					logReceivers[idx].logReceived = logReceivers[idx].logReceived - 1
+		table.insert(class.logBuffer, {timestamp, classLevel, logLevel, title, message, ...})
+		while (class.maxLogBuffer < #class.logBuffer) do
+			table.remove(class.logBuffer, 1)
+			for idx, value in ipairs(class.logReceivers) do
+				if (class.logReceivers[idx].logReceived > 0) then
+					class.logReceivers[idx].logReceived = class.logReceivers[idx].logReceived - 1
 				end
 			end
 		end
 		
 		-- send log entries to all receivers which have not received them
-		for idx, value in ipairs(logReceivers) do
-			if (logReceivers[idx].logReceived < #logBuffer) then
-				for i=logReceivers[idx].logReceived + 1, #logBuffer do
-					value.func(unpack(logBuffer[i]))
+		for idx, value in ipairs(class.logReceivers) do
+			if (class.logReceivers[idx].logReceived < #class.logBuffer) then
+				for i=class.logReceivers[idx].logReceived + 1, #class.logBuffer do
+					value.func(unpack(class.logBuffer[i]))
 				end
 			end
-			logReceivers[idx].logReceived = #logBuffer
+			class.logReceivers[idx].logReceived = #class.logBuffer
 		end
 	end
-	
-	function protected.GetLocale()
-		return L
-	end
 
-	function protected.GetTexturePath()
-		return T
-	end
-	
 	-- public methods
 	-- function self.f()
 	function self.LogMessage(logLevel, message, ...)
@@ -142,7 +146,7 @@ function GnomTEC()
 	function self.RegisterLogReceiver(logReceiver)
 		if type(logReceiver) == "function" then
 			self.UnregisterLogReceiver(logReceiver)
-			table.insert(logReceivers, {func=logReceiver, logReceived=0})
+			table.insert(class.logReceivers, {func=logReceiver, logReceived=0})
 			protected.LogMessage(CLASS_BASE, LOG_DEBUG, "GnomTEC", "log receiver registered")
 		end
 	end
@@ -150,14 +154,14 @@ function GnomTEC()
 	function self.UnregisterLogReceiver(logReceiver)
 		if type(logReceiver) == "function" then
 			local pos = 0
-			for idx, value in ipairs(logReceivers) do
+			for idx, value in ipairs(class.logReceivers) do
 				if (value.func == logReceiver) then
 					pos = idx
 					break
 				end
 			end
 			if (pos > 0) then
-				table.remove(logReceivers, pos)
+				table.remove(class.logReceivers, pos)
 				protected.LogMessage(CLASS_BASE, LOG_DEBUG, "GnomTEC", "log receiver unregistered")
 			end
 		end
@@ -166,16 +170,16 @@ function GnomTEC()
 
 	-- constructor
 	do
-		lastUID = lastUID + 1
-		protected.UID = "GnomTECInstance"..lastUID
+		class.lastUID = class.lastUID + 1
+		protected.UID = "GnomTECInstance"..class.lastUID
 		
-		if (not _timerFrame) then
-			_timerFrame = CreateFrame("Frame", nil, UIParent)
+		if (not class.timerFrame) then
+			class.timerFrame = CreateFrame("Frame", nil, UIParent)
 		
-			_timerFrame:SetPoint("BOTTOMLEFT")		
-			_timerFrame:SetWidth(0)	
-			_timerFrame:SetHeight(0)
-			_timerFrame:SetScript("OnUpdate", _OnUpdate)	
+			class.timerFrame:SetPoint("BOTTOMLEFT")		
+			class.timerFrame:SetWidth(0)	
+			class.timerFrame:SetHeight(0)
+			class.timerFrame:SetScript("OnUpdate", _OnUpdate)	
 		end
 		
 		protected.LogMessage(CLASS_BASE, LOG_DEBUG, "GnomTEC", "New instance created (%s)", protected.UID)

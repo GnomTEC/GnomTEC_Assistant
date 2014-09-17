@@ -1,5 +1,5 @@
 ﻿-- **********************************************************************
--- GnomTECWidgetText
+-- GnomTECWidgetContainerLayoutTabulator
 -- Version: 5.4.8.1
 -- Author: Peter Jack
 -- URL: http://www.gnomtec.de/
@@ -18,7 +18,7 @@
 -- See the Licence for the specific language governing permissions and
 -- limitations under the Licence.
 -- **********************************************************************
-local MAJOR, MINOR = "GnomTECWidgetText-1.0", 1
+local MAJOR, MINOR = "GnomTECWidgetContainerLayoutTabulator-1.0", 1
 local _widget, _oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not _widget then return end -- No Upgrade needed.
@@ -58,26 +58,22 @@ local LOG_DEBUG 	= 4
 -- ----------------------------------------------------------------------
 -- Helper Functions (local)
 -- ----------------------------------------------------------------------
--- function which returns also nil for empty strings
-local function emptynil( x ) return x ~= "" and x or nil end
 
 
 -- ----------------------------------------------------------------------
 -- Widget Class
 -- ----------------------------------------------------------------------
 
-function GnomTECWidgetText(init)
+function GnomTECWidgetContainerLayoutTabulator(init)
 
 	-- call base class
-	local self, protected = GnomTECWidget(init)
+	local self, protected = GnomTECWidgetContainer(init)
 	
 	-- public fields go in the instance table
 	-- self.field = value
 
 	-- protected fields go in the protected table
 	-- protected.field = value
-	protected.text = nil
-	protected.textFontString = nil
 	
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
@@ -92,109 +88,79 @@ function GnomTECWidgetText(init)
 	-- public methods
 	-- function self.f()
 	function self.LogMessage(logLevel, message, ...)
-		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetText", message, ...)
+		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetContainerLayoutTabulator", message, ...)
 	end
 
-	function self.GetMinReseize()
-		local minWidth = 30
-		local minHeight = 16
-		
-		if (protected.textFontString) then
-			minWidth = protected.textFontString:GetStringWidth() + 30
-			minHeight = protected.textFontString:GetStringHeight() + 4
-		end
-		
-		return minWidth, minHeight
-	end
 
-	function self.GetMaxReseize()		
-		local maxWidth = UIParent:GetWidth()
-		local maxHeight = UIParent:GetHeight()
-
-		return maxWidth, maxHeight
-	end
-
-	function self.IsHeightDependingOnWidth()
-		return false
-	end
-
-	function self.IsWidthDependingOnHeight()
-		return false
-	end
-
+	local base_ResizeByWidth = self.ResizeByWidth
 	function self.ResizeByWidth(pixelWidth, pixelHeight)
+		pixelWidth, pixelHeight = base_ResizeByWidth(pixelWidth, pixelHeight)
+
 		protected.widgetFrame:SetWidth(pixelWidth)
 		protected.widgetFrame:SetHeight(pixelHeight)
 
 		return pixelWidth, pixelHeight
 	end
 
+	local base_ResizeByHeight = self.ResizeByHeight
 	function self.ResizeByHeight(pixelWidth, pixelHeight)
+		pixelWidth, pixelHeight = base_ResizeByHeight(pixelWidth, pixelHeight)
+
 		protected.widgetFrame:SetWidth(pixelWidth)
 		protected.widgetFrame:SetHeight(pixelHeight)
 
 		return pixelWidth, pixelHeight
 	end
-	
-	function self.SetText(text)
-		protected.text = emptynil(text)
-		if (protected.textFontString) then
-			protected.textFontString:SetText(protected.text or "")
-			self.TriggerResize(self, 0, 0)
-		end
-	end
-	
-	function self.GetText()
-		return emptynil(protected.title)
-	end	
 	
 	-- constructor
 	do
 		if (not init) then
 			init = {}
 		end
-		
+
 		local widgetFrame = CreateFrame("Frame", nil, UIParent)
 		widgetFrame:Hide()
 
-		local textFontString = widgetFrame:CreateFontString()
-		
+		local containerFrame = widgetFrame
+		local labelFontString = containerFrame:CreateFontString()
+
 		protected.widgetFrame = widgetFrame 
-		protected.textFontString = textFontString 
-		
+		protected.containerFrame = containerFrame 
+		protected.labelFontString = labelFontString
+
 		-- should be configurable later eg. saveable
 		widgetFrame:SetPoint("CENTER")		
 		local w, r = self.GetWidth()
 		if (not r) then
 			widgetFrame:SetWidth(w)		
 		else
-			widgetFrame:SetWidth("32")		
+			widgetFrame:SetWidth(400)		
 		end
 		local h, r = self.GetHeight()
 		if (not r) then
 			widgetFrame:SetHeight(h)		
 		else
-			widgetFrame:SetHeight("14")
+			widgetFrame:SetHeight(200)
 		end
-		
-		textFontString:SetFontObject(GameFontNormal)
-		textFontString:SetJustifyH("CENTER")
-		textFontString:SetTextColor(1.0, 1.0, 1.0, 1.0)
-		textFontString:SetWidth("32")		
-		textFontString:SetHeight("14")
-		textFontString:SetPoint("TOPLEFT")
-		textFontString:SetPoint("BOTTOMRIGHT")
 
-		self.SetText(init.text)
-						
+		labelFontString:SetFontObject(GameFontNormal)
+		labelFontString:SetJustifyH("CENTER")
+		labelFontString:SetTextColor(0.5, 0.5, 0.5, 1.0)
+		labelFontString:SetWidth("32")		
+		labelFontString:SetHeight("14")
+		labelFontString:SetPoint("TOPLEFT", 0, -3)
+		labelFontString:SetPoint("RIGHT")
+
+		self.SetLabel(init.label)
+
 		if (init.parent) then
 			init.parent.AddChild(self, protected)
 		end
 
-		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetText", "New instance created (%s)", protected.UID)
+		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetContainerLayoutTabulator", "New instance created (%s)", protected.UID)
 	end
 	
-	-- return the instance
+	-- return the instance table
 	return self
 end
 

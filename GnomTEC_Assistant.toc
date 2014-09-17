@@ -11,8 +11,8 @@
 ## Notes-ruRU: Addon which will assist all GnomTEC addons in future with centralized templates and functionality.
 ## Notes-zhCN: Addon which will assist all GnomTEC addons in future with centralized templates and functionality.
 ## Notes-zhTW: Addon which will assist all GnomTEC addons in future with centralized templates and functionality.
-## Author: GnomTEC
-## Version: 5.4.7.1
+## Author: Peter Jack
+## Version: 5.4.8.1
 ## SavedVariables: GnomTEC_AssistantDB
 
 GnomTEC\GnomTEC.xml
