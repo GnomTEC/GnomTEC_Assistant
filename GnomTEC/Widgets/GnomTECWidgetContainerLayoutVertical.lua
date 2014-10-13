@@ -105,10 +105,6 @@ function GnomTECWidgetContainerLayoutVertical(init)
 				minHeight = minHeight + widgetMinHeight
 			end
 		end	
-	
-		if (self.GetLabel()) then
-			minHeight = minHeight + 20
-		end
 
 		if (minWidth > UIParent:GetWidth()) then
 			minWidth = UIParent:GetWidth()
@@ -133,10 +129,6 @@ function GnomTECWidgetContainerLayoutVertical(init)
 				end
 				maxHeight = maxHeight + widgetMaxHeight
 			end
-		end
-
-		if (self.GetLabel()) then
-			maxHeight = maxHeight + 20
 		end
 
 		if (maxHeight > UIParent:GetHeight()) then
@@ -190,11 +182,7 @@ function GnomTECWidgetContainerLayoutVertical(init)
 				child.widget.PrepareResize()
 				if (parent == self) then
 					child.widgetProtected.widgetFrame:ClearAllPoints()
-					if (not self.GetLabel()) then
-						child.widgetProtected.widgetFrame:SetPoint("TOP", protected.containerFrame, 0, 0)
-					else
-						child.widgetProtected.widgetFrame:SetPoint("TOP", protected.containerFrame, 0, -20)
-					end
+					child.widgetProtected.widgetFrame:SetPoint("TOP", protected.containerFrame, 0, 0)
 				else
 					child.widgetProtected.widgetFrame:ClearAllPoints()
 					child.widgetProtected.widgetFrame:SetPoint("TOP", parent, "BOTTOM", 0, 0)
@@ -210,10 +198,6 @@ function GnomTECWidgetContainerLayoutVertical(init)
 		local remainingWidgets = {}
 		local widgetWidth, widgetHeight
 		local widgetHeightIsRelative
-
-		if (self.GetLabel()) then
-			remainingHeight = remainingHeight - 20
-		end
 
 		-- first resize all elements to new width but don't change height yet.
 		-- create list of all shown widgets which are changeable in height
@@ -471,15 +455,13 @@ function GnomTECWidgetContainerLayoutVertical(init)
 			init = {}
 		end
 
-		local widgetFrame = CreateFrame("Frame", nil, UIParent)
+		local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent)
 		widgetFrame:Hide()
 
 		local containerFrame = widgetFrame
-		local labelFontString = containerFrame:CreateFontString()
 
 		protected.widgetFrame = widgetFrame 
 		protected.containerFrame = containerFrame 
-		protected.labelFontString = labelFontString
 		
 		-- should be configurable later eg. saveable
 		widgetFrame:SetPoint("CENTER")		
@@ -496,16 +478,6 @@ function GnomTECWidgetContainerLayoutVertical(init)
 			widgetFrame:SetHeight(200)
 		end
 		
-		labelFontString:SetFontObject(GameFontNormal)
-		labelFontString:SetJustifyH("CENTER")
-		labelFontString:SetTextColor(0.5, 0.5, 0.5, 1.0)
-		labelFontString:SetWidth("32")		
-		labelFontString:SetHeight("14")
-		labelFontString:SetPoint("TOPLEFT", 0, -3)
-		labelFontString:SetPoint("RIGHT")
-
-		self.SetLabel(init.label)
-
 		if (init.parent) then
 			init.parent.AddChild(self, protected)
 		end

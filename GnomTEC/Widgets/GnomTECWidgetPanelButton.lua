@@ -144,7 +144,7 @@ function GnomTECWidgetPanelButton(init)
 			init = {}
 		end
 		
-		local widgetFrame = CreateFrame("Button", nil, UIParent, "UIPanelButtonTemplate")
+		local widgetFrame = CreateFrame("Button", protected.widgetUID, UIParent, "UIPanelButtonTemplate")
 		widgetFrame:Hide()
 
 		protected.widgetFrame = widgetFrame 

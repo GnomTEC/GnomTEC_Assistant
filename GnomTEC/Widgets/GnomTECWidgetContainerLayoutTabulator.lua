@@ -118,15 +118,13 @@ function GnomTECWidgetContainerLayoutTabulator(init)
 			init = {}
 		end
 
-		local widgetFrame = CreateFrame("Frame", nil, UIParent)
+		local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent)
 		widgetFrame:Hide()
 
 		local containerFrame = widgetFrame
-		local labelFontString = containerFrame:CreateFontString()
 
 		protected.widgetFrame = widgetFrame 
 		protected.containerFrame = containerFrame 
-		protected.labelFontString = labelFontString
 
 		-- should be configurable later eg. saveable
 		widgetFrame:SetPoint("CENTER")		
@@ -142,16 +140,6 @@ function GnomTECWidgetContainerLayoutTabulator(init)
 		else
 			widgetFrame:SetHeight(200)
 		end
-
-		labelFontString:SetFontObject(GameFontNormal)
-		labelFontString:SetJustifyH("CENTER")
-		labelFontString:SetTextColor(0.5, 0.5, 0.5, 1.0)
-		labelFontString:SetWidth("32")		
-		labelFontString:SetHeight("14")
-		labelFontString:SetPoint("TOPLEFT", 0, -3)
-		labelFontString:SetPoint("RIGHT")
-
-		self.SetLabel(init.label)
 
 		if (init.parent) then
 			init.parent.AddChild(self, protected)

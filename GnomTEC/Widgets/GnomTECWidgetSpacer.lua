@@ -76,7 +76,8 @@ function GnomTECWidgetSpacer(init)
 
 	-- protected fields go in the protected table
 	-- protected.field = value
-	protected.text = nil
+	protected.minWidth = nil
+	protected.minHeight = nil
 	
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
@@ -95,8 +96,8 @@ function GnomTECWidgetSpacer(init)
 	end
 
 	function self.GetMinReseize()
-		local minWidth = 1
-		local minHeight = 1
+		local minWidth = protected.minWidth
+		local minHeight = protected.minHeight
 		
 		return minWidth, minHeight
 	end
@@ -137,27 +138,44 @@ function GnomTECWidgetSpacer(init)
 			init = {}
 		end
 		
-		local widgetFrame = CreateFrame("Frame", nil, UIParent)
+		protected.minWidth = init.minWidth or 1
+		protected.minHeight = init.minHeight or 1
+		
+		local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent)
 		widgetFrame:Hide()
-
-		local textFontString = widgetFrame:CreateFontString()
 		
 		protected.widgetFrame = widgetFrame 
-		protected.textFontString = textFontString 
 		
 		-- should be configurable later eg. saveable
 		widgetFrame:SetPoint("CENTER")		
+
+		
+		-- spacer should not have 100% as default as they should use minimal space by default
+		-- so we check if we have computed default values in base class
+		local width, widthUnit = string.match(init.width or "", "(%d+)(.)")
+		local height, heightUnit = string.match(init.height or "", "(%d+)(.)")
+		
+		if (not width) then
+			protected.widgetWidth = 0
+			protected.widgetWidthIsRelative = true
+		end
+
+		if (not height) then
+			protected.widgetHeight = 0
+			protected.widgetHeightIsRelative = true
+		end
+		
 		local w, r = self.GetWidth()
 		if (not r) then
 			widgetFrame:SetWidth(w)		
 		else
-			widgetFrame:SetWidth("1")		
+			widgetFrame:SetWidth(protected.minWidth)		
 		end
 		local h, r = self.GetHeight()
 		if (not r) then
 			widgetFrame:SetHeight(h)		
 		else
-			widgetFrame:SetHeight("1")
+			widgetFrame:SetHeight(protected.minHeight)
 		end
 		
 		if (init.parent) then

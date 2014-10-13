@@ -77,7 +77,7 @@ local logDataObject =	{
 	value = "0",
 	suffix = "new",
 	label = "GnomTEC Logbuch",
-	icon = [[Interface\Icons\INV_Inscription_Scroll]],
+	icon = [[Interface\Icons\INV_Scroll_07]],
 	OnClick = function(self, button)
 		GnomTEC_Assistant.SwitchLogWindow()
 	end,
@@ -238,16 +238,19 @@ local function GnomTECAssistant()
 	function self.SwitchMainWindow(show)
 		if (not mainWindowWidgets) then
 			mainWindowWidgets = {}
-			mainWindowWidgets.mainWindow = GnomTECWidgetContainerWindow({title="GnomTEC Assistant"})
-			mainWindowWidgets.mainWindowLayout = GnomTECWidgetContainerLayoutVertical({parent=mainWindowWidgets.mainWindow})
-
+			mainWindowWidgets.mainWindow = GnomTECWidgetContainerWindow({title="GnomTEC Assistant", name="Main", db=self.db})
+--			mainWindowWidgets.mainWindowLayout = GnomTECWidgetContainerLayoutVertical({parent=mainWindowWidgets.mainWindow})
+			mainWindowWidgets.mainWindowLayout = mainWindowWidgets.mainWindow
+			
 			mainWindowWidgets.mainWindowLayoutFunctions = GnomTECWidgetContainerLayoutVertical({parent=mainWindowWidgets.mainWindowLayout, label="Hauptfunktionen"})
-
+			mainWindowWidgets.mainWindowTopSpacer = GnomTECWidgetSpacer({parent=mainWindowWidgets.mainWindowLayoutFunctions, width="100%", height="1%", minHeight=34})
 			mainWindowWidgets.mainWindowLog = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutFunctions, label="GnomTEC Logbuch"})
 			mainWindowWidgets.mainWindowLog.OnClick = OnClickMainWindowLog
-
+			mainWindowWidgets.mainWindowBottomSpacer = GnomTECWidgetSpacer({parent=mainWindowWidgets.mainWindowLayoutFunctions, width="100%", height="100%"})
+	
 			mainWindowWidgets.mainWindowLayoutTest = GnomTECWidgetContainerLayoutVertical({parent=mainWindowWidgets.mainWindowLayout, label="Widget Tests"})
 
+			mainWindowWidgets.mainWindowTestTopSpacer = GnomTECWidgetSpacer({parent=mainWindowWidgets.mainWindowLayoutTest, width="100%", height="1%", minHeight=34})
 			mainWindowWidgets.mainWindowTestGnomTECWidgetContainerLayoutHorizontal =  GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetContainerLayoutHorizontal"})
 			mainWindowWidgets.mainWindowTestGnomTECWidgetContainerLayoutHorizontal.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestGnomTECWidgetContainerLayoutVertical = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetContainerLayoutVertical"})
@@ -266,6 +269,7 @@ local function GnomTECAssistant()
 			mainWindowWidgets.mainWindowTestGnomTECWidgetText.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestGnomTECWidgetTextureButton = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetTextureButton"})
 			mainWindowWidgets.mainWindowTestGnomTECWidgetTextureButton.OnClick = OnClickMainWindowTest
+			mainWindowWidgets.mainWindowTestBottomSpacer = GnomTECWidgetSpacer({parent=mainWindowWidgets.mainWindowLayoutTest, width="100%", height="100%"})
 		end
 		
 		if (nil == show) then
@@ -286,8 +290,11 @@ local function GnomTECAssistant()
 	function self.SwitchLogWindow(show)
 		if (not logWindowWidgets) then
 			logWindowWidgets = {}
-			logWindowWidgets.logWindow = GnomTECWidgetContainerWindow({title="GnomTEC Logbuch"})
-			logWindowWidgets.logWindowMessages = GnomTECWidgetScrollingMessage({parent=logWindowWidgets.logWindow})
+			logWindowWidgets.logWindow = GnomTECWidgetContainerWindow({title="GnomTEC Logbuch", name="Logbuch", db=self.db, portrait=[[Interface\Icons\INV_Scroll_07]]})
+			logWindowWidgets.logWindowLayoutVertical = GnomTECWidgetContainerLayoutVertical({parent=logWindowWidgets.logWindow, label="Logbuch"})
+			logWindowWidgets.logWindowTopLeftSpacer = GnomTECWidgetSpacer({parent=logWindowWidgets.logWindowLayoutVertical, minWidth=32, minHeight=34})
+			logWindowWidgets.logWindowMessages = GnomTECWidgetScrollingMessage({parent=logWindowWidgets.logWindowLayoutVertical, width="100%", height="100%"})
+			logWindowWidgets.logWindow.ReloadPositionAndSize(false)
 			logWindowWidgets.logWindow.OnShow = OnShowLogWindow
 		end
 		
@@ -329,8 +336,10 @@ local function GnomTECAssistant()
 			elseif ("GnomTECWidgetEditBox" == test) then
 				testWindowWidgets[test] = {}
 				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})
+				testWindowWidgets[test].testWindowLayout = GnomTECWidgetContainerLayoutVertical({parent=testWindowWidgets[test].testWindow, label="Label"})
+				testWindowWidgets[test].testWindowTopSpacer = GnomTECWidgetSpacer({parent=testWindowWidgets[test].testWindowLayout, width="100%", height="1%", minHeight=34})
 				local text = [[Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.]]
-				testWindowWidgets[test].testWindowText = GnomTECWidgetEditBox({parent=testWindowWidgets[test].testWindow, text=text})
+				testWindowWidgets[test].testWindowText = GnomTECWidgetEditBox({parent=testWindowWidgets[test].testWindowLayout, text=text})
 			elseif ("GnomTECWidgetMap" == test) then
 				testWindowWidgets[test] = {}
 				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})
@@ -338,11 +347,16 @@ local function GnomTECAssistant()
 			elseif ("GnomTECWidgetPanelButton" == test) then
 				testWindowWidgets[test] = {}
 				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})
-				testWindowWidgets[test].testWindowPanelButton = GnomTECWidgetPanelButton({parent=testWindowWidgets[test].testWindow, label="Label"})
+				testWindowWidgets[test].testWindowLayout = GnomTECWidgetContainerLayoutVertical({parent=testWindowWidgets[test].testWindow, label="Label"})
+				testWindowWidgets[test].testWindowTopSpacer = GnomTECWidgetSpacer({parent=testWindowWidgets[test].testWindowLayout, width="100%", height="1%", minHeight=34})
+				testWindowWidgets[test].testWindowPanelButton = GnomTECWidgetPanelButton({parent=testWindowWidgets[test].testWindowLayout, label="Label"})
+				testWindowWidgets[test].testWindowBottomSpacer = GnomTECWidgetSpacer({parent=testWindowWidgets[test].testWindowLayout, width="100%", height="100%"})
 			elseif ("GnomTECWidgetScrollingMessage" == test) then
 				testWindowWidgets[test] = {}
 				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})
-				testWindowWidgets[test].testWindowScrollingMessage = GnomTECWidgetScrollingMessage({parent=testWindowWidgets[test].testWindow})
+				testWindowWidgets[test].testWindowLayout = GnomTECWidgetContainerLayoutVertical({parent=testWindowWidgets[test].testWindow, label="Label"})
+				testWindowWidgets[test].testWindowTopSpacer = GnomTECWidgetSpacer({parent=testWindowWidgets[test].testWindowLayout, width="100%", height="1%", minHeight=34})
+				testWindowWidgets[test].testWindowScrollingMessage = GnomTECWidgetScrollingMessage({parent=testWindowWidgets[test].testWindowLayout})
 				for r=0.0, 1.0, 0.5 do
 					for g=0.0, 1.0, 0.5 do
 						for b=0.0, 1.0, 0.5 do
@@ -357,8 +371,9 @@ local function GnomTECAssistant()
 				testWindowWidgets[test] = {}
 				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test})
 				testWindowWidgets[test].testWindowLayout = GnomTECWidgetContainerLayoutVertical({parent=testWindowWidgets[test].testWindow})
+				testWindowWidgets[test].testWindowTopSpacer = GnomTECWidgetSpacer({parent=testWindowWidgets[test].testWindowLayout, width="100%", height="1%", minHeight=34})
 				testWindowWidgets[test].testWindowPanelButton1 = GnomTECWidgetPanelButton({parent=testWindowWidgets[test].testWindowLayout, label=[[\/ Spacer \/]]})
-				testWindowWidgets[test].testWindowSpacer = GnomTECWidgetSpacer({parent=testWindowWidgets[test].testWindowLayout})
+				testWindowWidgets[test].testWindowSpacer = GnomTECWidgetSpacer({parent=testWindowWidgets[test].testWindowLayout, width="100%", height="100%"})
 				testWindowWidgets[test].testWindowPanelButton2 = GnomTECWidgetPanelButton({parent=testWindowWidgets[test].testWindowLayout, label=[[/\ Spacer /\]]})
 			elseif ("GnomTECWidgetText" == test) then
 				testWindowWidgets[test] = {}

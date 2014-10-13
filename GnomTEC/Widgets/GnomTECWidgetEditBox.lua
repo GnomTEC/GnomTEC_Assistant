@@ -200,7 +200,7 @@ function GnomTECWidgetEditBox(init)
 			init = {}
 		end
 		
-		local widgetFrame = CreateFrame("Frame", nil, UIParent)
+		local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent)
 		widgetFrame:Hide()
 
 		local scrollFrame = CreateFrame("ScrollFrame", nil, widgetFrame)

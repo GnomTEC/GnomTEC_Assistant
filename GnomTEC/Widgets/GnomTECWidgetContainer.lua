@@ -78,7 +78,6 @@ function GnomTECWidgetContainer(init)
 	-- protected.field = value
 	protected.childs = {}
 	protected.containerFrame = nil
-	protected.labelFontString = nil
 
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
@@ -101,11 +100,7 @@ function GnomTECWidgetContainer(init)
 		table.insert(protected.childs, {widget = child, widgetProtected = childProtected})
 		childProtected.widgetFrame:SetParent(protected.containerFrame)
 		childProtected.widgetFrame:ClearAllPoints()
-		if (not self.GetLabel()) then
-			childProtected.widgetFrame:SetPoint("CENTER")
-		else
-			childProtected.widgetFrame:SetPoint("CENTER", 0, -10)
-		end		
+		childProtected.widgetFrame:SetPoint("CENTER")
 		childProtected.widgetFrame:Show()
 		
 		self.TriggerResize(child, 0, 0)
@@ -137,10 +132,6 @@ function GnomTECWidgetContainer(init)
 				break
 			end
 		end
-
-		if (self.GetLabel()) then
-			minHeight = minHeight + 20
-		end
 		
 		if (minWidth > UIParent:GetWidth()) then
 			minWidth = UIParent:GetWidth()
@@ -164,14 +155,10 @@ function GnomTECWidgetContainer(init)
 			end
 		end
 
-		if (self.GetLabel()) then
-			maxHeight = maxHeight + 20
-		end
-
-		if (maxWidth > UIParent:GetWidth()) then
+		if ((maxWidth > UIParent:GetWidth()) or (0 == maxWidth)) then
 			maxWidth = UIParent:GetWidth()
 		end
-		if (maxHeight > UIParent:GetHeight()) then
+		if ((maxHeight > UIParent:GetHeight()) or (0 == maxHeight)) then
 			maxHeight = UIParent:GetHeight()
 		end
 		
@@ -212,11 +199,7 @@ function GnomTECWidgetContainer(init)
 			if (not child) then
 				if (value.widget.IsShown()) then
 					child = value.widget
-					if (not self.GetLabel()) then
-						value.widgetProtected.widgetFrame:SetPoint("CENTER")
-					else
-						value.widgetProtected.widgetFrame:SetPoint("CENTER", 0, -10)
-					end		
+					value.widgetProtected.widgetFrame:SetPoint("CENTER")
 					child.PrepareResize()
 				end
 			else
@@ -230,11 +213,7 @@ function GnomTECWidgetContainer(init)
 	function self.ResizeByWidth(pixelWidth, pixelHeight)
 		for idx, value in ipairs(protected.childs) do
 			if (value.widget.IsShown()) then
-				if (not self.GetLabel()) then
-					pixelWidth, pixelHeight = value.widget.ResizeByWidth(pixelWidth, pixelHeight)
-				else
-					pixelWidth, pixelHeight = value.widget.ResizeByWidth(pixelWidth, pixelHeight - 20)
-				end
+				pixelWidth, pixelHeight = value.widget.ResizeByWidth(pixelWidth, pixelHeight)
 				break
 			end
 		end
@@ -247,11 +226,7 @@ function GnomTECWidgetContainer(init)
 	function self.ResizeByHeight(pixelWidth, pixelHeight)
 		for idx, value in ipairs(protected.childs) do
 			if (value.widget.IsShown()) then
-				if (not self.GetLabel()) then
-					pixelWidth, pixelHeight = value.widget.ResizeByHeight(pixelWidth, pixelHeight)
-				else
-					pixelWidth, pixelHeight = value.widget.ResizeByHeight(pixelWidth, pixelHeight - 20)
-				end
+				pixelWidth, pixelHeight = value.widget.ResizeByHeight(pixelWidth, pixelHeight)
 				break
 			end
 		end
@@ -296,9 +271,6 @@ function GnomTECWidgetContainer(init)
 
 	function self.SetLabel(label)
 		protected.label = emptynil(label)
-		if (protected.labelFontString) then
-			protected.labelFontString:SetText(protected.label or "")
-		end
 	end
 	
 	-- constructor

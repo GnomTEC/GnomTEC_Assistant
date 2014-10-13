@@ -154,7 +154,7 @@ function GnomTECWidgetText(init)
 			init = {}
 		end
 		
-		local widgetFrame = CreateFrame("Frame", nil, UIParent)
+		local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent)
 		widgetFrame:Hide()
 
 		local textFontString = widgetFrame:CreateFontString()

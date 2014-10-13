@@ -176,7 +176,7 @@ function GnomTECWidgetMap(init)
 			init = {}
 		end
 
-		local widgetFrame = CreateFrame("Frame", nil, UIParent)
+		local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent)
 		widgetFrame:Hide()
 
 		protected.widgetFrame = widgetFrame 

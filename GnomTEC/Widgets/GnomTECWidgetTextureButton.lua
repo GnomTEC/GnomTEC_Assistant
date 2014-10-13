@@ -157,7 +157,7 @@ function GnomTECWidgetTextureButton(init)
 			textureSize = 32
 		end
 		
-		local widgetFrame = CreateFrame("Button", nil, UIParent)
+		local widgetFrame = CreateFrame("Button", protected.widgetUID, UIParent)
 		widgetFrame:Hide()
 
 		protected.widgetFrame = widgetFrame 

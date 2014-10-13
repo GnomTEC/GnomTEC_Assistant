@@ -1,7 +1,7 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
 	<!-- T_GNOMTECWIDGETSCROLLINGMESSAGE: Standard template for GnomTECWidgetScrollingMessage-->
-	<Frame name="T_GNOMTECWIDGETSCROLLINGMESSAGE" virtual="true">
+	<Frame name="T_GNOMTECWIDGETSCROLLINGMESSAGE" hidden="true" virtual="true">
 		<Size x="128" y="128" />
 		<ResizeBounds>
          <minResize>
@@ -11,6 +11,100 @@
          	<RelDimension x="1.0" y="1.0"/>
       	</maxResize>
       </ResizeBounds>
+        <Frames>
+      	<ScrollingMessageFrame name="$parentscrollingMessageFrame" parentKey="scrollingMessageFrame" fade="false">
+      		<Anchors>
+      			<Anchor point="TOPLEFT">
+     			     <Offset>
+ 			           <AbsDimension x="0" y="0"/>
+ 			        </Offset>
+ 			     </Anchor>
+   		     <Anchor point="BOTTOMRIGHT">
+     			     <Offset>
+ 			           <AbsDimension x="-16" y="0"/>
+ 			        </Offset>
+ 			     </Anchor>
+				</Anchors>
+				<FontString inherits="ChatFontNormal" justifyH="LEFT"/>
+      	</ScrollingMessageFrame>
+      	<Slider name="$parentslider" parentKey="slider">
+      		<Anchors>
+      			<Anchor point="TOPRIGHT">
+     			     <Offset>
+ 			           <AbsDimension x="0" y="-18"/>
+ 			        </Offset>
+ 			     </Anchor>
+   		     <Anchor point="BOTTOMRIGHT">
+     			     <Offset>
+ 			           <AbsDimension x="0" y="18"/>
+ 			        </Offset>
+ 			     </Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="16" y="0"/>
+				</Size>
+				<Frames>
+					<Button name="$parentScrollUpButton" inherits="UIPanelScrollUpButtonTemplate">
+						<Anchors>
+							<Anchor point="BOTTOM" relativePoint="TOP"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								local parent = self:GetParent();
+								parent:SetValue(parent:GetValue() - parent:GetValueStep());
+								PlaySound("UChatScrollButton");
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="$parentScrollDownButton" inherits="UIPanelScrollDownButtonTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								local parent = self:GetParent();
+								parent:SetValue(parent:GetValue() + parent:GetValueStep());
+								PlaySound("UChatScrollButton");
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Frame name="$parentBorder">
+						<Size>
+							<AbsDimension x="24" y="0"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentScrollUpButton">
+								<Offset x="-5" y="5"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$parentScrollDownButton">
+								<Offset x="5" y="-3"/>
+							</Anchor>
+						</Anchors>
+						<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="12"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="0" right="0" top="5" bottom="5"/>
+							</BackgroundInsets>
+						</Backdrop>
+						<Scripts>
+							<OnLoad>
+								self:SetBackdropBorderColor(TOOLTIP_DEFAULT_COLOR.r, TOOLTIP_DEFAULT_COLOR.g, TOOLTIP_DEFAULT_COLOR.b, 0.5);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+				<ThumbTexture name="$parentThumbTexture" inherits="UIPanelScrollBarButton" file="Interface\Buttons\UI-ScrollBar-Knob">
+					<Size>
+						<AbsDimension x="16" y="24"/>
+					</Size>
+					<TexCoords left="0.25" right="0.75" top="0.125" bottom="0.875"/>
+				</ThumbTexture>
+			</Slider>
+      </Frames>
 	</Frame>
-
 </Ui>

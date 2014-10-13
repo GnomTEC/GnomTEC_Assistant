@@ -142,16 +142,6 @@ function GnomTECWidgetScrollingMessage(init)
 		end
 	end
 
-	local function OnClickUpButton(frame, button)
-		protected.scrollingMessageFrame:ScrollUp()
-		PlaySound("UChatScrollButton");
-	end
-
-	local function OnClickDownButton(frame, button)
-		protected.scrollingMessageFrame:ScrollDown()
-		PlaySound("UChatScrollButton");
-	end
-
 	-- protected methods
 	-- function protected.f()
 	
@@ -211,13 +201,9 @@ function GnomTECWidgetScrollingMessage(init)
 			init = {}
 		end
 		
-		local widgetFrame = CreateFrame("Frame", nil, UIParent)
-		widgetFrame:Hide()
-
-		local scrollingMessageFrame = CreateFrame("ScrollingMessageFrame", nil, widgetFrame)
-		local slider = CreateFrame("Slider", nil, widgetFrame)
-		local upButton = CreateFrame("Button", nil, slider, "UIPanelScrollUpButtonTemplate")
-		local downButton = CreateFrame("Button", nil, slider, "UIPanelScrollDownButtonTemplate")
+		local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent, "T_GNOMTECWIDGETSCROLLINGMESSAGE")
+		local scrollingMessageFrame = widgetFrame.scrollingMessageFrame	-- CreateFrame("ScrollingMessageFrame", nil, widgetFrame)
+		local slider = widgetFrame.slider 	-- CreateFrame("Slider", nil, widgetFrame)
 		
 		protected.widgetFrame = widgetFrame 
 		protected.scrollingMessageFrame = scrollingMessageFrame 
@@ -238,33 +224,17 @@ function GnomTECWidgetScrollingMessage(init)
 			widgetFrame:SetHeight("400")
 		end
 		
-		scrollingMessageFrame:SetPoint("TOPLEFT")		
-		scrollingMessageFrame:SetPoint("BOTTOMRIGHT", -16, 0)	
-		scrollingMessageFrame:SetFading(false)
 		scrollingMessageFrame:SetIndentedWordWrap(true) 
 		scrollingMessageFrame:SetMaxLines(1024)
-		scrollingMessageFrame:SetFontObject(ChatFontNormal)
-		scrollingMessageFrame:SetJustifyH("LEFT")
 		
 		scrollingMessageFrame:SetScript("OnMouseWheel", OnMouseWheel)
 		scrollingMessageFrame:SetScript("OnMessageScrollChanged", OnMessageScrollChanged)
 		
-		slider:SetWidth(16)
-		slider:SetPoint("TOPRIGHT", 0, -8)	
-		slider:SetPoint("BOTTOMRIGHT", 0, 8)	
-		slider:SetThumbTexture([[Interface\Buttons\UI-ScrollBar-Knob]])
 		slider:SetScript("OnMouseWheel", OnMouseWheel)
 		slider:SetScript("OnValueChanged", OnValueChanged)
-		slider:SetMinMaxValues(0, 0);
-		slider:SetValue(0);   
-
-		upButton:SetPoint("TOP", slider, "TOP", 0, 8)
-		upButton:SetScript("OnMouseWheel", OnMouseWheel)
-		upButton:SetScript("OnClick", OnClickUpButton)
-
-		downButton:SetPoint("BOTTOM", slider, "BOTTOM", 0, -8)
-		downButton:SetScript("OnMouseWheel", OnMouseWheel)
-		downButton:SetScript("OnClick", OnClickDownButton)
+		slider:SetMinMaxValues(0, 0)
+		slider:SetValue(0)
+		slider:SetValueStep(1)
 				
 		if (init.parent) then
 			init.parent.AddChild(self, protected)

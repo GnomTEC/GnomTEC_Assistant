@@ -75,13 +75,16 @@ function GnomTECWidget(init)
 
 	-- protected fields go in the protected table
 	-- protected.field = value
+	protected.widgetName = nil
+	protected.widgetDb = nil
 	protected.widgetParent = nil
 	protected.widgetUID = nil
 	protected.widgetFrame = nil
 	protected.widgetWidth = nil
+	protected.widgetHeight = nil
 	protected.widgetWidthIsRelative = nil
 	protected.widgetHeightIsRelative = nil
-	protected.label = nil
+	protected.widgetLabel = nil
 	
 
 	-- private fields are implemented using locals
@@ -164,6 +167,15 @@ function GnomTECWidget(init)
 			protected.widgetParent.TriggerResize(self,dx, dy)
 		end
 	end
+
+	function self.SaveSize()
+		if (protected.widgetDb) then
+			protected.widgetDb.width = protected.widgetWidth
+			protected.widgetDb.widthUnit = protected.widgetWidthUnit
+			protected.widgetDb.height = protected.widgetHeight
+			protected.widgetDb.heightUnit = protected.widgetHeightUnit
+		end
+	end
 	
 	function self.GetWidgetUID()
 		return protected.widgetUID
@@ -178,11 +190,11 @@ function GnomTECWidget(init)
 	end
 
 	function self.SetLabel(label)
-		protected.label = emptynil(label)
+		protected.widgetLabel = emptynil(label)
 	end	
 
 	function self.GetLabel()
-		return emptynil(protected.label)
+		return emptynil(protected.widgetLabel)
 	end	
 	
 	
@@ -197,8 +209,43 @@ function GnomTECWidget(init)
 		end
 		
 		protected.widgetParent = init.parent
-
+		
+		-- get default values
 		local width, widthUnit = string.match(init.width or "", "(%d+)(.)")
+		local height, heightUnit = string.match(init.height or "", "(%d+)(.)")
+
+		-- if widget have a name and a database then we can store frame positions 
+		if (init.db and init.name) then
+			protected.widgetName = init.name
+			if not (init.db.char.GnomTECWidgets) then
+				-- we are the first widget using the db so we have to create our table
+				init.db.char.GnomTECWidgets = {}
+			end
+			if not (init.db.char.GnomTECWidgets[protected.widgetName]) then
+				init.db.char.GnomTECWidgets[protected.widgetName] = {}
+				protected.widgetDb = init.db.char.GnomTECWidgets[protected.widgetName]
+				protected.widgetDb.width = width
+				protected.widgetDb.widthUnit = widthUnit
+				protected.widgetDb.height = height
+				protected.widgetDb.heightUnit = heightUnit
+			else
+				protected.widgetDb = init.db.char.GnomTECWidgets[protected.widgetName]
+			end
+
+			-- saving default values 
+			protected.widgetDb.defaultWidth = width
+			protected.widgetDb.defaultWidthUnit = widthUnit
+			protected.widgetDb.defaultHeight = height
+			protected.widgetDb.defaultHeightUnit = heightUnit
+			-- set actual values to values from database
+			width = protected.widgetDb.width
+			widthUnit = protected.widgetDb.widthUnit
+			height = protected.widgetDb.height
+			heightUnit = protected.widgetDb.heightUnit
+			
+		end
+		
+		-- set the actual width 
 		if (not width) then
 			protected.widgetWidth = 100
 			protected.widgetWidthIsRelative = true
@@ -211,7 +258,7 @@ function GnomTECWidget(init)
 			end
 		end
 
-		local height, heightUnit = string.match(init.height or "", "(%d+)(.)")
+		-- set the actual height 
 		if (not height) then
 			protected.widgetHeight = 100
 			protected.widgetHeightIsRelative = true
