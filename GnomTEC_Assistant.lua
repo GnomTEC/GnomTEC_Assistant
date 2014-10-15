@@ -1,6 +1,6 @@
 -- **********************************************************************
 -- GnomTEC Assistant
--- Version: 5.4.8.1
+-- Version: 6.0.2.1
 -- Author: Peter Jack
 -- URL: http://www.gnomtec.de/
 -- **********************************************************************
@@ -28,8 +28,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 local addonInfo = {
 	["Name"] = "GnomTEC Assistant",
 	["Description"] = "Addon which will assist all GnomTEC addons in future with centralized templates and functionality.",	
-	["Version"] = "5.4.8.1",
-	["Date"] = "2014-09-16",
+	["Version"] = "6.0.2.1",
+	["Date"] = "2014-10-15",
 	["Author"] = "Peter Jack",
 	["Email"] = "info@gnomtec.de",
 	["Website"] = "http://www.gnomtec.de/",
@@ -174,6 +174,12 @@ local function GnomTECAssistant()
 			local text = string.format("%s: |c%s%s %s:|r |c%s%s|r", timestamp, classColor, classText, title or "???", levelColor, string.format(message or "???", ...))
 			logWindowWidgets.logWindowMessages.AddMessage(text, 1.0, 1.0, 1.0)
 
+			if (classLevel == CLASS_WIDGET) then
+				logWindowWidgets.logWindowMessages_Widget.AddMessage(text, 1.0, 1.0, 1.0)
+			elseif (classLevel == CLASS_ADDON) then
+				logWindowWidgets.logWindowMessages_Addon.AddMessage(text, 1.0, 1.0, 1.0)
+			end
+
 			if (logWindowWidgets.logWindow.IsShown()) then
 				logDataObject.value = 0
 			else
@@ -239,7 +245,6 @@ local function GnomTECAssistant()
 		if (not mainWindowWidgets) then
 			mainWindowWidgets = {}
 			mainWindowWidgets.mainWindow = GnomTECWidgetContainerWindow({title="GnomTEC Assistant", name="Main", db=self.db})
---			mainWindowWidgets.mainWindowLayout = GnomTECWidgetContainerLayoutVertical({parent=mainWindowWidgets.mainWindow})
 			mainWindowWidgets.mainWindowLayout = mainWindowWidgets.mainWindow
 			
 			mainWindowWidgets.mainWindowLayoutFunctions = GnomTECWidgetContainerLayoutVertical({parent=mainWindowWidgets.mainWindowLayout, label="Hauptfunktionen"})
@@ -291,9 +296,19 @@ local function GnomTECAssistant()
 		if (not logWindowWidgets) then
 			logWindowWidgets = {}
 			logWindowWidgets.logWindow = GnomTECWidgetContainerWindow({title="GnomTEC Logbuch", name="Logbuch", db=self.db, portrait=[[Interface\Icons\INV_Scroll_07]]})
-			logWindowWidgets.logWindowLayoutVertical = GnomTECWidgetContainerLayoutVertical({parent=logWindowWidgets.logWindow, label="Logbuch"})
+
+			logWindowWidgets.logWindowLayoutVertical = GnomTECWidgetContainerLayoutVertical({parent=logWindowWidgets.logWindow, label="Komplett"})
 			logWindowWidgets.logWindowTopLeftSpacer = GnomTECWidgetSpacer({parent=logWindowWidgets.logWindowLayoutVertical, minWidth=32, minHeight=34})
 			logWindowWidgets.logWindowMessages = GnomTECWidgetScrollingMessage({parent=logWindowWidgets.logWindowLayoutVertical, width="100%", height="100%"})
+
+			logWindowWidgets.logWindowLayoutVertical_Addon = GnomTECWidgetContainerLayoutVertical({parent=logWindowWidgets.logWindow, label="Addon"})
+			logWindowWidgets.logWindowTopLeftSpacer_Addon = GnomTECWidgetSpacer({parent=logWindowWidgets.logWindowLayoutVertical_Addon, minWidth=32, minHeight=34})
+			logWindowWidgets.logWindowMessages_Addon = GnomTECWidgetScrollingMessage({parent=logWindowWidgets.logWindowLayoutVertical_Addon, width="100%", height="100%"})
+
+			logWindowWidgets.logWindowLayoutVertical_Widget = GnomTECWidgetContainerLayoutVertical({parent=logWindowWidgets.logWindow, label="Widget"})
+			logWindowWidgets.logWindowTopLeftSpacer_Widget = GnomTECWidgetSpacer({parent=logWindowWidgets.logWindowLayoutVertical_Widget, minWidth=32, minHeight=34})
+			logWindowWidgets.logWindowMessages_Widget = GnomTECWidgetScrollingMessage({parent=logWindowWidgets.logWindowLayoutVertical_Widget, width="100%", height="100%"})
+
 			logWindowWidgets.logWindow.ReloadPositionAndSize(false)
 			logWindowWidgets.logWindow.OnShow = OnShowLogWindow
 		end

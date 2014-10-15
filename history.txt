@@ -1,4 +1,4 @@
 == GnomTEC Assistant - Change History 
 
-=== 5.4.8.1 (2014-09-xx)
+=== 6.0.2.1 (2014-10-xx)
 * Initial version

@@ -1,6 +1,6 @@
 ﻿-- **********************************************************************
 -- GnomTECWidgetContainerWindow
--- Version: 5.4.8.1
+-- Version: 6.0.2.1
 -- Author: Peter Jack
 -- URL: http://www.gnomtec.de/
 -- **********************************************************************
@@ -141,6 +141,7 @@ function GnomTECWidgetContainerWindow(init)
 				value.widget:Hide()
 			end
 		end
+		PlaySound("igCharacterInfoTab")
 	end
 	
 	-- protected methods
