@@ -134,7 +134,7 @@ function GnomTECWidgetContainerLayoutVertical(init)
 		if (maxHeight > UIParent:GetHeight()) then
 			maxHeight = UIParent:GetHeight()
 		end
-		
+
 		return maxWidth, maxHeight
 	end
 
@@ -223,6 +223,12 @@ function GnomTECWidgetContainerLayoutVertical(init)
 		while (0 ~= #remainingWidgets) do
 			local actualHeight = 0
 			local tempWidgets = {}
+
+			if (0 == remainingRelativeHeightSum) then
+				-- if all widgets are set to minimum space then we hav propably a 0.
+				-- this would be bad for later division
+				remainingRelativeHeightSum = 1
+			end
 
 			-- reseize remaining widgets according relative heights
 			for idx, widget in ipairs(remainingWidgets) do

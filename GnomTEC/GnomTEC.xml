@@ -39,10 +39,12 @@
 
 	<!-- GnomTEC Framework Widget Templates -->
 	<Include file="Templates\T_GNOMTECWIDGETCONTAINERLAYOUTFILL.xml"/> 
+	<Include file="Templates\T_GNOMTECWIDGETCONTAINERLAYOUTGRID.xml"/> 
 	<Include file="Templates\T_GNOMTECWIDGETCONTAINERLAYOUTHORIZONTAL.xml"/>
 	<Include file="Templates\T_GNOMTECWIDGETCONTAINERLAYOUTTABULATOR.xml"/>
 	<Include file="Templates\T_GNOMTECWIDGETCONTAINERLAYOUTVERTICAL.xml"/> 
 	<Include file="Templates\T_GNOMTECWIDGETCONTAINERWINDOW.xml"/>
+	<Include file="Templates\T_GNOMTECWIDGETDROPDOWNBUTTON.xml"/>	
 	<Include file="Templates\T_GNOMTECWIDGETEDITBOX.xml"/>
 	<Include file="Templates\T_GNOMTECWIDGETMAP.xml"/>
 	<Include file="Templates\T_GNOMTECWIDGETPANELBUTTON.xml"/>
@@ -53,10 +55,12 @@
 
 	<!-- GnomTEC Framework Widget Classes -->
 	<Include file="Widgets\GnomTECWidgetContainerLayoutFill.lua"/> 
+	<Include file="Widgets\GnomTECWidgetContainerLayoutGrid.lua"/> 
 	<Include file="Widgets\GnomTECWidgetContainerLayoutHorizontal.lua"/>
 	<Include file="Widgets\GnomTECWidgetContainerLayoutTabulator.lua"/>
 	<Include file="Widgets\GnomTECWidgetContainerLayoutVertical.lua"/> 
 	<Include file="Widgets\GnomTECWidgetContainerWindow.lua"/>
+	<Include file="Widgets\GnomTECWidgetDropDownButton.lua"/>
 	<Include file="Widgets\GnomTECWidgetEditBox.lua"/>
 	<Include file="Widgets\GnomTECWidgetMap.lua"/>
 	<Include file="Widgets\GnomTECWidgetPanelButton.lua"/>

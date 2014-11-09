@@ -32,6 +32,11 @@
  			     </Anchor>
  			  </Anchors>
 			</Frame>
+			<Button name="$parentHelpButton" parentKey="helpButton" inherits="MainHelpPlateButton" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="39" y="20" />
+				</Anchors>
+			</Button> 
 		</Frames>
 		<Layers>
 			<Layer level="ARTWORK">

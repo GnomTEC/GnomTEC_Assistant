@@ -1,0 +1,9 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+	<!-- T_GNOMTECWIDGETDROPDOWNBUTTON: Standard template for GnomTECWidgetPanelButton-->
+	<Frame name="T_GNOMTECWIDGETDROPDOWNBUTTON" inherits="UIDropDownMenuTemplate" virtual="true">
+	</Frame>
+
+	<FontString name="T_GNOMTECWIDGETDROPDOWNBUTTON_FONTSTRING" inherits="GameFontHighlightSmall" wordwrap="false" justifyH="RIGHT" hidden="true" virtual="true">
+	</FontString> 
+</Ui>

@@ -193,12 +193,99 @@ function GnomTECWidgetContainerLayoutHorizontal(init)
 	end
 
 	function self.ResizeByWidth(pixelWidth, pixelHeight)
-		if (not self.IsWidthDependingOnHeight()) then
-			return self.ResizeByHeight(pixelWidth, pixelHeight)
-		else
-			-- TODO
-			return pixelWidth, pixelHeight
+		local remainingWidth = pixelWidth
+		local remainingRelativeWidthSum = 0
+		local remainingWidgets = {}
+		local widgetWidth, widgetHeight
+		local widgetWidthIsRelative
+
+		-- first search for all widgets with not fixed width and add them to our list
+		-- subtract width of fixed widgets from remainingWidth
+		for idx, child in ipairs(protected.childs) do
+			if (child.widget.IsShown()) then
+				widgetWidth, widgetWidthIsRelative = child.widget.GetWidth()	
+				if (widgetWidthIsRelative) then
+					table.insert(remainingWidgets, child.widget)
+					remainingRelativeWidthSum = remainingRelativeWidthSum + widgetWidth
+				else
+					widgetWidth, widgetHeight = child.widget.ResizeByWidth(widgetWidth, pixelHeight)
+					remainingWidth = remainingWidth - widgetWidth
+				end
+			end
 		end
+
+		-- reseize widget with not yet fixed width to fit to pixelWidth if possible
+		while (0 ~= #remainingWidgets) do
+			local actualWidth = 0
+			local tempWidgets = {}
+
+			if (0 == remainingRelativeWidthSum) then
+				-- if all widgets are set to minimum space then we hav propably a 0.
+				-- this would be bad for later division
+				remainingRelativeWidthSum = 1
+			end
+			
+			-- reseize remaining widgets according relative width
+			for idx, widget in ipairs(remainingWidgets) do
+				local min, _ = widget.GetMinReseize()
+				local max, _ = widget.GetMaxReseize()
+				
+				widgetWidth = remainingWidth / remainingRelativeWidthSum * widget.GetWidth()
+				if (widgetWidth > max) then
+					widgetWidth = max
+				elseif (widgetWidth < min) then
+					widgetWidth = min
+				end
+				widgetWidth, widgetHeight = widget.ResizeByWidth(widgetWidth, pixelHeight)
+				actualWidth = actualWidth + widgetWidth
+			end
+
+			remainingRelativeWidthSum = 0
+
+			if (actualWidth  > remainingWidth) then
+				-- size is yet to big so we have widgets with min size which we will now remove from list
+				for idx, widget in ipairs(remainingWidgets) do
+					local min, _ = widget.GetMinReseize()
+
+					if (min >= widget.GetPixelWidth()) then
+						remainingWidth = remainingWidth - min
+					else
+						table.insert(tempWidgets, widget)
+						remainingRelativeWidthSum = remainingRelativeWidthSum + widget.GetWidth()
+					end
+				end
+			elseif (actualWidth < remainingWidth) then
+				-- size is yet to small so we have widgets with max size which we will now remove from list
+				for idx, widget in ipairs(remainingWidgets) do
+					local max, _ = widget.GetMaxReseize()
+				
+					if (max <= widget.GetPixelWidth()) then
+						remainingWidth = remainingWidth - max
+					else
+						table.insert(tempWidgets, widget)
+						remainingRelativeWidthSum = remainingRelativeWidthSum + widget.GetWidth()
+					end
+				end
+			else
+				remainingWidth = remainingWidth - actualWidth
+			end
+
+			-- check of we have finished resize of at least one widget 
+			-- if not then we are either ready, have a rounding issue or some real issue
+			-- but at least the result yet is the best we can get and we can finish
+			if (#remainingWidgets == #tempWidgets) then
+				remainingWidth = remainingWidth - actualWidth
+				tempWidgets = {}
+			end
+			
+			
+			remainingWidgets = tempWidgets
+		end
+		
+		protected.widgetFrame:SetWidth(pixelWidth - remainingWidth)
+		protected.widgetFrame:SetHeight(pixelHeight)
+
+		return pixelWidth - remainingWidth, pixelHeight
 	end
 	
 	function self.ResizeByHeight(pixelWidth, pixelHeight)
@@ -209,9 +296,9 @@ function GnomTECWidgetContainerLayoutHorizontal(init)
 		local widgetWidth, widgetHeight
 		local widgetWidthIsRelative
 
-		-- first resize all elements to new width but don't change width yet.
-		-- create list of all shown widgets which are changeable in height
-		-- calculate remaining height and sum of relative width for above widgets
+		-- first resize all elements to new height but don't change width yet.
+		-- create list of all shown widgets which are changeable in width
+		-- calculate remaining width and sum of relative width for above widgets
 		for idx, child in ipairs(protected.childs) do
 			if (child.widget.IsShown()) then
 				widgetWidth, widgetHeight = child.widget.ResizeByHeight(child.widget.GetPixelWidth(), pixelHeight)
@@ -229,12 +316,18 @@ function GnomTECWidgetContainerLayoutHorizontal(init)
 			end
 		end
 
-		-- reseize widget with not yet fixed height to fit to pixelHeight if possible
+		-- reseize widget with not yet fixed width to fit to pixelWidth if possible
 		while (0 ~= #remainingWidgets) do
 			local actualWidth = 0
 			local tempWidgets = {}
 
-			-- reseize remaining widgets according relative heights
+			if (0 == remainingRelativeWidthSum) then
+				-- if all widgets are set to minimum space then we hav propably a 0.
+				-- this would be bad for later division
+				remainingRelativeWidthSum = 1
+			end
+
+			-- reseize remaining widgets according relative width
 			for idx, widget in ipairs(remainingWidgets) do
 				local min, _ = widget.GetMinReseize()
 				local max, _ = widget.GetMaxReseize()
@@ -250,7 +343,7 @@ function GnomTECWidgetContainerLayoutHorizontal(init)
 			end
 
 
-			remainingRelativeHeightSum = 0
+			remainingRelativeWidthSum = 0
 
 			if (actualWidth  > remainingWidth) then
 				-- size is yet to big so we have widgets with min size which we will now remove from list

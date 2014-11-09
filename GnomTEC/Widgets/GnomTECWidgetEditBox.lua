@@ -77,6 +77,7 @@ function GnomTECWidgetEditBox(init)
 	protected.scrollFrame = nil
 	protected.editBoxFrame = nil
 	protected.slider = nil
+	protected.multiLine = nil
 	
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
@@ -98,12 +99,12 @@ function GnomTECWidgetEditBox(init)
 	end
 
 	local function OnClickUpButton(frame, button)
-		protected.slider:SetValue(protected.slider:GetValue() - (protected.slider:GetHeight() / 2))
+		protected.slider:SetValue(protected.slider:GetValue() - 14)
 		PlaySound("UChatScrollButton");
 	end
 
 	local function OnClickDownButton(frame, button)
-		protected.slider:SetValue(protected.slider:GetValue() + (protected.slider:GetHeight() / 2))
+		protected.slider:SetValue(protected.slider:GetValue() + 14)
 		PlaySound("UChatScrollButton");
 	end
 	
@@ -125,7 +126,8 @@ function GnomTECWidgetEditBox(init)
 			lockSliderOrScrollUpdate = true
 			protected.scrollFrame:UpdateScrollChildRect()
 			protected.slider:SetMinMaxValues(0, protected.scrollFrame:GetVerticalScrollRange());
-			protected.slider:SetValue(protected.scrollFrame:GetVerticalScroll());   
+			protected.slider:SetValue(min(protected.scrollFrame:GetVerticalScroll(), protected.scrollFrame:GetVerticalScrollRange()));  
+			protected.scrollFrame:SetVerticalScroll(protected.slider:GetValue());
 			lockSliderOrScrollUpdate = false
 		end
 	end
@@ -151,16 +153,32 @@ function GnomTECWidgetEditBox(init)
 	end
 
 	function self.GetMinReseize()
-		local minWidth = 100
-		local minHeight = 100
-		
+		local minWidth
+		local minHeight
+
+		if (protected.multiLine) then
+			minWidth = 100
+			minHeight = 100
+		else
+			minWidth = 24
+			minHeight = 24
+		end
+
 		return minWidth, minHeight
 	end
 
 	function self.GetMaxReseize()		
-		local maxWidth = UIParent:GetWidth()
-		local maxHeight = UIParent:GetHeight()
+		local maxWidth
+		local maxHeight
 
+		if (protected.multiLine) then
+			maxWidth = UIParent:GetWidth()
+			maxHeight = UIParent:GetHeight()
+		else
+			maxWidth = UIParent:GetWidth()
+			maxHeight = 24
+		end
+		
 		return maxWidth, maxHeight
 	end
 
@@ -200,76 +218,111 @@ function GnomTECWidgetEditBox(init)
 			init = {}
 		end
 		
-		local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent)
-		widgetFrame:Hide()
-
-		local scrollFrame = CreateFrame("ScrollFrame", nil, widgetFrame)
-		local editBoxFrame = CreateFrame("EditBox", nil, widgetFrame)
-		local slider = CreateFrame("Slider", nil, widgetFrame)
-		local upButton = CreateFrame("Button", nil, slider, "UIPanelScrollUpButtonTemplate")
-		local downButton = CreateFrame("Button", nil, slider, "UIPanelScrollDownButtonTemplate")
-		
-		protected.widgetFrame = widgetFrame 
-		protected.scrollFrame = scrollFrame 
-		protected.editBoxFrame = editBoxFrame 
-		protected.slider = slider 
-		
-		-- should be configurable later eg. saveable
-		widgetFrame:SetPoint("CENTER")		
-		local w, r = self.GetWidth()
-		if (not r) then
-			widgetFrame:SetWidth(w)		
+		if (nil == init.multiLine) then
+			protected.multiLine = true
 		else
-			widgetFrame:SetWidth("600")		
-		end
-		local h, r = self.GetHeight()
-		if (not r) then
-			widgetFrame:SetHeight(h)		
-		else
-			widgetFrame:SetHeight("400")
+			protected.multiLine = init.multiLine
 		end
 		
-		widgetFrame:SetScript("OnSizeChanged", OnChangedSizeWidgetFrame)
+		if (protected.multiLine) then
+			local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent)
+			widgetFrame:Hide()
 
-		scrollFrame:SetPoint("TOPLEFT", 0, 0)	
-		scrollFrame:SetPoint("BOTTOMRIGHT", -16, 0)	
-		scrollFrame:SetScript("OnScrollRangeChanged", OnScrollRangeChanged)
-		scrollFrame:SetScript("OnMouseWheel", OnMouseWheel)
-		scrollFrame:SetScrollChild(editBoxFrame)
+			local editBoxFrame = CreateFrame("EditBox", nil, widgetFrame)
 
-		editBoxFrame:SetPoint("TOPLEFT", 0, 0)	
-		editBoxFrame:SetPoint("BOTTOMRIGHT", -16, 0)	
-		editBoxFrame:SetHeight(widgetFrame:GetHeight())	
-		editBoxFrame:SetWidth(widgetFrame:GetWidth() - 16)	
-		editBoxFrame:SetMultiLine(true)
-		editBoxFrame:SetFontObject(ChatFontNormal)
-		editBoxFrame:SetJustifyH("LEFT")
-		editBoxFrame:EnableKeyboard(true);
-		editBoxFrame:EnableMouse(true);			
-		editBoxFrame:SetAutoFocus(false);			
-		editBoxFrame:SetScript("OnMouseWheel", OnMouseWheel)
-		editBoxFrame:SetScript("OnSizeChanged", OnSizeChangedEditBox)
-		editBoxFrame:SetScript("OnEscapePressed", OnEscapePressed)
-		editBoxFrame:SetScript("OnCursorChanged", OnCursorChanged)
+			local scrollFrame = CreateFrame("ScrollFrame", nil, widgetFrame)
+			local slider = CreateFrame("Slider", nil, widgetFrame)
+			local upButton = CreateFrame("Button", nil, slider, "UIPanelScrollUpButtonTemplate")
+			local downButton = CreateFrame("Button", nil, slider, "UIPanelScrollDownButtonTemplate")
 
-		slider:SetWidth(16)
-		slider:SetPoint("TOPRIGHT", 0, -8)	
-		slider:SetPoint("BOTTOMRIGHT", 0, 8)	
-		slider:SetThumbTexture([[Interface\Buttons\UI-ScrollBar-Knob]])
-		slider:SetScript("OnMouseWheel", OnMouseWheel)
-		slider:SetScript("OnValueChanged", OnValueChanged)
+			protected.widgetFrame = widgetFrame 
+			protected.editBoxFrame = editBoxFrame 
+			protected.scrollFrame = scrollFrame 
+			protected.slider = slider 
 
-		upButton:SetPoint("TOP", slider, "TOP", 0, 8)
-		upButton:SetScript("OnMouseWheel", OnMouseWheel)
-		upButton:SetScript("OnClick", OnClickUpButton)
+			widgetFrame:SetPoint("CENTER")		
+			local w, r = self.GetWidth()
+			if (not r) then
+				widgetFrame:SetWidth(w)		
+			else
+				widgetFrame:SetWidth("100")		
+			end
 
-		downButton:SetPoint("BOTTOM", slider, "BOTTOM", 0, -8)
-		downButton:SetScript("OnMouseWheel", OnMouseWheel)
-		downButton:SetScript("OnClick", OnClickDownButton)
+			local h, r = self.GetHeight()
+			if (not r) then
+				widgetFrame:SetHeight(h)		
+			else
+				widgetFrame:SetHeight("100")
+			end
+			
+			widgetFrame:SetScript("OnSizeChanged", OnChangedSizeWidgetFrame)
+
+			scrollFrame:SetPoint("TOPLEFT", 0, 0)	
+			scrollFrame:SetPoint("BOTTOMRIGHT", -16, 0)	
+			scrollFrame:SetScript("OnScrollRangeChanged", OnScrollRangeChanged)
+			scrollFrame:SetScript("OnMouseWheel", OnMouseWheel)
+			scrollFrame:SetScrollChild(editBoxFrame)
+			
+			editBoxFrame:SetPoint("TOPLEFT", 0, 0)	
+			editBoxFrame:SetPoint("BOTTOMRIGHT", -16, 0)	
+
+			editBoxFrame:SetHeight(widgetFrame:GetHeight())	
+			editBoxFrame:SetWidth(widgetFrame:GetWidth() - 16)	
+			editBoxFrame:SetMultiLine(true)
+			editBoxFrame:SetFontObject(ChatFontNormal)
+			editBoxFrame:SetJustifyH("LEFT")
+			editBoxFrame:EnableKeyboard(true);
+			editBoxFrame:EnableMouse(true);			
+			editBoxFrame:SetAutoFocus(false);			
+			editBoxFrame:SetScript("OnMouseWheel", OnMouseWheel)
+			editBoxFrame:SetScript("OnSizeChanged", OnSizeChangedEditBox)
+			editBoxFrame:SetScript("OnEscapePressed", OnEscapePressed)
+			editBoxFrame:SetScript("OnCursorChanged", OnCursorChanged)
+
+			slider:SetWidth(16)
+			slider:SetPoint("TOPRIGHT", 0, -8)	
+			slider:SetPoint("BOTTOMRIGHT", 0, 8)	
+			slider:SetThumbTexture([[Interface\Buttons\UI-ScrollBar-Knob]])
+			slider:SetScript("OnMouseWheel", OnMouseWheel)
+			slider:SetScript("OnValueChanged", OnValueChanged)
+
+			upButton:SetPoint("TOP", slider, "TOP", 0, 8)
+			upButton:SetScript("OnMouseWheel", OnMouseWheel)
+			upButton:SetScript("OnClick", OnClickUpButton)
+
+			downButton:SetPoint("BOTTOM", slider, "BOTTOM", 0, -8)
+			downButton:SetScript("OnMouseWheel", OnMouseWheel)
+			downButton:SetScript("OnClick", OnClickDownButton)
 				
-		scrollFrame:UpdateScrollChildRect();
-		slider:SetMinMaxValues(0, scrollFrame:GetVerticalScrollRange());
-		slider:SetValue(scrollFrame:GetVerticalScroll());   
+			scrollFrame:UpdateScrollChildRect();
+			slider:SetMinMaxValues(0, scrollFrame:GetVerticalScrollRange());
+			slider:SetValue(scrollFrame:GetVerticalScroll());   
+		else
+			local widgetFrame = CreateFrame("EditBox", protected.widgetUID, UIParent)
+			widgetFrame:Hide()
+
+			protected.widgetFrame = widgetFrame 
+			protected.editBoxFrame = widgetFrame 
+			
+			widgetFrame:SetPoint("CENTER")		
+			local w, r = self.GetWidth()
+			if (not r) then
+				widgetFrame:SetWidth(w)		
+			else
+				widgetFrame:SetWidth("24")		
+			end
+			protected.widgetHeight = 24
+			protected.widgetHeightIsRelative = false
+			widgetFrame:SetHeight(protected.widgetHeight)
+
+			widgetFrame:SetMultiLine(false)
+			widgetFrame:SetFontObject(ChatFontNormal)
+			widgetFrame:SetJustifyH("LEFT")
+			widgetFrame:EnableKeyboard(true);
+			widgetFrame:EnableMouse(true);			
+			widgetFrame:SetAutoFocus(false);			
+			widgetFrame:SetScript("OnEscapePressed", OnEscapePressed)
+		end	
 
 		self.SetText(init.text)
 		

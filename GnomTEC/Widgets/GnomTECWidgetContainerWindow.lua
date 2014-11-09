@@ -161,19 +161,21 @@ function GnomTECWidgetContainerWindow(init)
 		base_AddChild(child, childProtected)
 
 		-- hint: this all is yet not made for removing tabs
-		local id = protected.widgetFrame.numTabs + 1
-		local button =  CreateFrame("Button", protected.widgetUID.."Tab"..id, protected.widgetFrame,"T_GNOMTECWIDGETCONTAINERWINDOW_TABBUTTON")
-		button:SetID(id)
-		if (1 == id) then
-			button:SetPoint("TOPLEFT",protected.widgetFrame,"BOTTOMLEFT",11,2)
-		else
-			button:SetPoint("LEFT", protected.widgetUID.."Tab"..(id-1),"RIGHT",-15,0)
+		if (childProtected.widgetLabel) then
+			local id = protected.widgetFrame.numTabs + 1
+			local button =  CreateFrame("Button", protected.widgetUID.."Tab"..id, protected.widgetFrame,"T_GNOMTECWIDGETCONTAINERWINDOW_TABBUTTON")
+			button:SetID(id)
+			if (1 == id) then
+				button:SetPoint("TOPLEFT",protected.widgetFrame,"BOTTOMLEFT",11,2)
+			else
+				button:SetPoint("LEFT", protected.widgetUID.."Tab"..(id-1),"RIGHT",-15,0)
+			end
+			button:SetText(childProtected.widgetLabel)
+			button:SetScript("OnClick", OnClickTabButton)
+			button:Show()
+			PanelTemplates_SetNumTabs(protected.widgetFrame, id);
+			PanelTemplates_SetTab(protected.widgetFrame, 1)
 		end
-		button:SetText(childProtected.widgetLabel or id)
-		button:SetScript("OnClick", OnClickTabButton)
-		button:Show()
-		PanelTemplates_SetNumTabs(protected.widgetFrame, id);
-		PanelTemplates_SetTab(protected.widgetFrame, 1)
 	end
 
 	local base_RemoveChild = self.RemoveChild
@@ -191,16 +193,6 @@ function GnomTECWidgetContainerWindow(init)
 		end
 	end
 
- 
---					<OnEnter>
---						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
---						GameTooltip:SetText(MicroButtonTooltipText(CHARACTER_INFO, "TOGGLECHARACTER0"), 1.0,1.0,1.0 );
---					</OnEnter>
---					<OnLeave function="GameTooltip_Hide"/>
- 
-
-
-	
 	local base_GetMinReseize = self.GetMinReseize
 	function self.GetMinReseize()
 		local minWidth, minHeight = base_GetMinReseize()
@@ -214,6 +206,17 @@ function GnomTECWidgetContainerWindow(init)
 
 		if (minHeight < 256) then
 			minHeight = 256
+		end
+		
+		if (protected.widgetFrame.numTabs) then
+			local tabWidth = 0
+			for id = 1, protected.widgetFrame.numTabs do
+				local button =  _G[protected.widgetUID.."Tab"..id]
+				tabWidth = tabWidth + button:GetWidth()
+			end
+			if (tabWidth > minWidth) then
+				minWidth = tabWidth
+			end
 		end
 
 		return minWidth, minHeight
