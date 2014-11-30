@@ -177,8 +177,8 @@ function GnomTECWidgetText(init)
 			widgetFrame:SetHeight("14")
 		end
 		
-		textFontString:SetFontObject(GameFontNormal)
-		textFontString:SetJustifyH("CENTER")
+		textFontString:SetFontObject(init.fontObject or GameFontNormal)
+		textFontString:SetJustifyH(init.justifyH or "CENTER")
 		textFontString:SetTextColor(1.0, 1.0, 1.0, 1.0)
 		textFontString:SetWidth("32")		
 		textFontString:SetHeight("14")

@@ -13,4 +13,43 @@
       </ResizeBounds>
 	</Frame>
 
+
+	<!-- T_GNOMTECWIDGET: Standard template for GnomTECWidget-->
+	<Frame name="T_GNOMTECWIDGET_HELPFRAME" virtual="true">
+		<Frames>
+			<Frame name="$parentBox" inherits="HelpPlateBox" parentKey="box">
+				<Size x="128" y="128" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="0" y="0"/>
+					<Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+				</Anchors>
+			</Frame>
+			<Frame name="$parentBoxHighlight" inherits="HelpPlateBoxHightlight" parentKey="boxHighlight">
+				<Size x="128" y="128" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="0" y="0"/>
+					<Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+				</Anchors>
+			</Frame>
+			<Button name="parentButton" inherits="HelpPlateButton" parentKey="button">
+				<Anchors>
+					<Anchor point="CENTER" x="0" y="0"/>
+					<Anchor point="CENTER" x="0" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.box = self:GetParent().box
+						self.boxHighlight = self:GetParent().boxHighlight
+						self.animGroup_Show = self:CreateAnimationGroup();
+						self.animGroup_Show.translate = self.animGroup_Show:CreateAnimation("Translation");
+						self.animGroup_Show.translate:SetSmoothing("IN");
+						self.animGroup_Show.alpha = self.animGroup_Show:CreateAnimation("Alpha");
+						self.animGroup_Show.alpha:SetChange(-1);
+						self.animGroup_Show.alpha:SetSmoothing("IN");
+						self.animGroup_Show.parent = self;
+					</OnLoad>
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
 </Ui>

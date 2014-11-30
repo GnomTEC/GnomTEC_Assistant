@@ -1,6 +1,6 @@
 ﻿-- **********************************************************************
--- GnomTECWidgetContainerWindow
--- Version: 6.0.2.1
+-- GnomTECWidgetContainerToolbox
+-- Version: 6.0.3.1
 -- Author: Peter Jack
 -- URL: http://www.gnomtec.de/
 -- **********************************************************************
@@ -18,7 +18,7 @@
 -- See the Licence for the specific language governing permissions and
 -- limitations under the Licence.
 -- **********************************************************************
-local MAJOR, MINOR = "GnomTECWidgetContainerWindow-1.0", 1
+local MAJOR, MINOR = "GnomTECWidgetContainerToolbox-1.0", 1
 local _widget, _oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not _widget then return end -- No Upgrade needed.
@@ -65,7 +65,7 @@ local function emptynil( x ) return x ~= "" and x or nil end
 -- Widget Class
 -- ----------------------------------------------------------------------
 
-function GnomTECWidgetContainerWindow(init)
+function GnomTECWidgetContainerToolbox(init)
 
 	-- call base class
 	local self, protected = GnomTECWidgetContainer(init)
@@ -75,12 +75,9 @@ function GnomTECWidgetContainerWindow(init)
 
 	-- protected fields go in the protected table
 	-- protected.field = value
-	protected.title = nil
-	protected.titleFontString = nil
 	protected.framePoint = nil
 	protected.frameXOffset = nil
 	protected.frameYOffset = nil
-	protected.playerModel = nil
 	
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
@@ -135,49 +132,20 @@ function GnomTECWidgetContainerWindow(init)
 			lastHeight = height
 		end
 	end
-	
-	local function OnClickTabButton(button, mouseButton)
-		PanelTemplates_Tab_OnClick(button, protected.widgetFrame);
-		for idx, value in ipairs(protected.childs) do
-			if (button:GetID() == idx) then
-				value.widget:Show()
-			else
-				value.widget:Hide()
-			end
-		end
-		PlaySound("igCharacterInfoTab")
-	end
-	
+		
 	-- protected methods
 	-- function protected.f()
 
 	-- public methods
 	-- function self.f()
 	function self.LogMessage(logLevel, message, ...)
-		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetContainerWindow", message, ...)
+		protected.LogMessage(CLASS_WIDGET, logLevel, "GnomTECWidgetContainerToolbox", message, ...)
 	end
 	
 	local base_AddChild = self.AddChild
 	function self.AddChild(child, childProtected)
 		self.RemoveChild(child)
 		base_AddChild(child, childProtected)
-
-		-- hint: this all is yet not made for removing tabs
-		if (childProtected.widgetLabel) then
-			local id = protected.widgetFrame.numTabs + 1
-			local button =  CreateFrame("Button", protected.widgetUID.."Tab"..id, protected.widgetFrame,"T_GNOMTECWIDGETCONTAINERWINDOW_TABBUTTON")
-			button:SetID(id)
-			if (1 == id) then
-				button:SetPoint("TOPLEFT",protected.widgetFrame,"BOTTOMLEFT",11,2)
-			else
-				button:SetPoint("LEFT", protected.widgetUID.."Tab"..(id-1),"RIGHT",-15,0)
-			end
-			button:SetText(childProtected.widgetLabel)
-			button:SetScript("OnClick", OnClickTabButton)
-			button:Show()
-			PanelTemplates_SetNumTabs(protected.widgetFrame, id);
-			PanelTemplates_SetTab(protected.widgetFrame, 1)
-		end
 	end
 
 	local base_RemoveChild = self.RemoveChild
@@ -199,28 +167,17 @@ function GnomTECWidgetContainerWindow(init)
 	function self.GetMinReseize()
 		local minWidth, minHeight = base_GetMinReseize()
 		
-		minWidth = minWidth + 14
-		minHeight = minHeight + 34
+		minWidth = minWidth + 8
+		minHeight = minHeight + 8
 		
-		if (minWidth < 256) then
-			minWidth = 256
+		if (minWidth < 16) then
+			minWidth = 16
 		end
 
-		if (minHeight < 256) then
-			minHeight = 256
+		if (minHeight < 16) then
+			minHeight = 16
 		end
 		
-		if (protected.widgetFrame.numTabs) then
-			local tabWidth = 0
-			for id = 1, protected.widgetFrame.numTabs do
-				local button =  _G[protected.widgetUID.."Tab"..id]
-				tabWidth = tabWidth + button:GetWidth()
-			end
-			if (tabWidth > minWidth) then
-				minWidth = tabWidth
-			end
-		end
-
 		return minWidth, minHeight
 	end
 
@@ -228,17 +185,17 @@ function GnomTECWidgetContainerWindow(init)
 	function self.GetMaxReseize()
 		local maxWidth, maxHeight = base_GetMaxReseize()
 		
-		maxWidth = maxWidth + 14
-		maxHeight = maxHeight + 34
+		maxWidth = maxWidth + 4
+		maxHeight = maxHeight + 4
 		
-		if (maxWidth < 256) then
-			maxWidth = 256
+		if (maxWidth < 16) then
+			maxWidth = 16
 		elseif (maxWidth > UIParent:GetWidth()) then
 			maxWidth = UIParent:GetWidth()
 		end
 
-		if (maxHeight < 256) then
-			maxHeight = 256
+		if (maxHeight < 16) then
+			maxHeight = 16
 		elseif (maxHeight > UIParent:GetHeight()) then
 			maxHeight = UIParent:GetHeight()
 		end
@@ -248,9 +205,9 @@ function GnomTECWidgetContainerWindow(init)
 
 	local base_ResizeByWidth = self.ResizeByWidth
 	function self.ResizeByWidth(pixelWidth, pixelHeight)
-		pixelWidth, pixelHeight = base_ResizeByWidth(pixelWidth - 14, pixelHeight - 34)
-		pixelWidth = pixelWidth + 14
-		pixelHeight = pixelHeight + 34
+		pixelWidth, pixelHeight = base_ResizeByWidth(pixelWidth - 8, pixelHeight - 8)
+		pixelWidth = pixelWidth + 8
+		pixelHeight = pixelHeight + 8
 		if (math.abs(self.GetPixelWidth() - pixelWidth) >= 1) then
 			protected.widgetFrame:SetWidth(pixelWidth)
 		end
@@ -262,9 +219,9 @@ function GnomTECWidgetContainerWindow(init)
 
 	local base_ResizeByHeight = self.ResizeByHeight
 	function self.ResizeByHeight(pixelWidth, pixelHeight)
-		pixelWidth, pixelHeight = base_ResizeByHeight(pixelWidth - 14, pixelHeight - 34)
-		pixelWidth = pixelWidth + 14
-		pixelHeight = pixelHeight + 34
+		pixelWidth, pixelHeight = base_ResizeByHeight(pixelWidth - 8, pixelHeight - 8)
+		pixelWidth = pixelWidth + 8
+		pixelHeight = pixelHeight + 8
 		if (math.abs(self.GetPixelWidth() - pixelWidth) >= 1) then
 			protected.widgetFrame:SetWidth(pixelWidth)
 		end
@@ -309,37 +266,6 @@ function GnomTECWidgetContainerWindow(init)
 		end
 	end
 	
-	function self.SetTitle(title)
-		protected.title = emptynil(title)
-		if (protected.titleFontString) then
-			protected.titleFontString:SetText(protected.title or "")
-		end
-	end
-	
-	function self.GetTitle()
-		return emptynil(protected.title)
-	end	
-
-	function self.SetPortrait(portrait)
-		if (("player" == string.lower(portrait) or ("target" == string.lower(portrait)))) then
-
-			if (not protected.playerModel) then
-				protected.playerModel = CreateFrame("PlayerModel", nil, protected.widgetFrame)
-
-				protected.playerModel:SetPoint("TOPLEFT")
-				protected.playerModel:SetWidth("56")		
-				protected.playerModel:SetHeight("56")
-				
-				SetPortraitToTexture(protected.widgetFrame.portrait,[[Interface\Icons\Achievement_PVP_A_A]])
-			end
-			protected.playerModel:ClearModel()
-			protected.playerModel:SetUnit(portrait)
-			protected.playerModel:SetPortraitZoom(1)
-		else
-			SetPortraitToTexture(protected.widgetFrame.portrait,portrait)
-		end
-	end
-
 	local base_Attach = self.Attach
 	function self.Attach(attachedWidget, attachedWidgetProtected)
 		local atachedWidgetFrame = attachedWidgetProtected.widgetFrame
@@ -355,18 +281,16 @@ function GnomTECWidgetContainerWindow(init)
 			init = {}
 		end
 		
-		local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent, "T_GNOMTECWIDGETCONTAINERWINDOW")
+		local widgetFrame = CreateFrame("Frame", protected.widgetUID, UIParent, "T_GNOMTECWIDGETCONTAINERTOOLBOX")
 
 		local reseizeButton = CreateFrame("Button", nil, widgetFrame)
 		local containerFrame = widgetFrame.containerFrame
-		local titleFontString = widgetFrame.TitleText
 
 		protected.widgetFrame = widgetFrame 
 		protected.widgetAttachFrame = widgetFrame.attachFrame
 		protected.widgetHelpFrame = widgetFrame.helpFrame
 
 		protected.containerFrame = containerFrame 
-		protected.titleFontString = titleFontString 
 				
 		local point = init.point or "CENTER"
 		local xOffset = init.xOffset or 0
@@ -418,7 +342,7 @@ function GnomTECWidgetContainerWindow(init)
 		if (not r) then
 			widgetFrame:SetWidth(w)		
 		else
-			protected.widgetWidth = 400
+			protected.widgetWidth = 64
 			protected.widgetWidthIsRelative = false
 			widgetFrame:SetWidth(protected.widgetWidth)		
 		end
@@ -426,7 +350,7 @@ function GnomTECWidgetContainerWindow(init)
 		if (not r) then
 			widgetFrame:SetHeight(h)		
 		else
-			protected.widgetHeight = 200
+			protected.widgetHeight = 64
 			protected.widgetHeightIsRelative = false
 			widgetFrame:SetHeight(protected.widgetHeight)
 		end
@@ -445,21 +369,12 @@ function GnomTECWidgetContainerWindow(init)
 		reseizeButton:SetPushedTexture([[Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down]])
 		reseizeButton:SetScript("OnMouseDown", StartResize)
 		reseizeButton:SetScript("OnMouseUp", StopResize)
-
-		protected.widgetFrame.numTabs = 0
-
-		self.SetTitle(init.title)
-		self.SetPortrait(init.portrait or [[Interface\Icons\Inv_Misc_Tournaments_banner_Gnome]])
-
-		if (protected.widgetHelpText) then
-			widgetFrame.helpButton:Show()
-		end
 		
 		-- this enables resizing
 		lastWidth = self.GetPixelWidth()
 		lastHeight = self.GetPixelHeight()
 
-		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetContainerWindow", "New instance created (%s)", protected.UID)
+		protected.LogMessage(CLASS_WIDGET, LOG_DEBUG, "GnomTECWidgetContainerToolbox", "New instance created (%s)", protected.UID)
 		
 	end
 	

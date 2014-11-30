@@ -17,27 +17,6 @@
  			<BackgroundInsets left="4" right="4" top="4" bottom="4"/>
  			<Color r="0.0" g="0.0" b="0.0" a="0.9"/>
 		</Backdrop>
-		<Frames>
-    		<Frame name="$parentcontainerFrame" parentKey="containerFrame">
- 		     <Anchors>
-   		     <Anchor point="TOPLEFT">
-     			     <Offset>
- 			           <AbsDimension x="7" y="-25"/>
- 			        </Offset>
- 			     </Anchor>
-   		     <Anchor point="BOTTOMRIGHT">
-     			     <Offset>
- 			           <AbsDimension x="-7" y="7"/>
- 			        </Offset>
- 			     </Anchor>
- 			  </Anchors>
-			</Frame>
-			<Button name="$parentHelpButton" parentKey="helpButton" inherits="MainHelpPlateButton" hidden="true">
-				<Anchors>
-					<Anchor point="TOPLEFT" x="39" y="20" />
-				</Anchors>
-			</Button> 
-		</Frames>
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="$parentTopLeft" file="Interface\PaperDollInfoFrame\UI-Character-General-TopLeft">
@@ -102,6 +81,109 @@
 				</Texture>
 			</Layer>
 		</Layers> 
+		<Frames>
+    		<Frame name="$parentattachFrame" parentKey="attachFrame">
+				<Anchors>
+   		     <Anchor point="TOPLEFT">
+     			     <Offset>
+ 			           <AbsDimension x="4" y="-4"/>
+ 			        </Offset>
+ 			     </Anchor>
+   		     <Anchor point="BOTTOMRIGHT">
+     			     <Offset>
+ 			           <AbsDimension x="-4" y="4"/>
+ 			        </Offset>
+ 			     </Anchor>
+				</Anchors>
+ 				<Frames>
+					<Frame name="$parentLeft" parentKey="left">
+						<Size x="1" y="1"/>
+						<Anchors>
+						  <Anchor point="TOPLEFT">
+							  <Offset>
+								  <AbsDimension x="0" y="-25"/>
+							  </Offset>
+						  </Anchor>
+						  <Anchor point="BOTTOMLEFT">
+							  <Offset>
+								  <AbsDimension x="0" y="25"/>
+							  </Offset>
+						  </Anchor>
+						</Anchors>
+					</Frame>
+					<Frame name="$parentRight" parentKey="right">
+						<Size x="1" y="1"/>
+						<Anchors>
+						  <Anchor point="TOPRIGHT">
+							  <Offset>
+								  <AbsDimension x="0" y="-25"/>
+							  </Offset>
+						  </Anchor>
+						  <Anchor point="BOTTOMRIGHT">
+							  <Offset>
+								  <AbsDimension x="0" y="25"/>
+							  </Offset>
+						  </Anchor>
+						</Anchors>
+					</Frame>
+					<Frame name="$parentTop" parentKey="top">
+						<Size x="1" y="1"/>
+						<Anchors>
+						  <Anchor point="TOPLEFT">
+							  <Offset>
+								  <AbsDimension x="25" y="0"/>
+							  </Offset>
+						  </Anchor>
+						  <Anchor point="TOPRIGHT">
+							  <Offset>
+								  <AbsDimension x="-25" y="0"/>
+							  </Offset>
+						  </Anchor>
+						</Anchors>
+					</Frame>
+					<Frame name="$parentBottom" parentKey="bottom">
+						<Size x="1" y="1"/>
+						<Anchors>
+						  <Anchor point="BOTTOMLEFT">
+							  <Offset>
+								  <AbsDimension x="25" y="0"/>
+							  </Offset>
+						  </Anchor>
+						  <Anchor point="BOTTOMRIGHT">
+							  <Offset>
+								  <AbsDimension x="-25" y="0"/>
+							  </Offset>
+						  </Anchor>
+						</Anchors>
+					</Frame>
+				</Frames>
+			</Frame>
+   		<Frame name="$parentcontainerFrame" parentKey="containerFrame">
+				<Anchors>
+   		     <Anchor point="TOPLEFT">
+     			     <Offset>
+ 			           <AbsDimension x="7" y="-25"/>
+ 			        </Offset>
+ 			     </Anchor>
+   		     <Anchor point="BOTTOMRIGHT">
+     			     <Offset>
+ 			           <AbsDimension x="-7" y="7"/>
+ 			        </Offset>
+ 			     </Anchor>
+ 			  </Anchors>
+			</Frame>
+			<Button name="$parentHelpButton" parentKey="helpButton" inherits="MainHelpPlateButton" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="39" y="20" />
+				</Anchors>
+			</Button>
+   		<Frame name="$parentcontainerHelpFrame" parentKey="helpFrame" inherits="T_GNOMTECWIDGET_HELPFRAME">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentcontainerFrame" x="0" y="0"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parentcontainerFrame" x="0" y="0"/>
+				</Anchors>
+			</Frame>
+		</Frames>
 	</Frame>
 	
 	<!-- T_GNOMTECWIDGETCONTAINERWINDOW_TABBUTTON: tab button template for GnomTECWidgetContainerWindow-->	

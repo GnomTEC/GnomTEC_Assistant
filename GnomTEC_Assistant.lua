@@ -281,6 +281,10 @@ local function GnomTECAssistant()
 			mainWindowWidgets.mainWindowTestGnomTECWidgetText.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestGnomTECWidgetTextureButton = GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidgetTextureButton"})
 			mainWindowWidgets.mainWindowTestGnomTECWidgetTextureButton.OnClick = OnClickMainWindowTest
+			mainWindowWidgets.mainWindowTestGnomTECWidget_Attach =  GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidget_Attach"})
+			mainWindowWidgets.mainWindowTestGnomTECWidget_Attach.OnClick = OnClickMainWindowTest
+			mainWindowWidgets.mainWindowTestGnomTECWidget_Help =  GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidget_Help"})
+			mainWindowWidgets.mainWindowTestGnomTECWidget_Help.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestBottomSpacer = GnomTECWidgetSpacer({parent=mainWindowWidgets.mainWindowLayoutTest, width="100%", height="100%"})
 
 			mainWindowWidgets.mainWindowLayoutPrototype = GnomTECWidgetContainerLayoutVertical({parent=mainWindowWidgets.mainWindowLayout, label="GUI Prototypen"})
@@ -446,6 +450,22 @@ local function GnomTECAssistant()
 						small=true
 					})
 				end
+			elseif ("GnomTECWidget_Attach" == test) then
+				testWindowWidgets[test] = {}
+				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test, portrait=[[Interface\Icons\Ability_Repair]]})
+				testWindowWidgets[test].testWindowLayout = GnomTECWidgetContainerLayoutVertical({parent=testWindowWidgets[test].testWindow})
+				testWindowWidgets[test].testWindowTopSpacer = GnomTECWidgetSpacer({parent=testWindowWidgets[test].testWindowLayout, minHeight=34, minWidth=50})
+				testWindowWidgets[test].testWindowText = GnomTECWidgetText({parent=testWindowWidgets[test].testWindowLayout, text="Hauptfenster"})
+				testWindowWidgets[test].testWindowPanelButton = GnomTECWidgetPanelButton({parent=testWindowWidgets[test].testWindowLayout, label="Show/Hide Anhängsel"})
+				testWindowWidgets[test].testWindowAttach = GnomTECWidgetContainerToolbox({attach=testWindowWidgets[test].testWindow, attachAlign="TOP"})
+				testWindowWidgets[test].testWindowAttachText = GnomTECWidgetText({parent=testWindowWidgets[test].testWindowAttach, text="Angehängtes Fenster"})
+				testWindowWidgets[test].testWindowAttach.Show()
+				testWindowWidgets[test].testWindowPanelButton.OnClick = function () if (testWindowWidgets["GnomTECWidget_Attach"].testWindowAttach.IsShown()) then testWindowWidgets["GnomTECWidget_Attach"].testWindowAttach.Hide() else testWindowWidgets["GnomTECWidget_Attach"].testWindowAttach.Show() end end
+			elseif ("GnomTECWidget_Help" == test) then
+				testWindowWidgets[test] = {}
+				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test, portrait=[[Interface\Icons\Ability_Repair]], help=[[Das könnte ein Hilfetext sein]]})
+				testWindowWidgets[test].testWindowText = GnomTECWidgetText({parent=testWindowWidgets[test].testWindow, text="Hilfesystem"})
+				testWindowWidgets[test].testWindow.ShowHelp()
 			end
 
 		end
@@ -475,8 +495,16 @@ local function GnomTECAssistant()
 				prototypeWindowWidgets[prototype].prototypeWindowText = GnomTECWidgetText({parent=prototypeWindowWidgets[prototype].prototypeWindow, text=">>>Noch nicht implementiert!<<<"})
 			elseif ("GnomTEC Badge GUI" == prototype) then
 				prototypeWindowWidgets[prototype] = {}
-				prototypeWindowWidgets[prototype].prototypeWindow = GnomTECWidgetContainerWindow({title=prototype, portrait=[[Interface\Icons\Achievement_Character_Gnome_Male]]})
-				prototypeWindowWidgets[prototype].prototypeWindowText = GnomTECWidgetText({parent=prototypeWindowWidgets[prototype].prototypeWindow, text=">>>Noch nicht implementiert!<<<"})
+				local player, realm = UnitName("player")
+				realm = string.gsub(realm or GetRealmName(), "%s+", "")
+				prototypeWindowWidgets[prototype].prototypeWindow = GnomTECWidgetContainerWindow({title=strjoin("-",player,realm), portrait="player"})
+				prototypeWindowWidgets[prototype].prototypeWindowLayoutV = GnomTECWidgetContainerLayoutVertical({parent=prototypeWindowWidgets[prototype].prototypeWindow})
+				prototypeWindowWidgets[prototype].prototypeWindowLayoutH = GnomTECWidgetContainerLayoutHorizontal({parent=prototypeWindowWidgets[prototype].prototypeWindowLayoutV, height="0%"})
+				prototypeWindowWidgets[prototype].prototypeWindowTopSpacer = GnomTECWidgetSpacer({parent=prototypeWindowWidgets[prototype].prototypeWindowLayoutH, minHeight=34, minWidth=50})
+				prototypeWindowWidgets[prototype].prototypeWindowLayoutV2 = GnomTECWidgetContainerLayoutVertical({parent=prototypeWindowWidgets[prototype].prototypeWindowLayoutH})
+				prototypeWindowWidgets[prototype].prototypeWindowTitle = GnomTECWidgetText({parent=prototypeWindowWidgets[prototype].prototypeWindowLayoutV2, fontObject=GameFontNormal, justifyH="LEFT", text="|cFF00FF00Heiner Testmann|r"})
+				prototypeWindowWidgets[prototype].prototypeWindowState = GnomTECWidgetText({parent=prototypeWindowWidgets[prototype].prototypeWindowLayoutV2, justifyH="LEFT", text="|cFFFFFF00Ein Bürger Sturmwinds|r"})
+				prototypeWindowWidgets[prototype].prototypeWindowText = GnomTECWidgetText({parent=prototypeWindowWidgets[prototype].prototypeWindowLayoutV, text=">>>Noch nicht implementiert!<<<"})
 			elseif ("GnomTEC CityMaps GUI" == prototype) then
 				prototypeWindowWidgets[prototype] = {}
 				prototypeWindowWidgets[prototype].prototypeWindow = GnomTECWidgetContainerWindow({title=prototype, portrait=[[Interface\Icons\INV_Misc_Map09]]})

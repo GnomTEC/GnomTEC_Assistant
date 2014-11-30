@@ -80,12 +80,17 @@ function GnomTECWidget(init)
 	protected.widgetParent = nil
 	protected.widgetUID = nil
 	protected.widgetFrame = nil
+	protected.widgetAttachFrame = nil
+	protected.widgetHelpFrame = nil
 	protected.widgetWidth = nil
 	protected.widgetHeight = nil
 	protected.widgetWidthIsRelative = nil
 	protected.widgetHeightIsRelative = nil
 	protected.widgetLabel = nil
-	
+	protected.widgetAttach = nil
+	protected.widgetAttachPoint = nil
+	protected.widgetAttachAlign = nil
+	protected.widgetHelpText = nil
 
 	-- private fields are implemented using locals
 	-- they are faster than table access, and are truly private, so the code that uses your class can't get them
@@ -197,7 +202,87 @@ function GnomTECWidget(init)
 		return emptynil(protected.widgetLabel)
 	end	
 	
+	function self.ShowHelp()
+		if (protected.widgetHelpFrame and protected.widgetHelpText) then
+			protected.widgetHelpFrame.box:Show()
+			protected.widgetHelpFrame.box:SetAlpha(0.7)
+			protected.widgetHelpFrame.boxHighlight:Hide()
+			protected.widgetHelpFrame.button:Show()
+		end
+	end
+
+	function self.HideHelp()
+		if protected.widgetHelpFrame then
+			protected.widgetHelpFrame.box:Hide()
+			protected.widgetHelpFrame.boxHighlight:Hide()
+			protected.widgetHelpFrame.button:Help()
+		end
+	end
 	
+	function self.Attach(attachedWidget, attachedWidgetProtected)
+		local attachFrame = protected.widgetAttachFrame or protected.widgetFrame
+		local atachedWidgetFrame = attachedWidgetProtected.widgetFrame
+		local attachPoint = attachedWidgetProtected.widgetAttachPoint
+		local attachAlign = attachedWidgetProtected.widgetAttachAlign
+		local point, relativePoint
+		
+		atachedWidgetFrame:SetParent(attachFrame)
+		
+		if ("LEFT" == attachPoint) then
+			attachFrame = attachFrame.left or attachFrame
+			if ("TOP" == attachAlign) then
+				point = "TOPRIGHT"
+				relativePoint = "TOPLEFT"
+			elseif ("BOTTOM" == attachAlign) then
+				point = "BOTTOMRIGHT"
+				relativePoint = "BOTTOMLEFT"
+			else
+				point = "RIGHT"
+				relativePoint = "LEFT"
+			end
+		elseif ("TOP" == attachPoint) then
+			attachFrame = attachFrame.top or attachFrame
+			if ("LEFT" == attachAlign) then
+				point = "BOTTOMLEFT"
+				relativePoint = "TOPLEFT"
+			elseif ("RIGHT" == attachAlign) then
+				point = "BOTTOMRIGHT"
+				relativePoint = "TOPRIGHT"
+			else
+				point = "BOTTOM"
+				relativePoint = "TOP"
+			end
+		elseif ("BOTTOM" == attachPoint) then
+			attachFrame = attachFrame.bottom or attachFrame
+			if ("LEFT" == attachAlign) then
+				point = "TOPLEFT"
+				relativePoint = "BOTTOMLEFT"
+			elseif ("RIGHT" == attachAlign) then
+				point = "TOPRIGHT"
+				relativePoint = "BOTTOMRIGHT"
+			else
+				point = "TOP"
+				relativePoint = "BOTTOM"
+			end
+		else
+			attachFrame = attachFrame.right or attachFrame
+			if ("TOP" == attachAlign) then
+				point = "TOPLEFT"
+				relativePoint = "TOPRIGHT"
+			elseif ("BOTTOM" == attachAlign) then
+				point = "BOTTOMLEFT"
+				relativePoint = "BOTTOMRIGHT"
+			else
+				point = "LEFT"
+				relativePoint = "RIGHT"
+			end
+		end		
+		atachedWidgetFrame:SetClampedToScreen(false)
+		atachedWidgetFrame:SetToplevel(false)
+		atachedWidgetFrame:SetFrameLevel(max(0,attachFrame:GetFrameLevel()-5))		
+		atachedWidgetFrame:ClearAllPoints()
+		atachedWidgetFrame:SetPoint(point, attachFrame, relativePoint)
+	end	
 	
 	-- constructor
 	do
@@ -213,8 +298,14 @@ function GnomTECWidget(init)
 		-- get default values
 		local width, widthUnit = string.match(init.width or "", "(%d+)(.)")
 		local height, heightUnit = string.match(init.height or "", "(%d+)(.)")
+		
+		if (init.attach) then
+			protected.widgetAttach = init.attach
+			protected.widgetAttachPoint = string.upper(init.attachPoint or "")
+			protected.widgetAttachAlign = string.upper(init.attachAlign or "")
+		end
 
-		-- if widget have a name and a database then we can store frame positions 
+		-- if widget have a name and a database then we can store frame positions and size
 		if (init.db and init.name) then
 			protected.widgetName = init.name
 			if not (init.db.char.GnomTECWidgets) then
@@ -242,7 +333,6 @@ function GnomTECWidget(init)
 			widthUnit = protected.widgetDb.widthUnit
 			height = protected.widgetDb.height
 			heightUnit = protected.widgetDb.heightUnit
-			
 		end
 		
 		-- set the actual width 
@@ -272,6 +362,8 @@ function GnomTECWidget(init)
 		end
 
 		self.SetLabel(init.label)
+
+		protected.widgetHelpText = init.help
 
 		protected.LogMessage(CLASS_CLASS, LOG_DEBUG, "GnomTECWidget", "New instance created (%s)", protected.UID)
 	end
