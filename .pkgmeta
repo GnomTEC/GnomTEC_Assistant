@@ -1,5 +1,8 @@
 package-as: GnomTEC_Assistant
 
+required-dependencies:
+    - GnomTEC
+    
 manual-changelog:
     filename: history.txt
     markup-type: creole
