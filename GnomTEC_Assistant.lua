@@ -29,12 +29,13 @@ local addonInfo = {
 	["Name"] = "GnomTEC Assistant",
 	["Description"] = "Addon which will assist all GnomTEC addons in future with centralized templates and functionality.",	
 	["Version"] = "6.1.0.1",
-	["Date"] = "2015-02-25",
+	["Date"] = "2015-03-08",
 	["Author"] = "Peter Jack",
 	["Email"] = "info@gnomtec.de",
 	["Website"] = "http://www.gnomtec.de/",
 	["Copyright"] = "© 2014-2015 by Peter Jack",
 	["License"] = "European Union Public Licence (EUPL v.1.1)",	
+	["FrameworkRevision"] = 1
 }
 
 -- ----------------------------------------------------------------------
@@ -104,6 +105,12 @@ local logDataObject =	{
 local function GnomTECAssistant()
 	-- call base class
 	local self, protected = GnomTECAddon("GnomTEC_Assistant", addonInfo)
+	
+	-- when we got nil from base class there is a major issue and we will stop here.
+	-- GnomTEC framework will inform the user by itself about the issue.
+	if (nil == self) then
+		return self
+	end
 	
 	-- public fields go in the instance table
 	-- self.field = value
