@@ -12,7 +12,7 @@
 ## Notes-zhCN: Addon which will assist all GnomTEC addons in future with centralized templates and functionality.
 ## Notes-zhTW: Addon which will assist all GnomTEC addons in future with centralized templates and functionality.
 ## Author: Peter Jack
-## Version: 6.2.0.1
+## Version: 6.2.2.1
 ## Dependencies: GnomTEC
 ## SavedVariables: GnomTEC_AssistantDB
 

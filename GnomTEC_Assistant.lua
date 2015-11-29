@@ -1,6 +1,6 @@
 -- **********************************************************************
 -- GnomTEC Assistant
--- Version: 6.2.0.1
+-- Version: 6.2.2.1
 -- Author: Peter Jack
 -- URL: http://www.gnomtec.de/
 -- **********************************************************************
@@ -28,14 +28,14 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 local addonInfo = {
 	["Name"] = "GnomTEC Assistant",
 	["Description"] = "Addon which will assist all GnomTEC addons in future with centralized templates and functionality.",	
-	["Version"] = "6.2.0.1",
-	["Date"] = "2015-06-25",
+	["Version"] = "6.2.2.1",
+	["Date"] = "2015-11-07",
 	["Author"] = "Peter Jack",
 	["Email"] = "info@gnomtec.de",
 	["Website"] = "http://www.gnomtec.de/",
 	["Copyright"] = "© 2014-2015 by Peter Jack",
 	["License"] = "European Union Public Licence (EUPL v.1.1)",	
-	["FrameworkRevision"] = 2
+	["FrameworkRevision"] = 3
 }
 
 -- ----------------------------------------------------------------------
@@ -581,7 +581,14 @@ local function GnomTECAssistant()
 		tooltip:AddDoubleLine("Anzahl Anfragen",statistics.commResponseCount,1.0,1.0,0.0,1.0,1.0,1.0)
 		tooltip:AddDoubleLine("Empfangene Bytes",statistics.commResponseReceiveBytes,1.0,1.0,0.0,1.0,1.0,1.0)
 		tooltip:AddDoubleLine("Gesendete Bytes",statistics.commResponseSendBytes,1.0,1.0,0.0,1.0,1.0,1.0)
-
+		tooltip:AddLine(" ")
+		tooltip:AddLine("Broadcasts an andere Spieler",1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Anzahl Broadcasts",statistics.commBroadcastSendCount,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Gesendete Bytes",statistics.commBroadcastSendBytes,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddLine(" ")
+		tooltip:AddLine("Broadcasts von anderern Spieler",1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Anzahl Broadcasts",statistics.commBroadcastReceiveCount,1.0,1.0,0.0,1.0,1.0,1.0)
+		tooltip:AddDoubleLine("Empfangene Bytes",statistics.commBroadcastReceiveBytes,1.0,1.0,0.0,1.0,1.0,1.0)
 		tooltip:AddLine(" ")
 		tooltip:AddLine("Hinweis: Links-Klick um GnomTEC Assistant zu öffnen/schließen",0.0,1.0,0.0)
 	end	
