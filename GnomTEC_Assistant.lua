@@ -28,8 +28,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 local addonInfo = {
 	["Name"] = "GnomTEC Assistant",
 	["Description"] = "Addon which will assist all GnomTEC addons in future with centralized templates and functionality.",	
-	["Version"] = "6.2.2.1",
-	["Date"] = "2015-11-07",
+	["Version"] = "6.2.3.2",
+	["Date"] = "2015-12-05",
 	["Author"] = "Peter Jack",
 	["Email"] = "info@gnomtec.de",
 	["Website"] = "http://www.gnomtec.de/",
@@ -42,10 +42,10 @@ local addonInfo = {
 -- Addon Global Constants (local)
 -- ----------------------------------------------------------------------
 -- Class levels
-local CLASS_BASE		= 0
-local CLASS_CLASS		= 1
-local CLASS_WIDGET	= 2
-local CLASS_ADDON		= 3
+local CLASS_BASE			= 0
+local CLASS_CLASS			= 1
+local CLASS_WIDGET		= 2
+local CLASS_ADDON			= 3
 
 -- Log levels
 local LOG_FATAL 	= 0
@@ -184,7 +184,7 @@ local function GnomTECAssistant()
 
 			if (classLevel == CLASS_WIDGET) then
 				logWindowWidgets.logWindowMessages_Widget.AddMessage(text, 1.0, 1.0, 1.0)
-			elseif (classLevel == CLASS_ADDON) then
+			elseif (classLevel == CLASS_ADDON)then
 				logWindowWidgets.logWindowMessages_Addon.AddMessage(text, 1.0, 1.0, 1.0)
 			end
 
