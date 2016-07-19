@@ -1,10 +1,10 @@
 -- **********************************************************************
 -- GnomTEC Assistant
--- Version: 6.2.2.1
+-- Version: 7.0.3.1
 -- Author: Peter Jack
 -- URL: http://www.gnomtec.de/
 -- **********************************************************************
--- Copyright © 2014-2015 by Peter Jack
+-- Copyright © 2014-2016 by Peter Jack
 --
 -- Licensed under the EUPL, Version 1.1 only (the "Licence");
 -- You may not use this work except in compliance with the Licence.
@@ -28,14 +28,14 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 local addonInfo = {
 	["Name"] = "GnomTEC Assistant",
 	["Description"] = "Addon which will assist all GnomTEC addons in future with centralized templates and functionality.",	
-	["Version"] = "6.2.3.2",
-	["Date"] = "2015-12-05",
+	["Version"] = "7.0.3.1",
+	["Date"] = "2016-07-20",
 	["Author"] = "Peter Jack",
 	["Email"] = "info@gnomtec.de",
 	["Website"] = "http://www.gnomtec.de/",
-	["Copyright"] = "© 2014-2015 by Peter Jack",
+	["Copyright"] = "© 2014-2016 by Peter Jack",
 	["License"] = "European Union Public Licence (EUPL v.1.1)",	
-	["FrameworkRevision"] = 3
+	["FrameworkRevision"] = 4
 }
 
 -- ----------------------------------------------------------------------
