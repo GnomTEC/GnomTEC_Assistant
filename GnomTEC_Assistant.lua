@@ -29,7 +29,7 @@ local addonInfo = {
 	["Name"] = "GnomTEC Assistant",
 	["Description"] = "Addon which will assist all GnomTEC addons in future with centralized templates and functionality.",	
 	["Version"] = "7.0.3.1",
-	["Date"] = "2016-07-20",
+	["Date"] = "2016-08-04",
 	["Author"] = "Peter Jack",
 	["Email"] = "info@gnomtec.de",
 	["Website"] = "http://www.gnomtec.de/",
@@ -290,8 +290,9 @@ local function GnomTECAssistant()
 			mainWindowWidgets.mainWindowTestGnomTECWidgetTextureButton.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestGnomTECWidget_Attach =  GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidget_Attach"})
 			mainWindowWidgets.mainWindowTestGnomTECWidget_Attach.OnClick = OnClickMainWindowTest
-			mainWindowWidgets.mainWindowTestGnomTECWidget_Help =  GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidget_Help"})
-			mainWindowWidgets.mainWindowTestGnomTECWidget_Help.OnClick = OnClickMainWindowTest
+-- some issues here and as we didn't use it yet it's removed
+--			mainWindowWidgets.mainWindowTestGnomTECWidget_Help =  GnomTECWidgetPanelButton({parent=mainWindowWidgets.mainWindowLayoutTest, label="GnomTECWidget_Help"})
+--			mainWindowWidgets.mainWindowTestGnomTECWidget_Help.OnClick = OnClickMainWindowTest
 			mainWindowWidgets.mainWindowTestBottomSpacer = GnomTECWidgetSpacer({parent=mainWindowWidgets.mainWindowLayoutTest, width="100%", height="100%"})
 
 			mainWindowWidgets.mainWindowLayoutPrototype = GnomTECWidgetContainerLayoutVertical({parent=mainWindowWidgets.mainWindowLayout, label="GUI Prototypen"})
@@ -469,10 +470,11 @@ local function GnomTECAssistant()
 				testWindowWidgets[test].testWindowAttach.Show()
 				testWindowWidgets[test].testWindowPanelButton.OnClick = function () if (testWindowWidgets["GnomTECWidget_Attach"].testWindowAttach.IsShown()) then testWindowWidgets["GnomTECWidget_Attach"].testWindowAttach.Hide() else testWindowWidgets["GnomTECWidget_Attach"].testWindowAttach.Show() end end
 			elseif ("GnomTECWidget_Help" == test) then
-				testWindowWidgets[test] = {}
-				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test, portrait=[[Interface\Icons\Ability_Repair]], help=[[Das könnte ein Hilfetext sein]]})
-				testWindowWidgets[test].testWindowText = GnomTECWidgetText({parent=testWindowWidgets[test].testWindow, text="Hilfesystem"})
-				testWindowWidgets[test].testWindow.ShowHelp()
+-- some issues here and as we didn't use it yet it's removed
+--				testWindowWidgets[test] = {}
+--				testWindowWidgets[test].testWindow = GnomTECWidgetContainerWindow({title=test, portrait=[[Interface\Icons\Ability_Repair]], help=[[Das könnte ein Hilfetext sein]]})
+--				testWindowWidgets[test].testWindowText = GnomTECWidgetText({parent=testWindowWidgets[test].testWindow, text="Hilfesystem"})
+--				testWindowWidgets[test].testWindow.ShowHelp()
 			end
 
 		end
