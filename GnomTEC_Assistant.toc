@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: GnomTEC_Assistant
 ## Notes: Addon which will assist all GnomTEC addons in future with centralized templates and functionality.
 ## Notes-deDE: Addon das alle GnomTEC Addons in Zukunft mit zentralen Templates und Funktionalitäten unterstützen wird.
@@ -12,7 +12,7 @@
 ## Notes-zhCN: Addon which will assist all GnomTEC addons in future with centralized templates and functionality.
 ## Notes-zhTW: Addon which will assist all GnomTEC addons in future with centralized templates and functionality.
 ## Author: Peter Jack
-## Version: 7.2.0.1
+## Version: 7.3.0.1
 ## Dependencies: GnomTEC
 ## SavedVariables: GnomTEC_AssistantDB
 
