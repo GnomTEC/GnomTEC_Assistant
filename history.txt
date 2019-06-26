@@ -1,5 +1,8 @@
 == GnomTEC Assistant - Change History 
 
+=== 8.2.0.2 (2019-06-26)
+* Updated TOC for WoW patch 8.2.0 (BfA)
+
 === 8.1.0.2 (2019-01-05)
 * Updated TOC for WoW patch 8.1.0 (BfA)
 
