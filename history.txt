@@ -1,5 +1,9 @@
 == GnomTEC Assistant - Change History 
 
+=== 8.2.5.3-classic (2019-11-09)
+* Updated TOC for WoW patch 1.13.2 (Classic)
+* missing icon from retail copied to addon
+
 === 8.2.0.2 (2019-06-26)
 * Updated TOC for WoW patch 8.2.0 (BfA)
 

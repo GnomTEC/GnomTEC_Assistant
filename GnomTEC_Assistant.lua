@@ -1,6 +1,6 @@
 -- **********************************************************************
 -- GnomTEC Assistant
--- Version: 8.2.0.2
+-- Version: 8.2.5.3
 -- Author: Peter Jack
 -- URL: http://www.gnomtec.de/
 -- **********************************************************************
@@ -28,8 +28,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 local addonInfo = {
 	["Name"] = "GnomTEC Assistant",
 	["Description"] = "Addon which will assist all GnomTEC addons in future with centralized templates and functionality.",	
-	["Version"] = "8.2.0.2",
-	["Date"] = "2019-06-26",
+	["Version"] = "8.2.5.3",
+	["Date"] = "2019-11-09",
 	["Author"] = "Peter Jack",
 	["Email"] = "info@gnomtec.de",
 	["Website"] = "http://www.gnomtec.de/",
@@ -63,7 +63,7 @@ local addonDataObject =	{
 	value = "0",
 	suffix = "addon(s)",
 	label = "GnomTEC Assistant",
-	icon = [[Interface\Icons\Inv_Misc_Tournaments_banner_Gnome]],
+	icon = [[Interface\Addons\GnomTEC_Assistant\icons\Inv_Misc_Tournaments_banner_Gnome]],
 	OnClick = function(self, button)
 		GnomTEC_Assistant.SwitchMainWindow()
 	end,
