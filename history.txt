@@ -1,5 +1,8 @@
 == GnomTEC Assistant - Change History 
 
+=== 9.0.1.5 (2020-10-19)
+* Updated TOC for WoW patch 9.0.1
+
 === 8.2.5.4-classic (2019-12-22)
 * Updated TOC for WoW patch 1.13.3 (Classic)
 
