@@ -1,5 +1,8 @@
 == GnomTEC Assistant - Change History 
 
+=== 9.2.7.5 (2022-09-15)
+* Updated TOC for WoW patch 9.2.7
+
 === 9.2.5.5 (2022-06-01)
 * Updated TOC for WoW patch 9.2.5
 
