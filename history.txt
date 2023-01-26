@@ -1,5 +1,8 @@
 == GnomTEC Assistant - Change History 
 
+=== 10.0.5.5 (2023-01-26)
+* Updated TOC for WoW patch 10.0.5
+
 === 10.0.2.5 (2022-11-16)
 * Updated TOC for WoW patch 10.0.2
 
