@@ -1,6 +1,6 @@
 -- **********************************************************************
 -- GnomTEC Assistant
--- Version: 10.1.7.5
+-- Version: 10.2.0.5
 -- Author: Peter Jack
 -- URL: http://www.gnomtec.de/
 -- **********************************************************************
@@ -28,8 +28,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("GnomTEC_Assistant")
 local addonInfo = {
 	["Name"] = "GnomTEC Assistant",
 	["Description"] = "Addon which will assist all GnomTEC addons in future with centralized templates and functionality.",	
-	["Version"] = "10.1.7.5",
-	["Date"] = "2023-09-13",
+	["Version"] = "10.2.0.5",
+	["Date"] = "2023-11-10",
 	["Author"] = "Peter Jack",
 	["Email"] = "info@gnomtec.de",
 	["Website"] = "http://www.gnomtec.de/",
